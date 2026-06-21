@@ -458,8 +458,18 @@ async function init() {
     document.body.style.overflow = 'hidden';   // arka plan scroll-lock
   };
   const closeMore = () => {
-    moreSheet?.classList.add('hidden');
-    document.body.style.overflow = '';
+    if (!moreSheet || moreSheet.classList.contains('hidden')) return;
+    const panel = moreSheet.querySelector('.more-sheet-panel');
+    if (panel) {
+      panel.style.transition = 'transform 0.22s ease-in';
+      panel.style.transform = 'translateY(100%)';
+    }
+    // Animasyon süresi kadar bekleyip sonra tamamen gizle
+    setTimeout(() => {
+      moreSheet.classList.add('hidden');
+      document.body.style.overflow = '';
+      if (panel) panel.style.transform = ''; // resetle
+    }, 220);
   };
   document.querySelectorAll('.bottom-nav-btn[data-tab]').forEach(btn => {
     btn.addEventListener('click', () => switchTab(btn.dataset.tab));
@@ -494,35 +504,30 @@ async function init() {
       if (!startY) return;
       currentY = e.touches[0].clientY;
       const deltaY = currentY - startY;
-      // Aşağı doğru çekiliyorsa paneli hareket ettir (görsel feedback)
-      if (deltaY > 0) {
+      
+      // Aşağı çekiliyorsa (ve scroll en üstteyse)
+      if (deltaY > 0 && moreSheetPanel.scrollTop <= 0) {
+        if (e.cancelable) e.preventDefault(); // Native scroll/overscroll u engelle
         moreSheetPanel.style.transform = `translateY(${deltaY}px)`;
         moreSheetPanel.style.transition = 'none';
       }
-    }, { passive: true });
+    }, { passive: false }); // PreventDefault kullanabilmek için false
 
     moreSheetPanel.addEventListener('touchend', () => {
       if (!startY) return;
       const deltaY = currentY - startY;
-      moreSheetPanel.style.transition = 'transform 0.22s ease-out';
       
-      if (deltaY > 50) {
-        // Yeterince aşağı çekildiyse kapat
+      if (deltaY > 60) {
+        // Yeterince aşağı çekildiyse kapat (closeMore zaten transition ile kaydırır)
         closeMore();
       } else {
         // Yeterli değilse eski konumuna geri dön
-        moreSheetPanel.style.transform = '';
+        moreSheetPanel.style.transition = 'transform 0.22s ease-out';
+        moreSheetPanel.style.transform = 'translateY(0)';
       }
       
       startY = 0;
       currentY = 0;
-      
-      // Menü her açıldığında transform sıfırlanmalıdır, bu yüzden closeMore içine temizlik koymak iyidir.
-      setTimeout(() => {
-        if (moreSheet?.classList.contains('hidden')) {
-           moreSheetPanel.style.transform = '';
-        }
-      }, 300);
     });
   }
 
