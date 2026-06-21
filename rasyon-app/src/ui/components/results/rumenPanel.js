@@ -37,7 +37,9 @@ export function renderRumenDynamicsPanel(sim) {
     </div>
 
     <div class="chart-wrap" style="height:280px">
-      <canvas id="chart-rumen-ph"></canvas>
+      <div class="chart-inner">
+        <canvas id="chart-rumen-ph"></canvas>
+      </div>
     </div>
 
     ${sim.riskFlags.length > 0 ? `

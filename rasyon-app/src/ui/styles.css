@@ -1486,6 +1486,12 @@ body {
   max-width: 100%;
 }
 
+.chart-inner {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
 .summary-bar {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
@@ -2705,8 +2711,11 @@ details.acc-panel table.diag-table {
   /* Canvas minimum 500px tutularak mobilde ezilmesi önlenir ve kaydırma aktif edilir */
   .chart-wrap canvas,
   .chart-wrap-tall canvas {
-    min-width: 500px !important;
     max-width: none !important;
+  }
+
+  .chart-inner {
+    min-width: 550px;
   }
 
   /* Tablolar: display:block + overflow-x:auto ile yatay scroll.
@@ -2834,7 +2843,7 @@ details.acc-panel table.diag-table {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.45);
-  z-index: 200;
+  z-index: 501;
   animation: fadeIn 0.18s ease-out;
 }
 
@@ -2843,7 +2852,7 @@ details.acc-panel table.diag-table {
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 201;
+  z-index: 502;
   background: var(--sidebar-bg);
   border-radius: 18px 18px 0 0;
   padding: 0.4rem 0.75rem calc(1.25rem + env(safe-area-inset-bottom, 0));

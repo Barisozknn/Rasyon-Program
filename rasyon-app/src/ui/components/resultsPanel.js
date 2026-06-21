@@ -239,7 +239,9 @@ export function renderResultsPanel(container, state) {
       <div class="card">
         <div class="card-title">${t('results.card_nutrient_balance')}</div>
         <div class="chart-wrap">
-          <canvas id="chart-nutrients"></canvas>
+          <div class="chart-inner">
+            <canvas id="chart-nutrients"></canvas>
+          </div>
         </div>
       </div>
 
@@ -247,7 +249,9 @@ export function renderResultsPanel(container, state) {
       <div class="card">
         <div class="card-title">${t('results.card_mineral_balance')}</div>
         <div class="chart-wrap">
-          <canvas id="chart-minerals"></canvas>
+          <div class="chart-inner">
+            <canvas id="chart-minerals"></canvas>
+          </div>
         </div>
       </div>
 
@@ -255,7 +259,9 @@ export function renderResultsPanel(container, state) {
       <div class="card">
         <div class="card-title">${t('results.card_distribution')}</div>
         <div class="chart-wrap">
-          <canvas id="chart-pie"></canvas>
+          <div class="chart-inner">
+            <canvas id="chart-pie"></canvas>
+          </div>
         </div>
       </div>
 
