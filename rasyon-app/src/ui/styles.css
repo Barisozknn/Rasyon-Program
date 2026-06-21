@@ -1152,28 +1152,29 @@ details.acc-panel table.diag-table { margin-bottom: 0; }
   .summary-card .val { font-size: 1.15rem; }
   .summary-card .lbl { font-size: 0.62rem; }
 
-  /* Grafik sarmalayıcıları: masaüstündeki sabit 280px/340px mobilde çok yer kaplar.
-     Küçük ekranda daha sıkıştırılmış ama okunabilir bir yüksekliğe indir. */
-  .chart-wrap { height: 210px; }
-  .chart-wrap-tall { height: 250px; }
+  /* Grafik yüksekliği mobilde küçüt */
+  .chart-wrap { height: 200px; }
+  .chart-wrap-tall { height: 240px; }
 
-  /* Tablolar yatay kaydırılabilir kapsayıcı içinde olmalı; `white-space:nowrap`
-     mobilde sütunların taşmasını önler, touch-scroll aktif. */
+  /* Tablolar: display:block + overflow-x:auto ile yatay scroll.
+     white-space normal bırakılır; taşan tablo div sarmalayıcısı scroll eder. */
   .tab-content table {
     display: block;
     overflow-x: auto;
-    white-space: nowrap;
     max-width: 100%;
     -webkit-overflow-scrolling: touch;
   }
-  /* Tablo sarmalayıcılar da touch-scroll desteğine sahip olsun */
-  .feed-table-wrap,
-  .results-grid .card > div[style*="overflow-x"] {
-    -webkit-overflow-scrolling: touch;
-  }
+  /* Tablolarda fazla beyaz boşluk yerine normal kelime kaydırma */
+  .results-grid table th,
+  .results-grid table td { white-space: normal; word-break: break-word; }
+  /* Sayısal sütunlar nowrap kalsın (hizalanmış görünüm için) */
+  .results-grid table td.num,
+  .results-grid table th.num { white-space: nowrap; }
 
-  /* Kısıt diagnostiği ve rasyon bileşen tablosu: hücre yazı boyutu küçüt,
-     padding sıkıştır → daha fazla satır ekranda görünsün. */
+  /* Tablo sarmalayıcılar touch-scroll desteğine sahip */
+  .feed-table-wrap { -webkit-overflow-scrolling: touch; }
+
+  /* Kısıt diagnostiği ve rasyon bileşen tablosu: küçük yazı + sıkı padding */
   .results-grid .diag-table,
   .results-grid .ration-items-table { font-size: 0.78rem; }
   .results-grid .diag-table th,
@@ -1265,12 +1266,16 @@ details.acc-panel table.diag-table { margin-bottom: 0; }
     color: var(--sidebar-text);
     transition: color 0.14s;
     min-width: 0;
+    /* Aktif/pasif durumda yükseklik sabit kalır — hizalama bozulmasın */
+    min-height: 3.5rem;
   }
   .bn-icon {
     font-size: 1.25rem; line-height: 1;
     display: inline-flex; align-items: center; justify-content: center;
     width: 2.4rem; height: 1.55rem; border-radius: 14px;
     transition: background 0.16s ease, color 0.16s ease;
+    /* Sabit boyut: aktif pill arka planı diğer butonların yerini kaydırmasın */
+    flex-shrink: 0;
   }
   .bottom-nav-btn.active { color: #fff; }
   .bottom-nav-btn.active .bn-icon { background: rgba(59,130,246,0.26); color: #fff; }
