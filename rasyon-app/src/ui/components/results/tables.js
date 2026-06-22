@@ -16,7 +16,7 @@ export function renderRationItemsTable(items, dmi) {
   const totalCost  = items.reduce((s, i) => s + i.costPerDay, 0);
 
   return `
-    <div style="overflow-x: auto;">
+    <div class="table-scroll-wrap">
       <table class="ration-items-table">
         <thead>
           <tr>
@@ -61,7 +61,7 @@ export function renderDiagnostics(diagnostics, requirements) {
   const statusLabel = { ok: t('results.st_ok'), below: t('results.st_below'), above: t('results.st_above') };
 
   return `
-    <div style="overflow-x: auto;">
+    <div class="table-scroll-wrap">
       <table class="diag-table">
         <thead>
           <tr>
