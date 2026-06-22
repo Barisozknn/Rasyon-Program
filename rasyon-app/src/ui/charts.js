@@ -99,7 +99,7 @@ export function renderRumenPHChart(rumenSim) {
       ],
     },
     options: {
-      responsive: !isMobile(),
+      responsive: true,
       maintainAspectRatio: false,
       plugins: {
         legend: { position: 'bottom', labels: { font: { size: 10 }, boxWidth: 14, padding: 8 } },
@@ -197,7 +197,7 @@ function renderNutrientBar(result) {
       ],
     },
     options: {
-      responsive: !isMobile(),
+      responsive: true,
       maintainAspectRatio: false,
       plugins: { legend: { display: true, position: 'bottom', labels: { font: { size: 11 } } } },
       scales: {
@@ -259,7 +259,7 @@ function renderMineralBar(result) {
       ],
     },
     options: {
-      responsive: !isMobile(),
+      responsive: true,
       maintainAspectRatio: false,
       plugins: { legend: { display: true, position: 'bottom', labels: { font: { size: 11 } } } },
       scales: {
@@ -299,7 +299,7 @@ function renderPieChart(result) {
       }],
     },
     options: {
-      responsive: !isMobile(),
+      responsive: true,
       maintainAspectRatio: false,
       plugins: {
         legend: {
