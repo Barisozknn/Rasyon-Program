@@ -2570,6 +2570,25 @@ details.acc-panel table.diag-table {
   }
 }
 
+/* ─── Genel Grafik Sarmalayıcıları (Charts.js boyut sorunları için) ─── */
+.chart-wrap {
+  position: relative;
+  height: 210px;
+  width: 100%;
+}
+
+.chart-wrap-tall {
+  position: relative;
+  height: 250px;
+  width: 100%;
+}
+
+.chart-inner {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    FAZ 15.4 — MOBİL / TABLET RESPONSIVE (Aşama 1: temel kullanılabilirlik)
    Saha programının ana kullanım yeri tablet/telefon. Hedef: her sayfa mobilde
