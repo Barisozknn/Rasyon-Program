@@ -466,12 +466,17 @@ function initResultsPinchZoom() {
 
   document.addEventListener('touchmove', (e) => {
     if (!onResults() || e.touches.length !== 2) return;
+    
+    // Çift parmakla dokunulduğunda tarayıcının varsayılan sayfa yakınlaştırmasını (native zoom) engelle!
+    // Bu sayede .bottom-nav ve sayfa yapısı bozulmaz. Sadece bizim custom applyScale() çalışır.
+    if (e.cancelable) e.preventDefault();
+    
     isPinching = true;
     const dist = pinchDist(e.touches);
     if (lastPinchDist > 0) {
       applyScale(startScale * (dist / lastPinchDist));
     }
-  }, { passive: true });
+  }, { passive: false });
 
   document.addEventListener('touchend', (e) => {
     if (e.touches.length < 2) {

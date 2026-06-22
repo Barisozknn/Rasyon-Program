@@ -3276,6 +3276,8 @@ details.acc-panel table.diag-table {
     padding: 0.85rem;
     padding-bottom: 3rem;
     box-sizing: border-box;
+    /* Tarayıcının varsayılan pinch-zoom davranışını bloke et */
+    touch-action: pan-x pan-y;
   }
 
   /* ── 2 sütunlu ızgara (masaüstü gibi) ── */
