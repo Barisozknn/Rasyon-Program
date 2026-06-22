@@ -31,6 +31,14 @@ function destroyChart(id) {
   }
 }
 
+/** Kayıtlı tüm Chart.js grafiklerini yeniden boyutlandırır (sekme geçişinde DOM hazır olunca çağrılır). */
+export function resizeAllCharts() {
+  Object.values(chartInstances).forEach(chart => {
+    try { chart.resize(); } catch (_) { /* grafik destroy edilmişse ignore */ }
+  });
+}
+
+
 export function renderNutrientCharts(result) {
   renderNutrientBar(result);
   renderMineralBar(result);

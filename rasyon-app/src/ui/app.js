@@ -23,7 +23,7 @@ import { renderAnimalForm } from './components/animalForm.js';
 import { renderFeedDatabase } from './components/feedDatabase.js';
 import { renderRationBuilder } from './components/rationBuilder.js';
 import { renderResultsPanel } from './components/resultsPanel.js';
-import { setChartTheme } from './charts.js';
+import { setChartTheme, resizeAllCharts } from './charts.js';
 import { renderHerdBatchPanel } from './components/herdBatchPanel.js';
 import { renderPriceManager } from './components/priceManager.js';
 import { renderObservationsPanel } from './components/observationsPanel.js';
@@ -101,8 +101,20 @@ async function switchTab(tab) {
     panel.classList.toggle('active', panel.id === `tab-${tab}`);
   });
 
+  // CSS hook: body class ile aktif sekmeyi işaretle (body:has() alternatifi)
+  document.body.setAttribute('data-active-tab', tab);
+
   updatePageTitle(tab);   // FAZ 21: üst-bar sayfa başlığı
   await renderTab(tab);
+
+  // Sonuçlar/Grafikler sekmesine geçince Chart.js'yi yeniden boyutlandır
+  if (tab === 'results') {
+    // RAF + küçük gecikme: renderTab DOM'u güncelledikten sonra grafikleri yeniden çiz
+    requestAnimationFrame(() => setTimeout(() => {
+      resizeAllCharts();
+      window.dispatchEvent(new Event('resize'));
+    }, 80));
+  }
 }
 
 async function renderTab(tab) {
