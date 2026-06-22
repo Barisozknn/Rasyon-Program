@@ -34,7 +34,7 @@ export function renderFAPanel(fa, animal) {
   const fatDelta = actualFat ? (actualFat - milk.estimatedMilkFatPct).toFixed(2) : null;
 
   return `
-    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:1rem; margin-bottom:1rem">
+    <div class="res-grid-4">
       <div class="summary-card">
         <div class="val" style="color:${gradeColor}; font-size:2rem">${assessment.grade}</div>
         <div class="lbl">${t('fa.grade')}</div>
@@ -54,7 +54,8 @@ export function renderFAPanel(fa, animal) {
     </div>
 
     <div class="section-title">${t('fa.diet_profile')}</div>
-    <table class="diag-table">
+    <div class="table-scroll-wrap">
+      <table class="diag-table">
       <thead>
         <tr><th>${t('fa.col_fa')}</th><th class="num">${t('fa.col_g_day')}</th><th class="num">${t('fa.col_pct_fat')}</th><th>${t('fa.col_importance')}</th></tr>
       </thead>
@@ -70,9 +71,11 @@ export function renderFAPanel(fa, animal) {
         <tr><td>SFA / MUFA / PUFA</td><td colspan="2" class="num">${diet.sfa_pct.toFixed(1)}% / ${diet.mufa_pct.toFixed(1)}% / ${diet.pufa_pct.toFixed(1)}%</td><td class="text-muted">${t('fa.sfa_note')}</td></tr>
       </tfoot>
     </table>
+    </div>
 
     <div class="section-title mt-2">${t('fa.milk_comp')}</div>
-    <table class="diag-table">
+    <div class="table-scroll-wrap">
+      <table class="diag-table">
       <thead>
         <tr><th>${t('fa.col_param')}</th><th class="num">${t('fa.col_value')}</th><th>${t('fa.col_meaning')}</th></tr>
       </thead>
@@ -105,6 +108,7 @@ export function renderFAPanel(fa, animal) {
         </tr>` : ''}
       </tbody>
     </table>
+    </div>
 
     ${assessment.warnings.length > 0 ? `
       <hr class="divider" />

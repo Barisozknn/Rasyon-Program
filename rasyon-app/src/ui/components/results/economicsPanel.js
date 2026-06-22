@@ -62,7 +62,8 @@ export function renderEconomicsPanel(result, state) {
       </div>
 
       <!-- Detay tablo -->
-      <table class="diag-table" style="margin-top: 1rem">
+      <div class="table-scroll-wrap">
+        <table class="diag-table" style="margin-top: 1rem">
         <thead>
           <tr><th>${t('econ.col_metric')}</th><th class="num">${t('econ.col_value')}</th><th>${t('econ.col_comment')}</th></tr>
         </thead>
@@ -81,6 +82,7 @@ export function renderEconomicsPanel(result, state) {
           ` : ''}
         </tbody>
       </table>
+      </div>
     `;
   }
 
@@ -129,7 +131,8 @@ export function renderEconomicsPanel(result, state) {
     </div>
 
     <!-- Detay tablo -->
-    <table class="diag-table">
+    <div class="table-scroll-wrap">
+      <table class="diag-table">
       <thead>
         <tr><th>${t('econ.col_metric')}</th><th class="num">${t('econ.col_value')}</th><th>${t('econ.col_comment')}</th></tr>
       </thead>
@@ -187,6 +190,7 @@ export function renderEconomicsPanel(result, state) {
         </tr>` : ''}
       </tbody>
     </table>
+    </div>
 
     <div class="text-small text-muted mt-1">
       ${t('econ.iofc_note')}

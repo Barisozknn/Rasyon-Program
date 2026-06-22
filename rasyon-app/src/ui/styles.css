@@ -1472,6 +1472,8 @@ body {
   height: 280px;
   width: 100%;
   max-width: 100%;
+  overflow-x: auto;          /* masaüstünde zaten sığar, mobilde scroll aktif */
+  -webkit-overflow-scrolling: touch;
 }
 
 .chart-wrap-tall {
@@ -1479,17 +1481,51 @@ body {
   height: 340px;
   width: 100%;
   max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .chart-wrap canvas,
 .chart-wrap-tall canvas {
-  max-width: 100%;
+  max-width: none;           /* Canvas hiçbir zaman sıkıştırılmasın */
+  display: block;
 }
 
 .chart-inner {
   position: relative;
   height: 100%;
-  width: 100%;
+  width: 100%;               /* Masaüstünde %100 */
+  min-width: 0;
+}
+
+/* ─── Scroll sarmalayıcı — tablolar için evrensel yardımcı ──────────────────
+   JS panellerindeki sabit sarmalayıcısız tablolara class="table-scroll-wrap"
+   wrap eklenir; bu sınıf yatay scroll sağlar. */
+.table-scroll-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+
+/* ─── Responsive grid yardımcı sınıfları (panellerdeki inline grid yerine) ──
+   Kullanım: class="res-grid-3" → masaüstü 3 kolon, tablet 2, mobil 1-2 kolon. */
+.res-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.res-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.res-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 
 .summary-bar {
@@ -2695,27 +2731,20 @@ details.acc-panel table.diag-table {
     font-size: 0.62rem;
   }
 
-  /* Grafik yüksekliği mobilde küçüt, genişlik scroll edilebilir olsun (Fiyat Yöneticisi gibi) */
+  /* Grafik: .chart-inner sabit genişlikte → .chart-wrap scroll eder.
+     responsive:false ile çizilen canvas bu genişliğe uyar. */
   .chart-wrap {
-    height: 200px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    height: 210px;
   }
 
   .chart-wrap-tall {
-    height: 240px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    height: 250px;
   }
 
-  /* Canvas minimum 500px tutularak mobilde ezilmesi önlenir ve kaydırma aktif edilir */
-  .chart-wrap canvas,
-  .chart-wrap-tall canvas {
-    max-width: none !important;
-  }
-
+  /* Mobilde chart-inner sabit min-width → scroll tetiklenir */
   .chart-inner {
-    width: 600px;
+    width: 520px;    /* charts.js'de setCanvasSize mobileWidth ile aynı olmalı */
+    min-width: 520px;
     height: 100%;
   }
 
@@ -2757,6 +2786,20 @@ details.acc-panel table.diag-table {
   .results-grid .ration-items-table th,
   .results-grid .ration-items-table td {
     padding: 0.3rem 0.45rem;
+  }
+
+  /* ── Responsive grid yardımcı sınıfları — mobilde daralt ──────────────────
+     4'lü → 2'li, 3'lü → 2'li (tablet için), 2'li korunur */
+  .res-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+  }
+  .res-grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+  }
+  .res-grid-2 {
+    gap: 0.6rem;
   }
 }
 
@@ -2813,16 +2856,33 @@ details.acc-panel table.diag-table {
 
   /* Çok küçük ekranlar için grafik yüksekliğini daha da kıs */
   .chart-wrap {
-    height: 180px;
+    height: 185px;
   }
 
   .chart-wrap-tall {
     height: 210px;
   }
 
+  /* 480px altında chart-inner biraz küçük */
+  .chart-inner {
+    width: 460px;
+    min-width: 460px;
+  }
+
   /* Rapor butonları tam genişlik iki blok */
   .report-bar .btn-sm {
     flex: 1 1 calc(50% - 0.4rem);
+  }
+
+  /* 480px altında grid'ler tek kolona düşer */
+  .res-grid-4,
+  .res-grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+  .res-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
   }
 }
 

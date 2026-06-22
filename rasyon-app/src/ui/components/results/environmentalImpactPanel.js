@@ -48,7 +48,7 @@ export function renderEnvironmentalImpactPanel(result, state) {
   const cowCo2TonYear  = (m.co2eq_kg_day * 365) / 1000;              // ton CO₂eq/yıl (inek başı)
 
   return `
-    <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:1rem; margin-bottom:1rem">
+    <div class="res-grid-4">
       <div class="summary-card">
         <div class="val" style="color:${color}">${m.production_g.toFixed(0)}</div>
         <div class="lbl">${t('env.ch4_day')}</div>
@@ -72,7 +72,8 @@ export function renderEnvironmentalImpactPanel(result, state) {
       ${escHtml(interpMsg)}
     </div>
 
-    <table class="diag-table" style="margin-top:0.75rem; font-size:0.85rem">
+    <div class="table-scroll-wrap">
+      <table class="diag-table" style="margin-top:0.75rem; font-size:0.85rem">
       <tbody>
         <tr>
           <td>${t('env.moraes')}</td>
@@ -96,10 +97,11 @@ export function renderEnvironmentalImpactPanel(result, state) {
         </tr>
       </tbody>
     </table>
+    </div>
 
     <hr class="divider" />
     <div class="section-title">${t('env.herd_title', { n: herdSize })}</div>
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem; margin-top:0.5rem">
+    <div class="res-grid-2" style="margin-top:0.5rem">
       <div class="summary-card">
         <div class="val">${herdCh4KgDay.toFixed(1)}</div>
         <div class="lbl">${t('env.herd_ch4')}</div>

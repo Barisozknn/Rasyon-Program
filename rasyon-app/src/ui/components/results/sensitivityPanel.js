@@ -45,30 +45,33 @@ export function renderSensitivityPanel(sensitivity) {
 
   const binding = shadowPrices.length > 0 ? `
     <div class="section-title mt-1">${t('sens.binding_title')}</div>
-    <table class="diag-table">
-      <thead><tr><th>${t('sens.col_constraint')}</th><th class="num">${t('sens.col_shadow')}</th><th>${t('sens.col_unit')}</th></tr></thead>
-      <tbody>
+    <div class="table-scroll-wrap">
+      <table class="diag-table">
+        <thead><tr><th>${t('sens.col_constraint')}</th><th class="num">${t('sens.col_shadow')}</th><th>${t('sens.col_unit')}</th></tr></thead>
+        <tbody>
         ${shadowPrices.map(p => `
           <tr>
             <td><b>${escHtml(constraintLabel(p))}</b></td>
             <td class="num">${Math.abs(p.dual) >= 0.01 ? Math.abs(p.dual).toFixed(2) : Math.abs(p.dual).toExponential(1)}</td>
             <td class="text-small text-muted">${constraintUnit(p.constraint)}</td>
           </tr>`).join('')}
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
     <div class="text-small text-muted mt-1">${t('sens.binding_hint')}</div>
   ` : `<div class="info-box mt-1">${t('sens.no_binding')}</div>`;
 
   const entry = reducedCosts.length > 0 ? `
     <div class="section-title mt-2">${t('sens.entry_title')}</div>
-    <table class="diag-table">
-      <thead><tr>
-        <th>${t('sens.col_feed')}</th>
-        <th class="num">${t('sens.col_current_price')}</th>
-        <th class="num">${t('sens.col_drop')}</th>
-        <th class="num">${t('sens.col_target')}</th>
-      </tr></thead>
-      <tbody>
+    <div class="table-scroll-wrap">
+      <table class="diag-table">
+        <thead><tr>
+          <th>${t('sens.col_feed')}</th>
+          <th class="num">${t('sens.col_current_price')}</th>
+          <th class="num">${t('sens.col_drop')}</th>
+          <th class="num">${t('sens.col_target')}</th>
+        </tr></thead>
+        <tbody>
         ${reducedCosts.slice(0, 8).map(r => {
           const target = Math.max(0, r.currentPrice - r.priceToEnter);
           // FAZ 23.3: canlı what-if kaydırıcısı — fiyatı düşür, rasyona girer mi anlık gör.
@@ -93,8 +96,9 @@ export function renderSensitivityPanel(sensitivity) {
             <td class="num"><b>${Math.round(target).toLocaleString()}</b></td>
           </tr>${slider}`;
         }).join('')}
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
     <div class="text-small text-muted mt-1">${t('sens.entry_hint')} ${t('sens.whatif_hint')}</div>
   ` : `<div class="info-box mt-1">${t('sens.no_entry')}</div>`;
 

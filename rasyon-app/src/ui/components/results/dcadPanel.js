@@ -78,7 +78,7 @@ export function renderDCADPanel(composition, animal, milkFever = null, dmi = nul
     : '';
 
   return `
-    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:1rem; margin-bottom:1rem">
+    <div class="res-grid-3">
       <div class="summary-card">
         <div class="val" style="color:${dcadColor}">${dcadVal.toFixed(1)}</div>
         <div class="lbl">${t('dcad.summary_dcad')}</div>
@@ -134,39 +134,41 @@ export function renderDCADPanel(composition, animal, milkFever = null, dmi = nul
       `;
     })() : ''}
 
-    <table class="diag-table" style="margin-top:0.75rem">
-      <thead><tr><th>${t('dcad.col_param')}</th><th class="num">${t('dcad.col_value')}</th><th>${t('dcad.col_status')}</th></tr></thead>
-      <tbody>
-        <tr>
-          <td>DCAD</td>
-          <td class="num">${dcadVal.toFixed(1)} mEq/100g</td>
-          <td><span class="status-${dcadInterp.status === 'optimal' ? 'ok' : (dcadInterp.status === 'below_target' ? 'below' : 'above')}">${dcadInterp.status === 'optimal' ? t('dcad.st_optimal') : dcadInterp.status === 'below_target' ? t('dcad.st_below') : t('dcad.st_above')}</span></td>
-        </tr>
-        ${measuredInterp ? `
+    <div class="table-scroll-wrap">
+      <table class="diag-table" style="margin-top:0.75rem">
+        <thead><tr><th>${t('dcad.col_param')}</th><th class="num">${t('dcad.col_value')}</th><th>${t('dcad.col_status')}</th></tr></thead>
+        <tbody>
           <tr>
-            <td><b>${t('dcad.row_field_ph')}</b></td>
-            <td class="num"><b>${measuredInterp.measuredPH.toFixed(2)}</b></td>
-            <td><span class="status-${measuredInterp.severity === 'none' ? 'ok' : (measuredInterp.severity === 'high' ? 'above' : 'below')}">${measuredInterp.status}</span></td>
+            <td>DCAD</td>
+            <td class="num">${dcadVal.toFixed(1)} mEq/100g</td>
+            <td><span class="status-${dcadInterp.status === 'optimal' ? 'ok' : (dcadInterp.status === 'below_target' ? 'below' : 'above')}">${dcadInterp.status === 'optimal' ? t('dcad.st_optimal') : dcadInterp.status === 'below_target' ? t('dcad.st_below') : t('dcad.st_above')}</span></td>
           </tr>
+          ${measuredInterp ? `
+            <tr>
+              <td><b>${t('dcad.row_field_ph')}</b></td>
+              <td class="num"><b>${measuredInterp.measuredPH.toFixed(2)}</b></td>
+              <td><span class="status-${measuredInterp.severity === 'none' ? 'ok' : (measuredInterp.severity === 'high' ? 'above' : 'below')}">${measuredInterp.status}</span></td>
+            </tr>
+            <tr>
+              <td>${t('dcad.row_dcad_est')}</td>
+              <td class="num text-muted">${estimated.estimatedPH.toFixed(2)}</td>
+              <td class="text-muted">${t('dcad.for_comparison')}</td>
+            </tr>
+          ` : `
+            <tr>
+              <td>${t('dcad.row_est_ph')}</td>
+              <td class="num">${estimated.estimatedPH.toFixed(2)}</td>
+              <td><span class="status-${estimated.status === 'target_met' ? 'ok' : 'above'}">${estimated.status === 'target_met' ? t('dcad.st_target_met') : t('dcad.st_field_needed')}</span></td>
+            </tr>
+          `}
           <tr>
-            <td>${t('dcad.row_dcad_est')}</td>
-            <td class="num text-muted">${estimated.estimatedPH.toFixed(2)}</td>
-            <td class="text-muted">${t('dcad.for_comparison')}</td>
+            <td>${t('dcad.target_period')}</td>
+            <td class="num">${periodLabel}</td>
+            <td class="text-muted">${t('dcad.dcad_target', { min: dcadInterp.target.min, max: dcadInterp.target.max })}</td>
           </tr>
-        ` : `
-          <tr>
-            <td>${t('dcad.row_est_ph')}</td>
-            <td class="num">${estimated.estimatedPH.toFixed(2)}</td>
-            <td><span class="status-${estimated.status === 'target_met' ? 'ok' : 'above'}">${estimated.status === 'target_met' ? t('dcad.st_target_met') : t('dcad.st_field_needed')}</span></td>
-          </tr>
-        `}
-        <tr>
-          <td>${t('dcad.target_period')}</td>
-          <td class="num">${periodLabel}</td>
-          <td class="text-muted">${t('dcad.dcad_target', { min: dcadInterp.target.min, max: dcadInterp.target.max })}</td>
-        </tr>
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
 
     <div class="text-small text-muted mt-1">
       ${measuredInterp

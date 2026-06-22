@@ -79,7 +79,7 @@ export function renderVitaminTraceMineralPanel(composition, requirements, dmi) {
   const tmExcess    = tmRows.filter(r => r.supplied > r.max).length;
 
   return `
-    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:1rem; margin-bottom:1rem">
+    <div class="res-grid-3">
       <div class="summary-card">
         <div class="val" style="color:${vitDeficits === 0 ? 'var(--primary)' : 'var(--warning)'}">${vitDeficits === 0 ? '<i class="ti ti-check"></i>' : vitDeficits}</div>
         <div class="lbl">${t('vm.sum_vit_def')}</div>
@@ -95,7 +95,8 @@ export function renderVitaminTraceMineralPanel(composition, requirements, dmi) {
     </div>
 
     <div class="section-title">${t('vm.sec_vitamins')}</div>
-    <table class="diag-table">
+    <div class="table-scroll-wrap">
+      <table class="diag-table">
       <thead>
         <tr><th>${t('vm.col_vitamin')}</th><th class="num">${t('vm.col_from_feed')}</th><th class="num">${t('vm.col_requirement')}</th><th>${t('vm.col_status')}</th><th>${t('vm.col_function')}</th></tr>
       </thead>
@@ -112,9 +113,11 @@ export function renderVitaminTraceMineralPanel(composition, requirements, dmi) {
         }).join('')}
       </tbody>
     </table>
+    </div>
 
     <div class="section-title mt-2">${t('vm.sec_functional')}</div>
-    <table class="diag-table">
+    <div class="table-scroll-wrap">
+      <table class="diag-table">
       <thead>
         <tr><th>${t('vm.col_nutrient')}</th><th class="num">${t('vm.col_from_feed')}</th><th class="num">${t('vm.col_recommended')}</th><th>${t('vm.col_status')}</th><th>${t('vm.col_function')}</th></tr>
       </thead>
@@ -142,9 +145,11 @@ export function renderVitaminTraceMineralPanel(composition, requirements, dmi) {
         }).join('')}
       </tbody>
     </table>
+    </div>
 
     <div class="section-title mt-2">${t('vm.sec_tm')}</div>
-    <table class="diag-table">
+    <div class="table-scroll-wrap">
+      <table class="diag-table">
       <thead>
         <tr><th>${t('vm.col_mineral')}</th><th class="num">${t('vm.col_from_feed')}</th><th class="num">${t('vm.col_min')}</th><th class="num">${t('vm.col_max')}</th><th>${t('vm.col_status')}</th><th>${t('vm.col_function')}</th></tr>
       </thead>
@@ -162,6 +167,7 @@ export function renderVitaminTraceMineralPanel(composition, requirements, dmi) {
         }).join('')}
       </tbody>
     </table>
+    </div>
 
     ${vitDeficits > 0 || tmDeficits > 0 ? `
       <div class="info-box box-warn" style="margin-top:0.75rem">

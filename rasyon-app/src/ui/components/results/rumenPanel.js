@@ -17,7 +17,7 @@ export function renderRumenDynamicsPanel(sim) {
               : 'var(--above-bg)';
 
   return `
-    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:1rem; margin-bottom:1rem">
+    <div class="res-grid-4">
       <div class="summary-card" style="background:${cardBg}">
         <div class="val" style="color:${risk.color}; font-size:1rem; line-height:1.2">${riskLabel}</div>
         <div class="lbl">${t('rumen.risk_level')}</div>
@@ -55,26 +55,28 @@ export function renderRumenDynamicsPanel(sim) {
       </div>
     `}
 
-    <table class="diag-table" style="margin-top:0.75rem">
-      <thead>
-        <tr><th>${t('rumen.col_param')}</th><th class="num">${t('rumen.col_value')}</th><th>${t('rumen.col_meaning')}</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>${t('rumen.base_ph')}</td><td class="num">${sim.basePH.toFixed(2)}</td><td class="text-muted">${t('rumen.base_ph_note')}</td></tr>
-        <tr><td>${t('rumen.min_ph_pp')}</td><td class="num">${sim.minPH.toFixed(2)}</td><td class="text-muted">${t('rumen.min_ph_pp_note')}</td></tr>
-        <tr><td>${t('rumen.amplitude')}</td><td class="num">${sim.amplitude.toFixed(2)}</td><td class="text-muted">${t('rumen.amplitude_note')}</td></tr>
-        <tr class="status-row-${sim.saraHours >= 3 ? 'above' : 'ok'}">
-          <td><b>${t('rumen.sara_duration')}</b></td>
-          <td class="num"><b>${sim.saraHours} ${t('rumen.hours_day')}</b></td>
-          <td>${t('rumen.sara_duration_note')}</td>
-        </tr>
-        ${sim.acidosisHours > 0 ? `<tr class="status-row-above">
-          <td><b>${t('rumen.acute_acidosis')}</b></td>
-          <td class="num"><b>${sim.acidosisHours} ${t('rumen.hours_day')}</b></td>
-          <td><b>${t('rumen.acute_note')}</b></td>
-        </tr>` : ''}
-      </tbody>
-    </table>
+    <div class="table-scroll-wrap">
+      <table class="diag-table" style="margin-top:0.75rem">
+        <thead>
+          <tr><th>${t('rumen.col_param')}</th><th class="num">${t('rumen.col_value')}</th><th>${t('rumen.col_meaning')}</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>${t('rumen.base_ph')}</td><td class="num">${sim.basePH.toFixed(2)}</td><td class="text-muted">${t('rumen.base_ph_note')}</td></tr>
+          <tr><td>${t('rumen.min_ph_pp')}</td><td class="num">${sim.minPH.toFixed(2)}</td><td class="text-muted">${t('rumen.min_ph_pp_note')}</td></tr>
+          <tr><td>${t('rumen.amplitude')}</td><td class="num">${sim.amplitude.toFixed(2)}</td><td class="text-muted">${t('rumen.amplitude_note')}</td></tr>
+          <tr class="status-row-${sim.saraHours >= 3 ? 'above' : 'ok'}">
+            <td><b>${t('rumen.sara_duration')}</b></td>
+            <td class="num"><b>${sim.saraHours} ${t('rumen.hours_day')}</b></td>
+            <td>${t('rumen.sara_duration_note')}</td>
+          </tr>
+          ${sim.acidosisHours > 0 ? `<tr class="status-row-above">
+            <td><b>${t('rumen.acute_acidosis')}</b></td>
+            <td class="num"><b>${sim.acidosisHours} ${t('rumen.hours_day')}</b></td>
+            <td><b>${t('rumen.acute_note')}</b></td>
+          </tr>` : ''}
+        </tbody>
+      </table>
+    </div>
 
     <div class="text-small text-muted mt-1">
       ${t('rumen.dyn_footer')}
@@ -120,7 +122,7 @@ export function renderRumenHealthPanel(composition, animal) {
     : 'ok';
 
   return `
-    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:1rem; margin-bottom:1rem">
+    <div class="res-grid-4">
       <div class="summary-card" style="background:${assessment.grade === 'A' || assessment.grade === 'B' ? 'var(--primary-light)' : 'var(--below-bg)'}">
         <div class="val" style="color:${gradeColor}; font-size:2.5rem">${assessment.grade}</div>
         <div class="lbl">${t('rumen.health_grade')}</div>
@@ -139,7 +141,8 @@ export function renderRumenHealthPanel(composition, animal) {
       </div>
     </div>
 
-    <table class="diag-table">
+    <div class="table-scroll-wrap">
+      <table class="diag-table">
       <thead><tr><th>${t('rumen.col_param')}</th><th class="num">${t('rumen.col_value')}</th><th>${t('rumen.col_target')}</th><th>${t('rumen.col_status')}</th></tr></thead>
       <tbody>
         <tr>
@@ -174,6 +177,7 @@ export function renderRumenHealthPanel(composition, animal) {
         </tr>
       </tbody>
     </table>
+    </div>
 
     ${assessment.warnings.length > 0 ? `
       <hr class="divider" />

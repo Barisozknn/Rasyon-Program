@@ -64,7 +64,7 @@ export function renderAAPanel(aa) {
                   : assessment.overallScore >= 70 ? 'var(--warning)' : 'var(--danger)';
 
   return `
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem; margin-bottom:1rem">
+    <div class="res-grid-2">
       <div class="summary-card" style="background:${scoreColor === 'var(--primary)' ? 'var(--primary-light)' : '#fff3cd'}">
         <div class="val" style="color:${scoreColor}">${assessment.overallScore}</div>
         <div class="lbl">${t('aa.score')}</div>
@@ -75,7 +75,8 @@ export function renderAAPanel(aa) {
       </div>
     </div>
 
-    <table class="diag-table">
+    <div class="table-scroll-wrap">
+      <table class="diag-table">
       <thead>
         <tr>
           <th>${t('aa.col_aa')}</th>
@@ -98,6 +99,7 @@ export function renderAAPanel(aa) {
         </tr>
       </tbody>
     </table>
+    </div>
 
     ${fl ? `
     <div class="info-box ${fl.pctOfTarget < 100 ? 'box-warn' : 'box-ok'}" style="margin-top:0.5rem; font-size:0.85rem">
