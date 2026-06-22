@@ -2655,13 +2655,13 @@ details.acc-panel table.diag-table {
     display: none;
   }
 
-  /* Sonuçlar/Fiyat sekmeleri kendi padding'ini kendisi ayarlar */
-  .tab-content:not(body:has(#tab-results.active) .tab-content):not(body:has(#tab-prices.active) .tab-content) {
+  /* Sonuçlar sekmesi kendi padding'ini kendisi ayarlar */
+  .tab-content:not(body:has(#tab-results.active) .tab-content) {
     padding: 0.85rem 0.85rem 4.75rem;
   }
 
   /* Diğer sekmeler için kısa yol */
-  body:not(:has(#tab-results.active)):not(:has(#tab-prices.active)) .tab-content {
+  body:not(:has(#tab-results.active)) .tab-content {
     padding: 0.85rem 0.85rem 4.75rem;
   }
 
@@ -2703,6 +2703,11 @@ details.acc-panel table.diag-table {
     max-width: 100%;
     width: 100%;
     -webkit-overflow-scrolling: touch;
+  }
+
+  /* Hayvan profili sekmesindeki tablolar uzun metinleri alt satıra atarak ekrana tam sığsın (scroll olmasın) */
+  #tab-animal table {
+    white-space: normal !important;
   }
 
   /* Modal: tam ekrana yakın (küçük ekranda kullanışlı) */
