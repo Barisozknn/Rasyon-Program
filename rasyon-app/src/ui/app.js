@@ -430,7 +430,8 @@ function initResultsPinchZoom() {
     if (_resultsZoomScale === 1) {
       panel.style.transform = '';
       panel.style.marginRight = '';
-      panel.style.marginBottom = '';
+      // Alt navigasyon (bottom-nav) yüksekliğini kurtarmak için 75px boşluk
+      panel.style.marginBottom = '75px';
     } else {
       panel.style.transform = `scale(${_resultsZoomScale.toFixed(3)})`;
       
@@ -441,7 +442,8 @@ function initResultsPinchZoom() {
       const emptyH = h - (h * _resultsZoomScale);
       
       panel.style.marginRight = `-${emptyW}px`;
-      panel.style.marginBottom = `-${emptyH}px`;
+      // Negatif marjı 75px daha az yaparak altta bottom-nav'ın örteceği ekstra boşluk bırakıyoruz
+      panel.style.marginBottom = `-${emptyH - 75}px`;
     }
   }
 
