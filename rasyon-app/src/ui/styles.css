@@ -2694,7 +2694,9 @@ details.acc-panel table.diag-table {
     -webkit-overflow-scrolling: touch;
   }
 
-  .tab-content table {
+  /* Sonuçlar ve Fiyat sekmeleri DIŞINDA tablolar display:block scroll konteyneri */
+  .tab-content:not(body:has(#tab-results.active) .tab-content):not(body:has(#tab-prices.active) .tab-content) table,
+  body:not(:has(#tab-results.active)):not(:has(#tab-prices.active)) .tab-content table {
     display: block;
     overflow-x: auto;
     white-space: nowrap;
@@ -2730,7 +2732,8 @@ details.acc-panel table.diag-table {
 
 /* ── Telefon (≤480px) ──────────────────────────────────────────────────────── */
 @media (max-width: 480px) {
-  .tab-content {
+  /* Sonuçlar/Fiyat sekmeleri dışındaki sekmeler için padding */
+  body:not(:has(#tab-results.active)):not(:has(#tab-prices.active)) .tab-content {
     padding: 0.6rem 0.6rem 4.75rem;
   }
 
@@ -2774,8 +2777,8 @@ details.acc-panel table.diag-table {
     padding: 0.7rem 1rem;
   }
 
-  /* Özet bar (results/herd) ve sürü stat'ları daraltılmış grid */
-  .summary-bar {
+  /* Özet bar: sonuçlar sekmesi DIŞINDA 2 sütun; sonuçlarda masaüstü gibi auto-fit */
+  body:not(:has(#tab-results.active)) .summary-bar {
     grid-template-columns: 1fr 1fr !important;
   }
 
@@ -3294,5 +3297,34 @@ details.acc-panel table.diag-table {
     padding: 0.85rem;
     padding-bottom: 3rem;
     box-sizing: border-box;
+  }
+}
+
+/* SONUÇLAR EK: summary-bar, tablo ve report-bar masaüstü gibi davransın */
+@media (max-width: 768px) {
+
+  /* summary-bar: masaüstündeki auto-fit grid geri gelsin (kartlar tek satır) */
+  #tab-results .summary-bar {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)) !important;
+    overflow-x: unset !important;
+    flex-wrap: unset !important;
+  }
+
+  /* Tüm tablolar #tab-results içinde normal display:table modunda */
+  #tab-results table {
+    display: table !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    white-space: normal !important;
+    overflow-x: visible !important;
+  }
+
+  /* report-bar: butonlar masaüstündeki gibi yatayda */
+  #tab-results .report-bar {
+    flex-direction: row !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 0.4rem !important;
   }
 }
