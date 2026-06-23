@@ -145,6 +145,9 @@ export async function syncNow() {
     _state.lastSyncAt = res.at;
     _state.pending = await countPendingChanges();
     setStatus(_state.pending > 0 ? 'pending' : 'synced');
+    if (res.applied > 0 && typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('rasyon:cloud-synced'));
+    }
   } catch (err) {
     console.warn('[cloud] Senkron hatası:', err);
     setStatus('error', { error: err.message });

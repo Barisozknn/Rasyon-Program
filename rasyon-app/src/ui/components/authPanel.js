@@ -95,12 +95,22 @@ function renderAccountView(body, user) {
       </div>
     `;
     body.querySelector('#auth-sync-now').addEventListener('click', () => syncNow());
-    body.querySelector('#auth-logout').addEventListener('click', async () => {
+    body.querySelector('#auth-logout').addEventListener('click', async (e) => {
+      const btn = e.target.closest('button');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="ti ti-loader-2 ti-spin"></i> Lütfen bekleyin...`;
       try {
+        const state = getSyncState();
+        if (state.pending > 0 || state.status === 'syncing') {
+          showToast('Kalan veriler buluta yükleniyor...', 'info');
+          await syncNow(); // Çıkış yapmadan önce bekleyen yerel verileri zorla buluta gönder
+        }
         await signOut();
         showToast(t('cloud.logout_done'), 'info');
         closeAuthModal();
       } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = t('cloud.logout');
         showToast(t('cloud.err_generic') + err.message, 'error');
       }
     });
