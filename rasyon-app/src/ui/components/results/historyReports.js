@@ -6,7 +6,7 @@
 import { rationAdd, rationGetAll, rationDelete } from '../../../data/db.js';
 import { showToast, escHtml } from '../../utils.js';
 import { t, feedDisplayName } from '../../i18n.js';
-import { renderCompositionTable, renderDiagnostics } from './tables.js';   // denetim #15: detayda tam tablo
+import { renderCompositionTable, renderDiagnostics, renderRationItemsTable } from './tables.js';   // denetim #15: detayda tam tablo
 
 function _lockZoom() {
   if (window.resetResultsZoom) window.resetResultsZoom();
@@ -244,6 +244,10 @@ function renderHistoryContent(rations, currentResult) {
           <tr class="hist-detail-row" data-idx="${i}" style="display:none">
             <td colspan="8" style="background:var(--bg)">
               <div class="text-small" style="margin:0.3rem 0 0.5rem"><b>${t('history.detail_feeds')}:</b> ${feedsLine}</div>
+              <div class="card" style="margin-bottom: 1rem">
+                <div class="section-title">${t('results.card_items')}</div>
+                ${r.result?.items ? renderRationItemsTable(r.result.items, r.result.requirements?.dmi_kg || 0) : `<p class="text-muted">${t('history.no_detail')}</p>`}
+              </div>
               <div class="results-grid">
                 <div>
                   <div class="section-title">${t('results.card_composition')}</div>
