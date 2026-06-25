@@ -719,6 +719,20 @@ function updateQuickList(container, state, query) {
   let feeds = _allFeeds;
   if (query.trim()) {
     feeds = feeds.filter(f => feedMatchesQuery(f, query));
+  } else {
+    // Arama boşken sık kullanılan yemleri en üste taşı
+    const commonKeywords = ['yonca', 'mısır silajı', 'mısır tane', 'soya', 'süt yemi', 'premiks', 'saman', 'arpa'];
+    const commonFeeds = [];
+    const otherFeeds = [];
+    for (const f of feeds) {
+      const name = (f.name || '').toLocaleLowerCase('tr-TR');
+      if (commonKeywords.some(kw => name.includes(kw))) {
+        commonFeeds.push(f);
+      } else {
+        otherFeeds.push(f);
+      }
+    }
+    feeds = [...commonFeeds, ...otherFeeds];
   }
   const visible = feeds.slice(0, 60);
 
