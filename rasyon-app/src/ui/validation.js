@@ -72,7 +72,7 @@ export const FIELD_RULES = {
     label: 'Süt yağı', type: 'number', min: 0, max: 15, unit: '%',
   },
   obs_milkProtein: {
-    label: 'Süt proteini', type: 'number', min: 2.0, max: 4.5, unit: '%',
+    label: 'Süt proteini', type: 'number', min: 0, max: 10, unit: '%',
   },
   obs_bcs: {
     label: 'BCS', type: 'number', min: 1.0, max: 5.0, unit: 'puan',
