@@ -138,9 +138,9 @@ async function reconcileActiveFarm(isNewLogin = false) {
       // Yeni hesap bağlandığında buluttan gelen (veya en güncel) çiftliği tercih et
       const nonDefault = farms.filter(f => f.name !== 'Varsayılan Çiftlik');
       if (nonDefault.length > 0) {
-        active = nonDefault.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0))[0];
+        active = nonDefault.sort((a, b) => new Date(b.updatedAt || 0).getTime() - new Date(a.updatedAt || 0).getTime())[0];
       } else {
-        active = farms.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0))[0];
+        active = farms.sort((a, b) => new Date(b.updatedAt || 0).getTime() - new Date(a.updatedAt || 0).getTime())[0];
       }
     } else {
       active = farms.find(f => f.id === settings.activeFarmId);

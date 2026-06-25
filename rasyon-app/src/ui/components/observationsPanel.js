@@ -287,13 +287,13 @@ export async function renderObservationsPanel(container, state) {
       await observationAdd({
         profileId: activeProfile.id,
         date: date ? new Date(date).toISOString() : new Date().toISOString(),
-        milkYield: parseFloat(fd.get('milkYield')) || 0,
-        milkFat: parseFloat(fd.get('milkFat')) || null,
-        milkProtein: parseFloat(fd.get('milkProtein')) || null,
-        bcs: parseFloat(fd.get('bcs')) || null,
-        dmiActual: parseFloat(fd.get('dmiActual')) || null,
-        methane: parseFloat(fd.get('methane')) || null,
-        rumenPh: parseFloat(fd.get('rumenPh')) || null,
+        milkYield: !Number.isNaN(parseFloat(fd.get('milkYield'))) ? parseFloat(fd.get('milkYield')) : null,
+        milkFat: !Number.isNaN(parseFloat(fd.get('milkFat'))) ? parseFloat(fd.get('milkFat')) : null,
+        milkProtein: !Number.isNaN(parseFloat(fd.get('milkProtein'))) ? parseFloat(fd.get('milkProtein')) : null,
+        bcs: !Number.isNaN(parseFloat(fd.get('bcs'))) ? parseFloat(fd.get('bcs')) : null,
+        dmiActual: !Number.isNaN(parseFloat(fd.get('dmiActual'))) ? parseFloat(fd.get('dmiActual')) : null,
+        methane: !Number.isNaN(parseFloat(fd.get('methane'))) ? parseFloat(fd.get('methane')) : null,
+        rumenPh: !Number.isNaN(parseFloat(fd.get('rumenPh'))) ? parseFloat(fd.get('rumenPh')) : null,
         notes: fd.get('notes') || '',
       });
       showToast(t('obs.saved'), 'success');

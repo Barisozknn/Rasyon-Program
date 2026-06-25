@@ -274,6 +274,19 @@ function updateCloudButton(state) {
   btn.classList.toggle('spin', state.status === 'syncing');
   btn.title = `${t('cloud.header_title')}${state.user?.email ? ' — ' + state.user.email : ''}`;
   btn.classList.toggle('cloud-active', !!state.user);
+  
+  const hdrSyncBtn = document.getElementById('header-sync-btn');
+  if (hdrSyncBtn) {
+    const icon = hdrSyncBtn.querySelector('i');
+    if (state.status === 'syncing') {
+      if (icon) icon.className = 'ti ti-refresh ti-spin';
+      hdrSyncBtn.disabled = true;
+    } else {
+      if (icon) icon.className = 'ti ti-cloud-upload';
+      hdrSyncBtn.disabled = false;
+    }
+  }
+
   // Senkron sonrası çiftlik adı değişmiş olabilir (pull/uzlaştırma) → header'ı tazele
   if (state.status === 'synced') refreshFarmButton();
 }
