@@ -452,7 +452,7 @@ function buildReminders({ lastResult, observations, profiles, animal = {} }) {
 
     // Süt humması riski yüksek
     const fever = lastResult.milkFever;
-    if (fever && (fever.riskLevel === 'high' || fever.riskLevel === 'very_high')) {
+    if (fever && animal.lactationStage === 'close_up' && (fever.riskLevel === 'high' || fever.riskLevel === 'very_high')) {
       reminders.push({
         level: 'danger',
         icon: 'ti-stethoscope',
