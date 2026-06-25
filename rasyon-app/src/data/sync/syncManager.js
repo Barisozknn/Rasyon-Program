@@ -81,7 +81,12 @@ export async function startSync(user) {
   _adapter = createSupabaseAdapter(client, user.id);
 
   // İlk tam senkron + aktif çiftlik uzlaştırma
-  await syncNow();
+  if (isNewLogin) {
+    await syncNow();
+  } else {
+    // Sadece manuel eşitleme istendiği için sayfa yenilemede senkron kapatıldı
+    setStatus('synced');
+  }
   await reconcileActiveFarm(isNewLogin);
 }
 
