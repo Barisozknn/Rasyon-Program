@@ -33,7 +33,7 @@ import { getSettings, saveSettings, migrateDmiMethodToAuto } from '../data/setti
 import { ensureDefaultFarm, farmGetById, farmPut, getActiveFarm, setActiveFarmId, backfillFarmId } from '../data/db.js';
 import { openAuthModal } from './components/authPanel.js';
 import { initFarmSwitcher, refreshFarmButton } from './components/farmSwitcher.js';
-import { startSync, stopSync, onSyncStatus } from '../data/sync/syncManager.js';
+import { startSync, stopSync, onSyncStatus, syncNow } from '../data/sync/syncManager.js';
 import { onAuthChange, isCloudConfigured } from '../data/auth.js';
 import { showToast, showLoading } from './utils.js';
 import { validateForm, summarizeErrors } from './validation.js';
@@ -291,9 +291,20 @@ async function initCloud() {
   if (btn) btn.addEventListener('click', () => openAuthModal());
   onSyncStatus(updateCloudButton);
   // Oturum değişimi → senkronu başlat/durdur (INITIAL_SESSION ile açılışta da çalışır)
-  await onAuthChange((event, session) => {
-    if (session?.user) startSync(session.user);
-    else if (event === 'SIGNED_OUT') stopSync();
+  await onAuthChange(async (event, session) => {
+    const hdrSyncBtn = document.getElementById('header-sync-btn');
+    if (session?.user) {
+      await startSync(session.user);
+      if (hdrSyncBtn) {
+        hdrSyncBtn.style.display = 'inline-flex';
+        hdrSyncBtn.onclick = () => syncNow();
+      }
+      refreshFarmButton(); // Uzlaştırma sonrası arayüzü güncelle
+    } else if (event === 'SIGNED_OUT') {
+      stopSync();
+      if (hdrSyncBtn) hdrSyncBtn.style.display = 'none';
+      refreshFarmButton();
+    }
   });
 }
 

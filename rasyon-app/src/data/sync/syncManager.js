@@ -69,9 +69,10 @@ export async function startSync(user) {
   // Hesap değişikliği kontrolü (paylaşılan cihaz güvenliği)
   let prevUser = null;
   try { prevUser = localStorage.getItem(SYNC_USER_KEY); } catch { /* yok */ }
-  if (prevUser && prevUser !== user.id) {
-    await clearAllData({ includeUserFeeds: true });   // önceki kullanıcının TÜM yerel verisi (kullanıcı yemleri dahil) — cross-account sızıntı önlenir
-    resetSyncState();          // pull imleçlerini sıfırla → tam yeniden çek
+  const isNewLogin = (!prevUser || prevUser !== user.id);
+  if (isNewLogin) {
+    await clearAllData({ includeUserFeeds: true });
+    resetSyncState();
   }
   try { localStorage.setItem(SYNC_USER_KEY, user.id); } catch { /* yok */ }
 
@@ -81,7 +82,7 @@ export async function startSync(user) {
 
   // İlk tam senkron + aktif çiftlik uzlaştırma
   await syncNow();
-  await reconcileActiveFarm();
+  await reconcileActiveFarm(isNewLogin);
 }
 
 /** Senkronu durdur (çıkışta). Yerel veri KORUNUR. */
@@ -127,15 +128,29 @@ export async function syncNow() {
  * Pull sonrası aktif çiftliği uzlaştırır: ayarlardaki çiftlik hâlâ varsa korur,
  * yoksa ilk çiftliği (veya yeni "Varsayılan Çiftlik") seçer.
  */
-async function reconcileActiveFarm() {
+async function reconcileActiveFarm(isNewLogin = false) {
   try {
     const farms = await farmGetAll();
     const settings = getSettings();
-    let active = farms.find(f => f.id === settings.activeFarmId);
+    let active;
+    
+    if (isNewLogin && farms.length > 1) {
+      // Yeni hesap bağlandığında buluttan gelen (veya en güncel) çiftliği tercih et
+      const nonDefault = farms.filter(f => f.name !== 'Varsayılan Çiftlik');
+      if (nonDefault.length > 0) {
+        active = nonDefault.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0))[0];
+      } else {
+        active = farms.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0))[0];
+      }
+    } else {
+      active = farms.find(f => f.id === settings.activeFarmId);
+    }
+    
     if (!active) {
       active = farms[0] || await ensureDefaultFarm();
-      saveSettings({ activeFarmId: active.id });
     }
+    
+    saveSettings({ activeFarmId: active.id });
     setActiveFarmId(active.id);
   } catch (err) {
     console.warn('[cloud] Aktif çiftlik uzlaştırma hatası:', err);
