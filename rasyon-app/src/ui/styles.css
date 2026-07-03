@@ -894,7 +894,8 @@ body {
 
 .feed-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   font-size: 0.83rem;
 }
 
@@ -2122,9 +2123,15 @@ details.acc-panel table.diag-table {
 
 .feed-actions {
   white-space: nowrap;
-  display: inline-flex;
-  gap: 0.25rem;
-  align-items: center;
+  vertical-align: middle;
+}
+
+.feed-actions .btn-icon {
+  margin-right: 0.25rem;
+}
+
+.feed-actions .btn-icon:last-child {
+  margin-right: 0;
 }
 
 .user-badge {

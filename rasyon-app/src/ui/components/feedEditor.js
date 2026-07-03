@@ -265,9 +265,11 @@ export function openFeedDetail(feed) {
     return `
       <details class="acc-panel" open>
         <summary><strong>${feGroupTitle(idx)}</strong></summary>
-        <table class="diag-table" style="margin-top:0.5rem; font-size:0.85rem">
-          <tbody>${rows}</tbody>
-        </table>
+        <div class="table-scroll-wrap" style="margin-top:0.5rem">
+          <table class="diag-table" style="font-size:0.85rem">
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
       </details>`;
   }).filter(Boolean).join('');
 
