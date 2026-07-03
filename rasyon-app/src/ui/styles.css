@@ -909,6 +909,7 @@ body {
   letter-spacing: 0.04em;
   border-bottom: 1px solid var(--border);
   white-space: nowrap;
+  vertical-align: bottom;
 }
 
 .feed-table td {
