@@ -3518,7 +3518,7 @@ details.acc-panel table.diag-table {
 }
 
 .ai-message-user .ai-message-content {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   color: white;
   border-bottom-right-radius: 0.25rem;
 }
