@@ -898,9 +898,6 @@ body {
   font-size: 0.83rem;
 }
 
-.feed-table thead tr {
-  border-bottom: 2px solid var(--border);
-}
 
 .feed-table th {
   background: var(--bg);
@@ -911,6 +908,7 @@ body {
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.04em;
+  border-bottom: 2px solid var(--border);
   white-space: nowrap;
   vertical-align: middle;
 }
@@ -2713,6 +2711,25 @@ details.acc-panel table.diag-table {
     width: 100% !important;
     white-space: nowrap !important;
     max-width: none !important;
+  }
+
+  /* Üstteki display:block genel kuralı thead/tbody/tr/th/td'yi de block yapıyor;
+     feed-table için tablo display hiyerarşisini geri yükle → başlık çizgisi hizası düzelir */
+  .feed-table-wrap table thead,
+  .feed-table-wrap table tbody {
+    display: table-row-group !important;
+  }
+
+  .feed-table-wrap table tr {
+    display: table-row !important;
+  }
+
+  .feed-table-wrap table th {
+    display: table-cell !important;
+  }
+
+  .feed-table-wrap table td {
+    display: table-cell !important;
   }
 
   /* Modal: tam ekrana yakın (küçük ekranda kullanışlı) */
