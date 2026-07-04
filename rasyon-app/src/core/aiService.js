@@ -20,7 +20,7 @@ export async function askGemini(messages) {
   const endpoint = "https://api.groq.com/openai/v1/chat/completions";
 
   const payload = {
-    model: "llama-3.3-70b-versatile",
+    model: "llama-3.1-8b-instant",
     messages,
     temperature: 0.35,
     max_tokens: 4096,
