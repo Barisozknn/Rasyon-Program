@@ -29,9 +29,14 @@ export async function renderAiAssistantPanel(container) {
 
   container.innerHTML = `
     <div class="ai-panel">
-      <!-- SOL MENÜ: GEÇMİŞ SOHBETLER -->
-      <div class="ai-sidebar">
-        <button id="aiNewChatBtn" class="btn btn-primary w-100 mb-3" style="margin-bottom: 1rem;">
+      <!-- SOL MENÜ: GEÇMİŞ SOHBETLER (Mobilde Bottom Sheet) -->
+      <div class="ai-sidebar-overlay" id="aiSidebarOverlay"></div>
+      <div class="ai-sidebar" id="aiSidebar">
+        <div class="ai-sidebar-header d-flex d-md-none justify-content-between align-items-center mb-3">
+          <h4 class="m-0 d-flex align-items-center gap-2"><i class="ti ti-message-circle-2"></i> Sohbetler</h4>
+          <button id="aiCloseSidebarBtn" class="btn btn-icon btn-sm" style="background: transparent; border:none;"><i class="ti ti-x" style="font-size: 1.5rem;"></i></button>
+        </div>
+        <button id="aiNewChatBtn" class="btn btn-primary w-100 mb-3" style="margin-bottom: 1rem; background-color: #1c5237; border-color: #1c5237;">
           <i class="ti ti-plus"></i> Yeni Sohbet
         </button>
         <div id="aiChatList" class="ai-chat-list">
@@ -41,6 +46,15 @@ export async function renderAiAssistantPanel(container) {
 
       <!-- SAĞ EKRAN: AKTİF SOHBET -->
       <div class="ai-main">
+        <div class="ai-mobile-header d-flex d-md-none align-items-center justify-content-between p-3 border-bottom">
+          <div style="width: 32px;"></div> <!-- Spacer for center alignment -->
+          <h3 class="ai-chat-title m-0 font-weight-bold" style="font-size: 1.2rem;">Sohbet</h3>
+          <div class="ai-mobile-header-actions d-flex gap-2">
+            <button id="aiMenuBtn" class="btn btn-icon btn-sm" style="background:transparent; border:none; color:var(--text-primary);"><i class="ti ti-menu-2" style="font-size: 1.5rem;"></i></button>
+            <button id="aiDeleteCurrentChatBtn" class="btn btn-icon btn-sm" style="background:transparent; border:none; color:var(--text-secondary);"><i class="ti ti-trash" style="font-size: 1.5rem;"></i></button>
+          </div>
+        </div>
+        
         <div class="ai-disclaimer">
           <i class="ti ti-alert-triangle"></i>
           <span>${t('ai.disclaimer')}</span>
@@ -65,6 +79,41 @@ export async function renderAiAssistantPanel(container) {
   const chatInput = document.getElementById('aiChatInput');
   const sendBtn = document.getElementById('aiSendBtn');
   const newChatBtn = document.getElementById('aiNewChatBtn');
+  
+  // Mobile specific elements
+  const menuBtn = document.getElementById('aiMenuBtn');
+  const closeSidebarBtn = document.getElementById('aiCloseSidebarBtn');
+  const sidebar = document.getElementById('aiSidebar');
+  const overlay = document.getElementById('aiSidebarOverlay');
+  const deleteCurrentChatBtn = document.getElementById('aiDeleteCurrentChatBtn');
+
+  const openSidebar = () => {
+    sidebar.classList.add('open');
+    overlay.classList.add('show');
+  };
+
+  const closeSidebar = () => {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('show');
+  };
+
+  if (menuBtn) menuBtn.addEventListener('click', openSidebar);
+  if (closeSidebarBtn) closeSidebarBtn.addEventListener('click', closeSidebar);
+  if (overlay) overlay.addEventListener('click', closeSidebar);
+
+  if (deleteCurrentChatBtn) {
+    deleteCurrentChatBtn.addEventListener('click', async () => {
+      if (!activeChatId) return;
+      if (confirm("Mevcut sohbeti silmek istediğinize emin misiniz?")) {
+        await deleteAiChat(activeChatId);
+        chats = chats.filter(c => c.id !== activeChatId);
+        activeChatId = chats.length > 0 ? chats[0].id : null;
+        if (!activeChatId) startNewChat();
+        renderSidebar();
+        renderHistory();
+      }
+    });
+  }
 
   const renderSidebar = () => {
     chatListEl.innerHTML = '';
@@ -87,6 +136,7 @@ export async function renderAiAssistantPanel(container) {
         activeChatId = item.dataset.id;
         renderSidebar();
         renderHistory();
+        if (window.innerWidth <= 768) closeSidebar();
       });
     });
 
@@ -227,6 +277,7 @@ export async function renderAiAssistantPanel(container) {
     renderSidebar();
     renderHistory();
     chatInput.focus();
+    if (window.innerWidth <= 768) closeSidebar();
   });
 
   sendBtn.addEventListener('click', sendMessage);
