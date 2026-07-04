@@ -704,6 +704,10 @@ body {
 .checkbox-group input[type="checkbox"] {
   width: 16px;
   height: 16px;
+  min-height: 16px;
+  padding: 0;
+  box-shadow: none;
+  flex-shrink: 0;
   accent-color: var(--primary);
 }
 
