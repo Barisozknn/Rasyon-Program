@@ -8,9 +8,9 @@ import { newId } from '../../data/uuid.js';
 import { getAiChats, saveAiChat, deleteAiChat, rationGetAll, animalProfileGetAll, observationGetAll, getActiveFarm } from '../../data/db.js';
 
 // ─── Sabit Limitler ───────────────────────────────────────────────────────────
-const MAX_HISTORY_MESSAGES = 20; // API'ya gönderilecek maksimum önceki mesaj sayısı
-const MAX_RATIONS = 5;  // Bağlama dahil edilecek son rasyon sayısı
-const MAX_OBSERVATIONS = 10; // Bağlama dahil edilecek son gözlem sayısı
+const MAX_HISTORY_MESSAGES = 10; // API'ya gönderilecek maksimum önceki mesaj sayısı
+const MAX_RATIONS = 5;           // Bağlama dahil edilecek son rasyon sayısı
+const MAX_OBSERVATIONS = 5;      // Bağlama dahil edilecek son gözlem sayısı
 
 let chats = [];
 let activeChatId = null;
