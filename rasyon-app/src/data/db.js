@@ -26,14 +26,14 @@ import { newId } from './uuid.js';
 // ─── Sabitler ───────────────────────────────────────────────────────────────
 
 export const DB_NAME    = 'rasyon-db';
-export const DB_VERSION = 3;  // FAZ 16.10: UUID göçü + farms store + senkron meta
+export const DB_VERSION = 4;  // FAZ 16.10: UUID göçü + farms store + senkron meta, v4: aiChats
 
 /**
  * Senkronizasyona tabi kullanıcı store'ları (çiftlik-kapsamlı).
  * `feeds` (paylaşılan kütüphane, seed) ve `farms` (sahip-kapsamlı) ayrı ele alınır.
  */
 export const SYNC_STORES = [
-  'animalProfiles', 'rations', 'herdGroups', 'feedPriceHistory', 'fieldObservations',
+  'animalProfiles', 'rations', 'herdGroups', 'feedPriceHistory', 'fieldObservations', 'aiChats',
 ];
 
 // ─── Aktif çiftlik (modül-içi; app katmanı setActiveFarmId ile besler) ────────
@@ -121,6 +121,12 @@ export async function getDB() {
       if (!db.objectStoreNames.contains('farms')) {
         const fStore = db.createObjectStore('farms', { keyPath: 'id' });
         fStore.createIndex('by_name', 'name', { unique: false });
+      }
+
+      // ── AI Sohbet Geçmişi (v4) ───────────────────────────────────────
+      if (!db.objectStoreNames.contains('aiChats')) {
+        const aiStore = db.createObjectStore('aiChats', { keyPath: 'id' });
+        aiStore.createIndex('by_updatedAt', 'updatedAt', { unique: false });
       }
     },
   });
@@ -767,6 +773,41 @@ export async function dbStats() {
       : 0;
   }
   return out;
+// ═══════════════════════════════════════════════════════════════════════════════
+// AI SOHBET GEÇMİŞİ (AI CHATS) (FAZ v4)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export async function getAiChats() {
+  const db = await getDB();
+  const index = db.transaction('aiChats').store.index('by_updatedAt');
+  const all = await index.getAll();
+  return visible(all).sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+}
+
+export async function saveAiChat(chat) {
+  const db = await getDB();
+  const tx = db.transaction('aiChats', 'readwrite');
+  const existing = await tx.store.get(chat.id);
+  
+  const rec = { ...(existing || {}), ...chat };
+  const toSave = withSyncMeta(rec);
+  
+  await tx.store.put(toSave);
+  await tx.done;
+  return toSave;
+}
+
+export async function deleteAiChat(id) {
+  const db = await getDB();
+  const tx = db.transaction('aiChats', 'readwrite');
+  const existing = await tx.store.get(id);
+  if (!existing) return;
+
+  const toSave = softDelete(existing);
+  await tx.store.put(toSave);
+  await tx.done;
+}
+
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -776,7 +817,7 @@ export async function dbStats() {
 /** Yedeklemeye dahil edilen tüm object store'lar. */
 export const ALL_STORES = [
   'feeds', 'animalProfiles', 'rations', 'herdGroups',
-  'feedPriceHistory', 'fieldObservations', 'farms',
+  'feedPriceHistory', 'fieldObservations', 'farms', 'aiChats',
 ];
 
 /**

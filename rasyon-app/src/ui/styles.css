@@ -3443,7 +3443,7 @@ details.acc-panel table.diag-table {
 
 .ai-panel {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   height: calc(100vh - var(--header-height) - 2rem);
   background: var(--surface);
   border-radius: var(--radius-lg);
@@ -3451,6 +3451,89 @@ details.acc-panel table.diag-table {
   overflow: hidden;
   box-shadow: var(--shadow-sm);
   margin-bottom: 1rem;
+}
+
+.ai-sidebar {
+  width: 280px;
+  background: var(--surface-2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+.ai-chat-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ai-chat-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  background: transparent;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.ai-chat-item:hover {
+  background: var(--surface);
+  color: var(--text-primary);
+}
+
+.ai-chat-item.active {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  border-color: rgba(29, 78, 216, 0.1);
+}
+
+.ai-chat-item-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.ai-chat-item-title span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.ai-chat-delete-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-light);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.ai-chat-delete-btn:hover {
+  background: rgba(220, 38, 38, 0.1);
+  color: var(--danger);
+}
+
+.ai-chat-item:hover .ai-chat-delete-btn {
+  opacity: 1;
+}
+
+.ai-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .ai-disclaimer {

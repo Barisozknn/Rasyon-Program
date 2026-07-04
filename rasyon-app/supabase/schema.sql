@@ -68,6 +68,15 @@ create table if not exists public.field_observations (
   data        jsonb not null default '{}'::jsonb
 );
 
+create table if not exists public.ai_chats (
+  id          uuid primary key,
+  owner_id    uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  farm_id     uuid,
+  updated_at  timestamptz not null default now(),
+  deleted_at  timestamptz,
+  data        jsonb not null default '{}'::jsonb
+);
+
 -- Kullanıcı yemleri (FAZ 16.11 — danışman-global; farm_id NULL = tüm çiftlikler)
 -- NOT: id TEXT'tir (uuid değil) — kullanıcı yemi id'leri "user_"/"custom_" önekli string.
 create table if not exists public.user_feeds (
@@ -88,6 +97,7 @@ create index if not exists idx_herd_groups_owner_upd        on public.herd_group
 create index if not exists idx_feed_price_history_owner_upd on public.feed_price_history (owner_id, updated_at);
 create index if not exists idx_field_observations_owner_upd on public.field_observations (owner_id, updated_at);
 create index if not exists idx_user_feeds_owner_upd         on public.user_feeds (owner_id, updated_at);
+create index if not exists idx_ai_chats_owner_upd           on public.ai_chats (owner_id, updated_at);
 
 -- ── Row-Level Security: herkes yalnızca kendi verisini görür/yazar ───────────
 
@@ -96,7 +106,7 @@ declare t text;
 begin
   foreach t in array array[
     'farms','animal_profiles','rations','herd_groups',
-    'feed_price_history','field_observations','user_feeds'
+    'feed_price_history','field_observations','user_feeds','ai_chats'
   ]
   loop
     execute format('alter table public.%I enable row level security;', t);

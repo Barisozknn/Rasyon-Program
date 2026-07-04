@@ -4,45 +4,170 @@ import { askGemini } from '../../core/aiService.js';
 import { showToast } from '../utils.js';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
+import { newId } from '../../data/uuid.js';
+import { getAiChats, saveAiChat, deleteAiChat } from '../../data/db.js';
 
-let messageHistory = [];
+let chats = [];
+let activeChatId = null;
 
-export function renderAiAssistantPanel(container) {
+export async function renderAiAssistantPanel(container) {
+  // Yükleme sırasında geçici ekran
+  container.innerHTML = `<div class="p-4 text-center text-muted"><i class="ti ti-loader ti-spin"></i> Yükleniyor...</div>`;
+
+  try {
+    chats = await getAiChats();
+  } catch (e) {
+    console.error("Sohbetler yüklenemedi:", e);
+    chats = [];
+  }
+
+  if (chats.length === 0) {
+    startNewChat();
+  } else if (!activeChatId || !chats.find(c => c.id === activeChatId)) {
+    activeChatId = chats[0].id;
+  }
+
   container.innerHTML = `
     <div class="ai-panel">
-      <div class="ai-disclaimer">
-        <i class="ti ti-alert-triangle"></i>
-        <span>${t('ai.disclaimer')}</span>
-      </div>
-      
-      <div class="ai-chat-history" id="aiChatHistory">
-        <!-- Messages will appear here -->
-      </div>
-      
-      <div class="ai-chat-input-wrapper">
-        <textarea id="aiChatInput" placeholder="${t('ai.placeholder')}" rows="2"></textarea>
-        <button id="aiSendBtn" class="btn btn-primary" title="${t('ai.send')}">
-          <i class="ti ti-send"></i>
+      <!-- SOL MENÜ: GEÇMİŞ SOHBETLER -->
+      <div class="ai-sidebar">
+        <button id="aiNewChatBtn" class="btn btn-primary w-100 mb-3" style="margin-bottom: 1rem;">
+          <i class="ti ti-plus"></i> Yeni Sohbet
         </button>
+        <div id="aiChatList" class="ai-chat-list">
+          <!-- Sohbet Listesi -->
+        </div>
+      </div>
+
+      <!-- SAĞ EKRAN: AKTİF SOHBET -->
+      <div class="ai-main">
+        <div class="ai-disclaimer">
+          <i class="ti ti-alert-triangle"></i>
+          <span>${t('ai.disclaimer')}</span>
+        </div>
+        
+        <div class="ai-chat-history" id="aiChatHistory">
+          <!-- Messages will appear here -->
+        </div>
+        
+        <div class="ai-chat-input-wrapper">
+          <textarea id="aiChatInput" placeholder="${t('ai.placeholder')}" rows="2"></textarea>
+          <button id="aiSendBtn" class="btn btn-primary" title="${t('ai.send')}">
+            <i class="ti ti-send"></i>
+          </button>
+        </div>
       </div>
     </div>
   `;
 
+  const chatListEl = document.getElementById('aiChatList');
   const chatHistoryEl = document.getElementById('aiChatHistory');
   const chatInput = document.getElementById('aiChatInput');
   const sendBtn = document.getElementById('aiSendBtn');
+  const newChatBtn = document.getElementById('aiNewChatBtn');
 
-  // Render initial history if exists
-  renderHistory(chatHistoryEl);
+  const renderSidebar = () => {
+    chatListEl.innerHTML = '';
+    chats.forEach(chat => {
+      const isActive = chat.id === activeChatId ? 'active' : '';
+      const title = chat.title || 'Yeni Sohbet';
+      const html = `
+        <div class="ai-chat-item ${isActive}" data-id="${chat.id}">
+          <div class="ai-chat-item-title"><i class="ti ti-message-circle"></i> <span>${title}</span></div>
+          <button class="ai-chat-delete-btn" data-id="${chat.id}" title="Sil"><i class="ti ti-trash"></i></button>
+        </div>
+      `;
+      chatListEl.insertAdjacentHTML('beforeend', html);
+    });
+
+    // Event listeners for sidebar items
+    chatListEl.querySelectorAll('.ai-chat-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        if (e.target.closest('.ai-chat-delete-btn')) return; // Silme butonuna basıldıysa yoksay
+        activeChatId = item.dataset.id;
+        renderSidebar();
+        renderHistory();
+      });
+    });
+
+    chatListEl.querySelectorAll('.ai-chat-delete-btn').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const idToDelete = btn.dataset.id;
+        if (confirm("Bu sohbeti silmek istediğinize emin misiniz?")) {
+          await deleteAiChat(idToDelete);
+          chats = chats.filter(c => c.id !== idToDelete);
+          if (activeChatId === idToDelete) {
+            activeChatId = chats.length > 0 ? chats[0].id : null;
+            if (!activeChatId) startNewChat();
+          }
+          renderSidebar();
+          renderHistory();
+        }
+      });
+    });
+  };
+
+  const renderHistory = () => {
+    chatHistoryEl.innerHTML = '';
+    const activeChat = chats.find(c => c.id === activeChatId);
+    const messages = activeChat ? (activeChat.messages || []) : [];
+    
+    if (messages.length === 0) {
+      chatHistoryEl.innerHTML = `
+        <div class="ai-empty-state">
+          <i class="ti ti-robot"></i>
+          <p>Merhaba! Rasyon veya hayvan besleme ile ilgili sorularınızı sorabilirsiniz.</p>
+        </div>
+      `;
+      return;
+    }
+
+    messages.forEach(msg => {
+      const msgClass = msg.role === 'user' ? 'ai-message-user' : 'ai-message-assistant';
+      let formattedContent = '';
+      if (msg.role === 'assistant') {
+        formattedContent = DOMPurify.sanitize(marked.parse(msg.content));
+      } else {
+        const div = document.createElement('div');
+        div.innerText = msg.content;
+        formattedContent = div.innerHTML.replace(/\n/g, '<br/>');
+      }
+
+      const html = `
+        <div class="ai-message ${msgClass}">
+          <div class="ai-message-content markdown-body">
+            ${formattedContent}
+          </div>
+        </div>
+      `;
+      chatHistoryEl.insertAdjacentHTML('beforeend', html);
+    });
+    
+    chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+  };
 
   const sendMessage = async () => {
     const text = chatInput.value.trim();
     if (!text) return;
 
-    // Add user message to history
-    messageHistory.push({ role: 'user', content: text });
+    let activeChat = chats.find(c => c.id === activeChatId);
+    if (!activeChat) {
+      startNewChat();
+      activeChat = chats[0];
+    }
+
+    // İlk mesajsa başlık oluştur
+    if (!activeChat.title || activeChat.title === 'Yeni Sohbet') {
+      activeChat.title = text.length > 25 ? text.substring(0, 25) + '...' : text;
+    }
+
+    activeChat.messages.push({ role: 'user', content: text });
+    await saveAiChat(activeChat); // Hemen kaydet
+    
     chatInput.value = '';
-    renderHistory(chatHistoryEl);
+    renderSidebar();
+    renderHistory();
     
     // Show typing indicator
     const typingId = 'typing-indicator';
@@ -61,7 +186,6 @@ export function renderAiAssistantPanel(container) {
     sendBtn.disabled = true;
 
     try {
-      // Build context from current state
       const contextData = {
         animal: state.animal,
         feeds: state.selectedFeeds.map(f => ({ name: f.name, category: f.category, currentAmount: f.val || 0 })),
@@ -76,28 +200,34 @@ export function renderAiAssistantPanel(container) {
       const systemPromptTemplate = t('ai.systemPrompt');
       const systemPrompt = systemPromptTemplate.replace('{{data}}', JSON.stringify(contextData, null, 2));
 
-      // Call AI Service
       const response = await askGemini(text, systemPrompt);
 
-      // Remove typing indicator
       const typingEl = document.getElementById(typingId);
       if (typingEl) typingEl.remove();
 
-      // Add AI response to history
-      messageHistory.push({ role: 'assistant', content: response });
-      renderHistory(chatHistoryEl);
+      activeChat.messages.push({ role: 'assistant', content: response });
+      await saveAiChat(activeChat); // IndexedDB + Supabase'e kaydet
+      
+      renderSidebar();
+      renderHistory();
 
     } catch (error) {
       console.error(error);
       const typingEl = document.getElementById(typingId);
       if (typingEl) typingEl.remove();
-      
       showToast("Yapay zeka ile iletişimde bir hata oluştu.", "error");
     } finally {
       sendBtn.disabled = false;
       chatInput.focus();
     }
   };
+
+  newChatBtn.addEventListener('click', () => {
+    startNewChat();
+    renderSidebar();
+    renderHistory();
+    chatInput.focus();
+  });
 
   sendBtn.addEventListener('click', sendMessage);
   chatInput.addEventListener('keydown', (e) => {
@@ -106,43 +236,15 @@ export function renderAiAssistantPanel(container) {
       sendMessage();
     }
   });
+
+  // Initial render
+  renderSidebar();
+  renderHistory();
 }
 
-function renderHistory(container) {
-  container.innerHTML = '';
-  
-  if (messageHistory.length === 0) {
-    container.innerHTML = `
-      <div class="ai-empty-state">
-        <i class="ti ti-robot"></i>
-        <p>Merhaba! Rasyon veya hayvan besleme ile ilgili sorularınızı sorabilirsiniz.</p>
-      </div>
-    `;
-    return;
-  }
-
-  messageHistory.forEach(msg => {
-    const msgClass = msg.role === 'user' ? 'ai-message-user' : 'ai-message-assistant';
-    
-    let formattedContent = '';
-    if (msg.role === 'assistant') {
-      formattedContent = DOMPurify.sanitize(marked.parse(msg.content));
-    } else {
-      // Escape user text to prevent XSS
-      const div = document.createElement('div');
-      div.innerText = msg.content;
-      formattedContent = div.innerHTML.replace(/\n/g, '<br/>');
-    }
-
-    const html = `
-      <div class="ai-message ${msgClass}">
-        <div class="ai-message-content markdown-body">
-          ${formattedContent}
-        </div>
-      </div>
-    `;
-    container.insertAdjacentHTML('beforeend', html);
-  });
-  
-  container.scrollTop = container.scrollHeight;
+function startNewChat() {
+  const newIdStr = newId();
+  const newChat = { id: newIdStr, title: 'Yeni Sohbet', messages: [] };
+  chats.unshift(newChat);
+  activeChatId = newIdStr;
 }
