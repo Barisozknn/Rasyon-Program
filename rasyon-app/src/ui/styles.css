@@ -3451,13 +3451,13 @@ details.acc-panel table.diag-table {
 .ai-panel {
   display: flex;
   flex-direction: row;
-  height: calc(100vh - var(--header-height) - 2rem);
+  height: calc(100vh - var(--header-height) - 3rem);
   background: var(--surface);
   border-radius: 1.5rem;
   border: 1px solid var(--border);
   overflow: hidden;
   box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-  margin-bottom: 1rem;
+  margin-bottom: 0;
 }
 
 .ai-sidebar {
@@ -3562,6 +3562,7 @@ details.acc-panel table.diag-table {
   color: #ef4444; /* text-red-500 */
   font-size: 0.875rem;
   border: 1px solid rgba(239, 68, 68, 0.2);
+  flex-shrink: 0;
 }
 
 .ai-disclaimer i {
@@ -3581,6 +3582,7 @@ details.acc-panel table.diag-table {
   font-size: 0.8rem;
   border: 1px solid rgba(28, 82, 55, 0.15);
   line-height: 1.4;
+  flex-shrink: 0;
 }
 
 .ai-context-info i {
@@ -3708,6 +3710,7 @@ details.acc-panel table.diag-table {
   padding: 1.25rem 1.5rem;
   border-top: 1px solid rgba(0,0,0,0.05);
   background: var(--surface);
+  flex-shrink: 0;
 }
 
 .ai-chat-input-wrapper textarea {
