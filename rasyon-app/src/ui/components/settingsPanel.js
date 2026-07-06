@@ -103,11 +103,11 @@ export function renderSettingsPanel(container, state, options = {}) {
             <span class="hint">${t('settings.calc_mode_hint')}</span>
           </div>
           <div class="form-group full-width">
-            <label class="checkbox-label" style="display:flex; align-items:center; gap:0.5rem; cursor:pointer">
-              <input type="checkbox" id="set-energy-discount" ${s.science.autoEnergyDiscount !== false ? 'checked' : ''} style="width:auto" />
-              ${t('settings.energy_discount')}
-            </label>
-            <span class="hint">${t('settings.energy_discount_hint')}</span>
+            <div class="checkbox-group">
+              <input type="checkbox" id="set-energy-discount" ${s.science.autoEnergyDiscount !== false ? 'checked' : ''} />
+              <label for="set-energy-discount">${t('settings.energy_discount')}</label>
+            </div>
+            <div class="hint" style="margin-top:0.4rem">${t('settings.energy_discount_hint')}</div>
           </div>
         </div>
         <div id="system-desc" class="system-desc-box"></div>
