@@ -3453,10 +3453,10 @@ details.acc-panel table.diag-table {
   flex-direction: row;
   height: calc(100vh - var(--header-height) - 2rem);
   background: var(--surface);
-  border-radius: var(--radius-lg);
+  border-radius: 1.5rem;
   border: 1px solid var(--border);
   overflow: hidden;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
   margin-bottom: 1rem;
 }
 
@@ -3555,11 +3555,13 @@ details.acc-panel table.diag-table {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 1rem;
-  background-color: rgba(239, 68, 68, 0.1); /* Subtle red/warning bg */
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 1.5rem 0 1.5rem;
+  border-radius: 1rem;
+  background-color: rgba(239, 68, 68, 0.08); /* Subtle red/warning bg */
   color: #ef4444; /* text-red-500 */
   font-size: 0.875rem;
-  border-bottom: 1px solid var(--border);
+  border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
 .ai-disclaimer i {
@@ -3571,11 +3573,13 @@ details.acc-panel table.diag-table {
   display: flex;
   align-items: flex-start;
   gap: 0.6rem;
-  padding: 0.65rem 1rem;
-  background-color: rgba(28, 82, 55, 0.12);
+  padding: 0.75rem 1rem;
+  margin: 0.75rem 1.5rem 0 1.5rem;
+  border-radius: 1rem;
+  background-color: rgba(28, 82, 55, 0.08);
   color: var(--color-primary, #1c5237);
   font-size: 0.8rem;
-  border-bottom: 1px solid rgba(28, 82, 55, 0.2);
+  border: 1px solid rgba(28, 82, 55, 0.15);
   line-height: 1.4;
 }
 
@@ -3702,7 +3706,7 @@ details.acc-panel table.diag-table {
   display: flex;
   gap: 0.75rem;
   padding: 1.25rem 1.5rem;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid rgba(0,0,0,0.05);
   background: var(--surface);
 }
 
