@@ -39,15 +39,15 @@ export async function renderHerdBatchPanel(container, state) {
           <i class="ti ti-info-circle"></i> Bu sekme ne işe yarar? <span style="font-size:0.75rem; font-weight:400; color:var(--text-muted); margin-left:auto">▾</span>
         </summary>
         <div class="info-box" style="margin-top:0.5rem; font-size:0.85rem; line-height:1.7">
-          <b>🐄 Toplu Sürü Optimizasyonu</b> — Kayıtlı tüm hayvan profilleriniz veya belirli bir grup için tek tıkla rasyon hesaplar.<br>
-          • <b>Toplu Optimize (Bireysel):</b> Seçilen gruptaki her profil için kendi yem fiyatlarıyla ayrı ayrı optimum rasyonu bulur. Kârlılık, tüketim ve metan emisyonu kıyaslaması yapar.<br>
-          • <b>Ortak Stok (Sürü-Geneli):</b> Seçilen yemler için çiftliğinizdeki mevcut stok miktarını (kg) veya bütçeyi (₺) girmenize olanak tanır. Program, eldeki kısıtlı yemi tüm hayvan gruplarına en kârlı olacak şekilde paylaştırır.<br>
-          • <b>Raporlama:</b> Toplu sonuçları tek bir PDF raporunda (Sürü Özeti) indirebilirsiniz.
+          <b>🚜 Çiftlik Yönetim ve TMR Paneli</b> — Çiftliğinizdeki tüm grupların yem yönetimini tek ekrandan yapmanızı sağlar.<br>
+          • <b>Rasyon Atama:</b> Kuru dönem, sağmal veya düveleriniz için hazırladığınız kayıtlı rasyonları ilgili gruplara atayın.<br>
+          • <b>Günlük TMR İhtiyacı:</b> Tüm grupların hayvan sayıları ve reçeteleri üzerinden çiftliğinizin günlük toplam karma yem (TMR) tonajını otomatik hesaplar.<br>
+          • <b>Maliyet Takibi:</b> Güncel fiyatlar üzerinden tüm çiftliğin makro karlılığını gösterir.
         </div>
       </details>
 
       <div class="card">
-        <div class="card-title">${t('herd.title')}</div>
+        <div class="card-title">Çiftlik Yönetim ve TMR Paneli</div>
         <div class="empty-state" style="padding:2.5rem">
           <div class="icon"><i class="ti ti-users"></i></div>
           <p>${t('herd.empty_no_profile')}</p>
