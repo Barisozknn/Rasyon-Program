@@ -64,10 +64,10 @@ export async function renderHerdBatchPanel(container, state) {
         <i class="ti ti-info-circle"></i> Bu sekme ne işe yarar? <span style="font-size:0.75rem; font-weight:400; color:var(--text-muted); margin-left:auto">▾</span>
       </summary>
       <div class="info-box" style="margin-top:0.5rem; font-size:0.85rem; line-height:1.7">
-        <b>🐄 Toplu Sürü Optimizasyonu</b> — Kayıtlı tüm hayvan profilleriniz veya belirli bir grup için tek tıkla rasyon hesaplar.<br>
-        • <b>Toplu Optimize (Bireysel):</b> Seçilen gruptaki her profil için kendi yem fiyatlarıyla ayrı ayrı optimum rasyonu bulur. Kârlılık, tüketim ve metan emisyonu kıyaslaması yapar.<br>
-        • <b>Ortak Stok (Sürü-Geneli):</b> Seçilen yemler için çiftliğinizdeki mevcut stok miktarını (kg) veya bütçeyi (₺) girmenize olanak tanır. Program, eldeki kısıtlı yemi tüm hayvan gruplarına en kârlı olacak şekilde paylaştırır.<br>
-        • <b>Raporlama:</b> Toplu sonuçları tek bir PDF raporunda (Sürü Özeti) indirebilirsiniz.
+        <b>🚜 Çiftlik Yönetim ve TMR Paneli</b> — Çiftliğinizdeki tüm grupların yem yönetimini tek ekrandan yapmanızı sağlar.<br>
+        • <b>Rasyon Atama:</b> Kuru dönem, sağmal veya düveleriniz için hazırladığınız kayıtlı rasyonları ilgili gruplara atayın.<br>
+        • <b>Günlük TMR İhtiyacı:</b> Tüm grupların hayvan sayıları ve reçeteleri üzerinden çiftliğinizin günlük toplam karma yem (TMR) tonajını otomatik hesaplar.<br>
+        • <b>Maliyet Takibi:</b> Güncel fiyatlar üzerinden tüm çiftliğin makro karlılığını gösterir.
       </div>
     </details>
 
@@ -311,49 +311,38 @@ async function runBatchOptimization(container, state, profiles, groups) {
            return { profile, result: null, economics: null, groupName: '', groupSize: 1, error: 'Atanan rasyon bulunamadı (silinmiş olabilir).' };
         }
 
-        let feedsForOpt = [];
-        let feedLimitsForOpt = {};
-        let groupLimitsForOpt = {};
-        let objectiveForOpt = 'cost';
-
-        if (ration.input) {
-          feedsForOpt = ration.input.feeds || [];
-          feedLimitsForOpt = ration.input.feedLimits || {};
-          groupLimitsForOpt = ration.input.groupLimits || {};
-          objectiveForOpt = ration.input.objective || 'cost';
-        } else if (ration.result && ration.result.items) {
-          // Eski kaydedilmiş rasyon (input objesi yok)
-          feedsForOpt = ration.result.items.map(item => allFeeds.find(f => f.id === (item.id || item.feedId))).filter(Boolean);
-          // Orijinal reçetedeki kullanım miktarlarını minimum kısıt olarak sabitlemeye çalışalım (reçete bozulmasın)
-          ration.result.items.forEach(item => {
-            const fid = item.id || item.feedId;
-            feedLimitsForOpt[fid] = { min: item.asFedKg * 0.95, max: item.asFedKg * 1.05 };
-          });
-        } else {
-           return { profile, result: null, economics: null, groupName: '', groupSize: 1, error: 'Rasyon verisi eksik.' };
+        if (!ration.result) {
+           return { profile, result: null, economics: null, groupName: '', groupSize: 1, error: 'Kayıtlı rasyonun sonuç verisi eksik.' };
         }
 
-        const result = await optimizeViaWorker({
-          animal: profile,
-          feeds: feedsForOpt,
-          feedLimits: feedLimitsForOpt,
-          groupLimits: groupLimitsForOpt,
-          objective: objectiveForOpt,
-          system: science.system || 'NASEM2021',
-          dmiMethod: science.dmiMethod || 'auto',
-          autoEnergyDiscount: science.autoEnergyDiscount !== false,
-          calcMode: science.calcMode || 'nrc',
-        });
+        // Yeniden optimize etmek yerine kaydedilmiş reçeteyi güncel maliyetlerle klonla
+        const clonedResult = JSON.parse(JSON.stringify(ration.result));
+        let updatedTotalCost = 0;
+        
+        if (clonedResult.items && Array.isArray(clonedResult.items)) {
+           clonedResult.items.forEach(item => {
+              const currentFeed = allFeeds.find(f => f.id === (item.id || item.feedId));
+              if (currentFeed && currentFeed.pricePerTon) {
+                 const currentPrice = Number(currentFeed.pricePerTon);
+                 const dmFraction = (Number(currentFeed.dm) || 90) / 100;
+                 item.costPerDay = (item.dmKg * (currentPrice / 1000)) / dmFraction;
+              }
+              updatedTotalCost += item.costPerDay;
+           });
+           clonedResult.totalCost = updatedTotalCost;
+        }
+
         const groupName = groups.find(g => g.id === profile.groupId)?.name ?? '—';
         const groupSize = groups.find(g => g.id === profile.groupId)?.animalCount ?? 1;
         const economics = calcEconomics({
           milkYield_kg: profile.milkYield,
           milkPrice_tl: milkPrice,
-          feedCost_tl_day: result.totalCost,
-          dmi_kg: result.dmi?.achieved_kg || 0,
+          feedCost_tl_day: updatedTotalCost,
+          dmi_kg: clonedResult.dmi?.achieved_kg || 0,
           herdSize: groupSize,
         });
-        return { profile, result, economics, groupName, groupSize, error: null };
+
+        return { profile, result: clonedResult, economics, groupName, groupSize, error: null };
       } catch (err) {
         return { profile, result: null, economics: null, groupName: '', groupSize: 1, error: err.message };
       } finally {
