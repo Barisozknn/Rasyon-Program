@@ -371,7 +371,12 @@ async function handleOptimize(optimizeInput) {
     // FAZ 15.1: Dashboard'ın "Son Rasyon" kartı optimize anındaki hayvan
     // bilgisini (breed/BW/dönem/süt) sonuçla tutarlı göstersin diye snapshot al
     // (form sonradan değişse bile sonuç bu profil için hesaplanmıştı).
-    state.lastOptimizedAnimal = { ...optimizeInput.animal };
+    const animalSnapshot = { ...optimizeInput.animal };
+    // animalForm profil ID'sini _profileId olarak saklar; .id ile de erişilebilir yap
+    if (!animalSnapshot.id && animalSnapshot._profileId) {
+      animalSnapshot.id = animalSnapshot._profileId;
+    }
+    state.lastOptimizedAnimal = animalSnapshot;
 
     const badge = document.getElementById('results-badge');
     if (badge) badge.style.display = result.feasible ? 'inline-flex' : 'none';

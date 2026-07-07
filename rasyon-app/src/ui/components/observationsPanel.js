@@ -396,7 +396,9 @@ async function refreshAnalysis(container, profile, state) {
     let res = null;
 
     // 1. Öncelik: Aynı oturumda az önce çözülmüş rasyon sonucu (en taze, tüm alanları var)
-    if (state?.rationResult && state.lastOptimizedAnimal?.id === profile.id) {
+    // NOT: animalForm.js profil ID'sini _profileId olarak saklar, id değil
+    const optimizedProfileId = state.lastOptimizedAnimal?.id || state.lastOptimizedAnimal?._profileId;
+    if (state?.rationResult && optimizedProfileId === profile.id) {
       res = state.rationResult;
     }
 
