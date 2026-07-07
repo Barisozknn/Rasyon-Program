@@ -458,8 +458,7 @@ function renderBatchResults(el, results, milkPrice) {
 
     ${(() => {
       const tmrTotals = {};
-      results.filter(r => r.result?.feasible).forEach(r => {
-        if (!r.result.items) return;
+      results.filter(r => r.result && r.result.items).forEach(r => {
         r.result.items.forEach(item => {
           const feedId = item.id || item.feedId || item.name;
           const feedName = item.name;
@@ -477,22 +476,22 @@ function renderBatchResults(el, results, milkPrice) {
           <tr>
             <td>${escHtml(t.name)}</td>
             <td class="num">${t.kg.toLocaleString(undefined, { maximumFractionDigits: 1 })} kg</td>
-            <td class="num"><b>${(t.kg / 1000).toLocaleString(undefined, { maximumFractionDigits: 2 })} Ton</b></td>
           </tr>
         `).join('');
 
       return tmrRows ? `
-        <div class="card mt-2" style="border-top: 3px solid var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
-          <div class="card-title mb-1" style="display:flex; align-items:center; gap:0.5rem;">
-            <i class="ti ti-truck" style="font-size:1.2rem; color:var(--primary);"></i> Günlük Yükleme (TMR) İhtiyacı
+        <div class="card mt-2 p-1 border-primary">
+          <div class="card-title text-primary" style="margin-bottom:0.5rem">
+            <i class="ti ti-truck-delivery"></i> Günlük Yükleme (TMR) İhtiyacı
           </div>
-          <div class="text-small text-muted mb-1">Tüm hesaplanan grupların günlük toplam karma ihtiyacı (Ton/Gün)</div>
-          <table class="diag-table" style="max-width: 600px;">
+          <div class="text-small text-muted" style="margin-bottom:1rem">
+            Tüm hesaplanan grupların günlük toplam karma ihtiyacı (Kg/Gün)
+          </div>
+          <table class="diag-table" style="max-width: 500px;">
             <thead>
               <tr>
                 <th>Yem Adı</th>
                 <th class="num">Günlük Toplam (Kg)</th>
-                <th class="num">Günlük Toplam (Ton)</th>
               </tr>
             </thead>
             <tbody>
@@ -506,7 +505,7 @@ function renderBatchResults(el, results, milkPrice) {
     <!-- Rasyon Detay Modal -->
     <div id="herd-detail-modal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; padding:1rem">
       <div class="card" style="max-width:900px; width:100%; max-height:90vh; overflow-y:auto; position:relative;">
-        <div class="flex-between" style="position:sticky; top:0; background:var(--bg-main); padding-bottom:1rem; border-bottom:1px solid var(--border); z-index:10; margin-bottom:1rem;">
+        <div class="flex-between" style="position:sticky; top:0; background:var(--bg-card); padding:1rem; margin:-1rem -1rem 1rem -1rem; border-bottom:1px solid var(--border); z-index:10;">
           <div class="card-title" id="herd-detail-title" style="margin:0">Rasyon Detayı</div>
           <button class="btn btn-sm btn-secondary" id="btn-close-herd-detail"><i class="ti ti-x"></i></button>
         </div>
@@ -553,46 +552,35 @@ function renderBatchResults(el, results, milkPrice) {
   });
 }
 
-function renderRow(r, idx) {
-  if (r.error) {
+function renderBatchRow(r, idx) {
+  if (r.error && !r.result) {
     return `
-      <tr class="status-row-above">
+      <tr class="status-row-below" style="opacity:0.8">
         <td><b>${escHtml(r.profile.name || r.profile.id)}</b></td>
         <td colspan="10" class="text-muted">${escHtml(r.error)}</td>
         <td><span class="status-above">${t('herd.status_err')}</span></td>
         <td></td>
       </tr>`;
   }
-  if (!r.result.feasible) {
-    return `
-      <tr class="status-row-above">
-        <td><b>${escHtml(r.profile.name || r.profile.id)}</b></td>
-        <td>${escHtml(r.groupName)}</td>
-        <td>${stageLabel(r.profile.lactationStage)}</td>
-        <td class="num">${r.profile.milkYield ?? '—'}</td>
-        <td colspan="6" class="text-muted">${t('herd.status_infeasible')} (${r.result.statusName})</td>
-        <td><span class="status-above">${t('herd.status_infeasible')}</span></td>
-        <td></td>
-      </tr>`;
-  }
-
-  const iofc = r.economics.daily.iofc_tl;
-  const iofcCls = iofc > 0 ? 'status-row-ok' : 'status-row-above';
-
+  
+  const iofc = r.economics?.daily?.iofc_tl || 0;
+  const isFeasible = r.result && r.result.feasible !== false; // if cloned old ration, assume feasible
+  const iofcCls = isFeasible ? (iofc > 0 ? 'status-row-ok' : 'status-row-above') : 'status-row-above';
+  
   return `
     <tr class="${iofcCls}">
       <td><b>${escHtml(r.profile.name || r.profile.id)}</b></td>
       <td>${escHtml(r.groupName)}</td>
       <td>${stageLabel(r.profile.lactationStage)}</td>
-      <td class="num">${r.profile.milkYield}</td>
-      <td class="num">${r.result.dmi.achieved_kg.toFixed(1)}</td>
-      <td class="num">${r.result.composition.nel_mcal.toFixed(1)}</td>
-      <td class="num">${r.result.composition.cp_pct.toFixed(1)}</td>
-      <td class="num">${r.result.totalCost.toFixed(2)}</td>
-      <td class="num"><b>${iofc.toFixed(2)}</b></td>
+      <td class="num">${r.profile.milkYield ?? '—'}</td>
+      <td class="num">${r.result?.dmi?.achieved_kg?.toFixed(1) || '—'}</td>
+      <td class="num">${r.result?.composition?.nel_mcal?.toFixed(1) || '—'}</td>
+      <td class="num">${r.result?.composition?.cp_pct?.toFixed(1) || '—'}</td>
+      <td class="num">${r.result?.totalCost?.toFixed(2) || '—'}</td>
+      <td class="num"><b>${iofc ? iofc.toFixed(2) : '—'}</b></td>
       <td class="num">${r.groupSize}</td>
-      <td class="num"><b>${r.economics.herd.dailyIOFC_tl.toLocaleString(undefined, { maximumFractionDigits: 0 })}</b></td>
-      <td><span class="status-ok">${t('herd.status_ok')}</span></td>
+      <td class="num"><b>${r.economics?.herd?.dailyIOFC_tl?.toLocaleString(undefined, { maximumFractionDigits: 0 }) || '—'}</b></td>
+      <td><span class="${isFeasible ? 'status-ok' : 'status-above'}">${isFeasible ? t('herd.status_ok') : t('herd.status_infeasible')}</span></td>
       <td><button class="btn btn-sm btn-secondary btn-herd-detail" data-idx="${idx}" title="Rasyon Detayını Gör"><i class="ti ti-eye"></i> Detay</button></td>
     </tr>`;
 }

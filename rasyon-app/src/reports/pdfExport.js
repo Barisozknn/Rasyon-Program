@@ -552,7 +552,54 @@ export async function generateHerdSummaryPDF(batchResults, meta = {}) {
       9: { halign: 'right' }, 10: { halign: 'right' },
     },
   });
-  y = doc.lastAutoTable.finalY + 5;
+  y = doc.lastAutoTable.finalY + 10;
+
+  // TMR (Günlük Yükleme) Tablosu
+  const tmrTotals = {};
+  batchResults.filter(r => r.result && r.result.items).forEach(r => {
+    r.result.items.forEach(item => {
+      const feedId = item.id || item.feedId || item.name;
+      const feedName = item.name;
+      const dailyKg = item.asFedKg * (r.groupSize || 1);
+      if (!tmrTotals[feedId]) {
+        tmrTotals[feedId] = { name: feedName, kg: 0 };
+      }
+      tmrTotals[feedId].kg += dailyKg;
+    });
+  });
+
+  const tmrArray = Object.values(tmrTotals).sort((a, b) => b.kg - a.kg);
+  if (tmrArray.length > 0) {
+    // Check if we need a new page
+    if (y + 30 > doc.internal.pageSize.getHeight()) {
+      doc.addPage();
+      y = margin;
+    }
+    
+    doc.setFontSize(11);
+    doc.setFont(BOLD_FONT_H, 'bold');
+    doc.setTextColor(29, 78, 216);
+    doc.text(str(L('Günlük Yükleme (TMR) İhtiyacı', 'Daily TMR Requirements')), margin, y);
+    y += 5;
+
+    const tmrRowsList = tmrArray.map(t => [
+      str(t.name),
+      `${t.kg.toLocaleString(locale, { maximumFractionDigits: 1 })} kg`
+    ]);
+
+    autoTable(doc, {
+      startY: y,
+      margin: { left: margin, right: margin },
+      head: [[str(L('Yem Adı', 'Feed Name')), str(L('Günlük Toplam (Kg)', 'Daily Total (Kg)'))]],
+      body: tmrRowsList,
+      styles: { fontSize: 8, cellPadding: 1.5, ...tblBody },
+      headStyles: { fillColor: [71, 85, 105], textColor: 255, fontSize: 8 },
+      columnStyles: {
+        1: { halign: 'right', cellWidth: 50 },
+      },
+    });
+    y = doc.lastAutoTable.finalY + 5;
+  }
 
   // Alt bilgi
   const pageCount = doc.internal.getNumberOfPages();
