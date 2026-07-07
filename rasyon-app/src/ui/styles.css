@@ -635,7 +635,8 @@ body {
 
 .form-group input,
 .form-group select,
-.form-group textarea {
+.form-group textarea,
+.profile-ration-select {
   padding: 0.45rem 0.65rem;
   min-height: 38px;
   border: none;
@@ -655,7 +656,8 @@ body {
 
 [data-theme="dark"] .form-group input,
 [data-theme="dark"] .form-group select,
-[data-theme="dark"] .form-group textarea {
+[data-theme="dark"] .form-group textarea,
+[data-theme="dark"] .profile-ration-select {
   box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.4),
     inset -2px -2px 6px rgba(255, 255, 255, 0.03);
 }
@@ -666,7 +668,8 @@ body {
 
 .form-group input:focus,
 .form-group select:focus,
-.form-group textarea:focus {
+.form-group textarea:focus,
+.profile-ration-select:focus {
   outline: none;
   background: var(--surface);
   box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.1),
@@ -676,7 +679,8 @@ body {
 
 [data-theme="dark"] .form-group input:focus,
 [data-theme="dark"] .form-group select:focus,
-[data-theme="dark"] .form-group textarea:focus {
+[data-theme="dark"] .form-group textarea:focus,
+[data-theme="dark"] .profile-ration-select:focus {
   box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5),
     -4px -4px 10px rgba(255, 255, 255, 0.03),
     0 0 0 2px var(--primary);

@@ -435,6 +435,7 @@ function renderBatchResults(el, results, milkPrice) {
           <th class="num">${t('herd.col_milk')}</th>
           <th class="num">${t('herd.col_dmi')}</th>
           <th class="num">${t('herd.col_nel')}</th>
+          <th class="num">MP (G)</th>
           <th class="num">${t('herd.col_cp')}</th>
           <th class="num">${t('herd.col_feedcost')}</th>
           <th class="num">${t('herd.col_iofc')}</th>
@@ -563,7 +564,7 @@ function renderRow(r, idx) {
     return `
       <tr class="status-row-below" style="opacity:0.8">
         <td><b>${escHtml(r.profile.name || r.profile.id)}</b></td>
-        <td colspan="10" class="text-muted">${escHtml(r.error)}</td>
+        <td colspan="11" class="text-muted">${escHtml(r.error)}</td>
         <td><span class="status-above">${t('herd.status_err')}</span></td>
         <td></td>
       </tr>`;
@@ -581,6 +582,7 @@ function renderRow(r, idx) {
       <td class="num">${r.profile.milkYield ?? '—'}</td>
       <td class="num">${r.result?.dmi?.achieved_kg?.toFixed(1) || '—'}</td>
       <td class="num">${r.result?.composition?.nel_mcal?.toFixed(1) || '—'}</td>
+      <td class="num">${r.result?.composition?.mp_g?.toFixed(0) || '—'}</td>
       <td class="num">${r.result?.composition?.cp_pct?.toFixed(1) || '—'}</td>
       <td class="num">${r.result?.totalCost?.toFixed(2) || '—'}</td>
       <td class="num"><b>${iofc ? iofc.toFixed(2) : '—'}</b></td>
