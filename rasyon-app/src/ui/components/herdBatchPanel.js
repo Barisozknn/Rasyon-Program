@@ -323,10 +323,11 @@ async function runBatchOptimization(container, state, profiles, groups) {
           objectiveForOpt = ration.input.objective || 'cost';
         } else if (ration.result && ration.result.items) {
           // Eski kaydedilmiş rasyon (input objesi yok)
-          feedsForOpt = ration.result.items.map(item => allFeeds.find(f => f.id === item.feedId)).filter(Boolean);
+          feedsForOpt = ration.result.items.map(item => allFeeds.find(f => f.id === (item.id || item.feedId))).filter(Boolean);
           // Orijinal reçetedeki kullanım miktarlarını minimum kısıt olarak sabitlemeye çalışalım (reçete bozulmasın)
           ration.result.items.forEach(item => {
-            feedLimitsForOpt[item.feedId] = { min: item.asFedKg * 0.95, max: item.asFedKg * 1.05 };
+            const fid = item.id || item.feedId;
+            feedLimitsForOpt[fid] = { min: item.asFedKg * 0.95, max: item.asFedKg * 1.05 };
           });
         } else {
            return { profile, result: null, economics: null, groupName: '', groupSize: 1, error: 'Rasyon verisi eksik.' };
@@ -471,7 +472,7 @@ function renderBatchResults(el, results, milkPrice) {
       results.filter(r => r.result?.feasible).forEach(r => {
         if (!r.result.items) return;
         r.result.items.forEach(item => {
-          const feedId = item.feedId || item.name;
+          const feedId = item.id || item.feedId || item.name;
           const feedName = item.name;
           const dailyKg = item.asFedKg * (r.groupSize || 1);
           if (!tmrTotals[feedId]) {
