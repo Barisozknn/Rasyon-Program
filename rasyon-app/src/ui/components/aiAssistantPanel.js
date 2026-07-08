@@ -189,12 +189,12 @@ export async function renderAiAssistantPanel(container) {
 
   container.innerHTML = `
     <style>
-      .custom-toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; cursor: pointer; flex-shrink: 0; }
+      .custom-toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; }
       .custom-toggle-switch input[type="checkbox"] { display: none; }
       .custom-toggle-switch-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: #e8e8e8; border-radius: 20px; transition: all 0.3s ease-in-out; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
       .custom-toggle-switch-handle { position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background-color: #fff; border-radius: 50%; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1); }
-      .custom-toggle-switch input[type="checkbox"]:checked + .custom-toggle-switch-bg { background-color: #1c5237; }
-      .custom-toggle-switch input[type="checkbox"]:checked + .custom-toggle-switch-bg .custom-toggle-switch-handle { transform: translateX(20px); }
+      .custom-toggle-switch input[type="checkbox"]:checked ~ .custom-toggle-switch-bg { background-color: #1c5237; }
+      .custom-toggle-switch input[type="checkbox"]:checked ~ .custom-toggle-switch-bg .custom-toggle-switch-handle { transform: translateX(20px); }
     </style>
     <div class="ai-panel">
       <!-- SOL MENÜ: GEÇMİŞ SOHBETLER (Mobilde Bottom Sheet) -->
@@ -227,14 +227,16 @@ export async function renderAiAssistantPanel(container) {
         </div>
         
         <div class="ai-chat-input-wrapper" style="flex-direction: column; align-items: stretch;">
-          <div class="mb-2 px-2 d-flex align-items-center gap-2">
-            <label class="custom-toggle-switch m-0" title="${t('ai.include_data') || 'Çiftlik Verilerimi Ekle'}">
-              <input type="checkbox" id="aiIncludeDataToggle">
-              <div class="custom-toggle-switch-bg">
-                <div class="custom-toggle-switch-handle"></div>
+          <div class="mb-2 px-2">
+            <label class="m-0 d-flex align-items-center gap-2" style="cursor: pointer; user-select: none;" title="${t('ai.include_data') || 'Çiftlik Verilerimi Ekle'}">
+              <div class="custom-toggle-switch">
+                <input type="checkbox" id="aiIncludeDataToggle">
+                <div class="custom-toggle-switch-bg">
+                  <div class="custom-toggle-switch-handle"></div>
+                </div>
               </div>
+              <span style="font-size: 0.85rem; color: var(--text-secondary); padding-top: 2px;">${t('ai.include_data') || 'Çiftlik Verilerimi Ekle'}</span>
             </label>
-            <span style="font-size: 0.85rem; color: var(--text-secondary); cursor: pointer;" onclick="document.getElementById('aiIncludeDataToggle').click()">${t('ai.include_data') || 'Çiftlik Verilerimi Ekle'}</span>
           </div>
           <div style="display: flex; gap: 0.5rem; width: 100%;">
             <textarea id="aiChatInput" placeholder="${t('ai.placeholder')}" rows="2" style="flex:1;"></textarea>
@@ -297,10 +299,9 @@ export async function renderAiAssistantPanel(container) {
       let dateHtml = '';
       if (chat.updatedAt) {
         const d = new Date(chat.updatedAt);
-        const today = new Date();
-        const isToday = d.getDate() === today.getDate() && d.getMonth() === today.getMonth() && d.getFullYear() === today.getFullYear();
-        const dateStr = isToday ? d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : d.toLocaleDateString([], {day:'numeric', month:'short'});
-        dateHtml = `<span style="font-size: 0.7rem; opacity: 0.6; margin-left: 1.5rem;">${dateStr}</span>`;
+        const dateStr = d.toLocaleDateString([], {day:'2-digit', month:'2-digit', year:'numeric'});
+        const timeStr = d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        dateHtml = `<span style="font-size: 0.7rem; opacity: 0.6; margin-left: 1.5rem; white-space: nowrap;">${dateStr} - ${timeStr}</span>`;
       }
 
       const html = `
@@ -387,9 +388,8 @@ export async function renderAiAssistantPanel(container) {
       let timeHtml = '';
       if (msg.timestamp) {
         const d = new Date(msg.timestamp);
-        const dateStr = d.toLocaleDateString([], {day: '2-digit', month: '2-digit', year: 'numeric'});
         const timeStr = d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        timeHtml = `<div style="font-size: 0.7rem; opacity: 0.6; text-align: right; margin-top: 6px;">${dateStr} - ${timeStr}</div>`;
+        timeHtml = `<div style="font-size: 0.7rem; opacity: 0.6; text-align: right; margin-top: 6px;">${timeStr}</div>`;
       }
 
       const html = `
