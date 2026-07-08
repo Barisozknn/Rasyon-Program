@@ -1,6 +1,6 @@
-# NutriOpt 🐄 🌾
+# RasyoMetri 🐄 🌾
 
-**NutriOpt**, süt sığırları için **NRC 2001**, **NASEM 2021** ve **CNCPS v6.5** besleme modellerini temel alan, modern ve kapsamlı bir rasyon optimizasyon programıdır. Çevrimdışı çalışabilen PWA (Progressive Web App) yapısı, yapay zeka asistan desteği ve bulut senkronizasyonu ile hem sahada hem de masa başında güvenle kullanılabilir.
+**RasyoMetri**, süt sığırları için **NRC 2001**, **NASEM 2021** ve **CNCPS v6.5** besleme modellerini temel alan, modern ve kapsamlı bir rasyon optimizasyon programıdır. Çevrimdışı çalışabilen PWA (Progressive Web App) yapısı, yapay zeka asistan desteği ve bulut senkronizasyonu ile hem sahada hem de masa başında güvenle kullanılabilir. Program çoklu dil (Türkçe ve İngilizce) destekli olarak tasarlanmıştır.
 
 ## 🌟 Öne Çıkan Özellikler
 
@@ -13,7 +13,7 @@
   - **Geniş Yem Veritabanı:** Besin madde analizleriyle detaylandırılmış özelleştirilebilir yem deposu.
   - **Fiyat ve Maliyet Yöneticisi:** Yem maliyetlerinin güncel takibi ile en ekonomik rasyonun oluşturulması.
   - **Çiftlik Paneli ve Saha Gözlem Takibi:** Sürü bazlı değerlendirmeler ve dışkı, kondisyon gibi saha gözlemleri.
-- **Gelişmiş Raporlama:** Rasyon sonuçlarını ve analizleri grafiklerle görüntüleme, Excel ve PDF formatlarında dışa aktarma.
+- **Gelişmiş Raporlama:** Rasyon sonuçlarını ve analizleri grafiklerle görüntüleme, Excel ve PDF formatlarında dışa aktarma. Excel çıktıları artık özel tasarımlara (renklendirme, zebra deseni, sabit başlıklar) sahiptir.
 - **Modern ve Duyarlı Arayüz:** Karanlık/Aydınlık (Dark/Light) tema desteği ve mobil/tablet cihazlarla tam uyumlu (Responsive) kullanıcı dostu tasarım.
 
 ## 🛠️ Kullanılan Teknolojiler
@@ -33,7 +33,7 @@
 **Veri Görselleştirme & Çıktı Alma:**
 - `chart.js` - Besin değerleri ve maliyet grafikleri
 - `jspdf` & `jspdf-autotable` - PDF raporları oluşturma
-- `xlsx` - Excel (Spreadsheet) formatında veri içe/dışa aktarımı
+- `xlsx-js-style` - Gelişmiş tasarım, stil ve renklendirme desteği ile Excel formatında veri içe/dışa aktarımı
 
 **Araçlar & Kütüphaneler:**
 - `marked` & `dompurify` - AI Asistan çıktıları için güvenli Markdown ayrıştırma
@@ -47,7 +47,8 @@ rasyon-app/
 ├── src/                 # Kaynak kodları
 │   ├── ui/              # Arayüz bileşenleri, app.js, UI mantığı ve stiller
 │   ├── core/            # Optimizasyon motoru, hesaplama fonksiyonları
-│   └── utils/           # Yardımcı metodlar
+│   ├── reports/         # PDF ve Excel dışa aktarma (export) kodları
+│   └── utils/           # Yardımcı metodlar ve çoklu dil (i18n) desteği
 ├── supabase/            # Supabase veritabanı şemaları
 ├── tests/               # Vitest ile yazılmış birim testleri
 ├── index.html           # Ana giriş HTML dosyası
