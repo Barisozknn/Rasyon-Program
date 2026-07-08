@@ -125,7 +125,7 @@ function downloadTemplate() {
 
 async function downloadExcelTemplate() {
   try {
-    const XLSX = await import('xlsx');
+    const XLSX = await import('xlsx-js-style');
     const objects = getTemplateObjects();
     const data = objects.map(ex => {
       const row = {};
@@ -138,8 +138,22 @@ async function downloadExcelTemplate() {
     
     // Basit bir sığdırma ve filtre (şablon formatı)
     ws['!cols'] = TEMPLATE_COLUMNS.map(c => ({ wch: c === 'name' || c === 'nameEn' || c === 'comment' ? 25 : 12 }));
-    ws['!views'] = [{ state: 'frozen', ySplit: 1 }];
+    ws['!views'] = [{ state: 'frozen', xSplit: 0, ySplit: 1 }];
     ws['!autofilter'] = { ref: ws['!ref'] };
+    
+    // Başlık Satırını Renklendir
+    const range = XLSX.utils.decode_range(ws['!ref']);
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+      const cell = ws[XLSX.utils.encode_cell({c: C, r: 0})];
+      if (cell) {
+        cell.s = {
+          fill: { fgColor: { rgb: "339966" } }, // Yeşil
+          font: { bold: true, color: { rgb: "FFFFFF" } },
+          alignment: { horizontal: "center", vertical: "center" },
+          border: { bottom: { style: "medium", color: { rgb: "000000" } } }
+        };
+      }
+    }
     
     XLSX.utils.book_append_sheet(wb, ws, "Yemler");
     XLSX.writeFile(wb, "yem-sablon.xlsx");
@@ -195,7 +209,7 @@ async function handleFile(file) {
 
 /** Excel dosyasını başlık-anahtarlı satır nesnelerine çevir (XLSX dinamik yüklenir). */
 async function readExcelRows(file) {
-  const XLSX = await import('xlsx');
+  const XLSX = await import('xlsx-js-style');
   const buf = await file.arrayBuffer();
   const wb = XLSX.read(buf, { type: 'array' });
   const sheet = wb.Sheets[wb.SheetNames[0]];

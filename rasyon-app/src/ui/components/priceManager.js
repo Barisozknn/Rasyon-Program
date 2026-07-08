@@ -545,7 +545,7 @@ async function openHistoryModal(container, feedId, feedName) {
 
 async function exportPriceTemplate() {
   try {
-    const XLSX = await import('xlsx');
+    const XLSX = await import('xlsx-js-style');
     const data = _allFeeds.map(f => ({
       'ID': f.id,
       'Yem Adı': f.name,
@@ -557,14 +557,28 @@ async function exportPriceTemplate() {
     // Sütun genişliklerini ayarla (daha ferah)
     ws['!cols'] = [{wch: 22}, {wch: 45}, {wch: 25}, {wch: 18}];
     
-    // İlk satırı (başlıkları) sabitle
-    ws['!views'] = [{ state: 'frozen', ySplit: 1 }];
+    // İlk satırı (başlıkları) sabitle (güvenli format)
+    ws['!views'] = [{ state: 'frozen', xSplit: 0, ySplit: 1 }];
     
     // Başlıklara filtre ekle
     ws['!autofilter'] = { ref: ws['!ref'] };
 
-    // Fiyat sütununa (D sütunu) sayı/para birimi formatı ekle
     const range = XLSX.utils.decode_range(ws['!ref']);
+    
+    // Başlık Satırını Renklendir
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+      const cell = ws[XLSX.utils.encode_cell({c: C, r: 0})];
+      if (cell) {
+        cell.s = {
+          fill: { fgColor: { rgb: "4F81BD" } },
+          font: { bold: true, color: { rgb: "FFFFFF" } },
+          alignment: { horizontal: "center", vertical: "center" },
+          border: { bottom: { style: "medium", color: { rgb: "000000" } } }
+        };
+      }
+    }
+
+    // Fiyat sütununa (D sütunu) sayı/para birimi formatı ekle
     for (let R = range.s.r + 1; R <= range.e.r; ++R) {
       const cellAddress = XLSX.utils.encode_cell({c: 3, r: R});
       const cell = ws[cellAddress];
@@ -592,7 +606,7 @@ async function importPricesExcel(container) {
     if (!file) return;
     
     try {
-      const XLSX = await import('xlsx');
+      const XLSX = await import('xlsx-js-style');
       const reader = new FileReader();
       reader.onload = (evt) => {
         try {

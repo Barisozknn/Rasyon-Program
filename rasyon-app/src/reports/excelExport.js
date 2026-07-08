@@ -5,7 +5,7 @@
  * (karışık-dil riski olmadan). Dil-nötr kısaltmalar (NEL/NDF/Ca/DCAD…) korunur.
  */
 
-import * as XLSX from 'xlsx';
+import * as XLSX from 'xlsx-js-style';
 import { getSettings } from '../data/settings.js';
 
 const STAGE_LABELS = {
@@ -71,7 +71,36 @@ export function generateRationExcel({ animal, result }) {
     [L('Maliyet (₺/gün)', 'Cost (₺/d)'),     result.totalCost],
   ];
   const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
-  wsSummary['!cols'] = [{ wch: 28 }, { wch: 30 }];
+  wsSummary['!cols'] = [{ wch: 35 }, { wch: 30 }];
+  
+  // Özet tablosunda başlıkları renklendir
+  const summaryRange = XLSX.utils.decode_range(wsSummary['!ref']);
+  for (let R = summaryRange.s.r; R <= summaryRange.e.r; ++R) {
+    for (let C = summaryRange.s.c; C <= summaryRange.e.c; ++C) {
+      const cell = wsSummary[XLSX.utils.encode_cell({c: C, r: R})];
+      if (!cell) continue;
+      
+      // İlk satır ana başlık
+      if (R === 0 && C === 0) {
+        cell.s = { font: { bold: true, sz: 14, color: { rgb: "000000" } } };
+      }
+      
+      // Bölüm Başlıkları (Tamamı büyük harf ve altı boşsa genelde başlık olur)
+      if (typeof cell.v === 'string' && cell.v === cell.v.toUpperCase() && cell.v.length > 5) {
+        cell.s = {
+          fill: { fgColor: { rgb: "D9D9D9" } },
+          font: { bold: true },
+          border: { bottom: { style: "thin", color: { rgb: "000000" } } }
+        };
+      }
+      
+      // Sol Sütun Kalın
+      if (C === 0 && (!cell.s || !cell.s.font)) {
+        cell.s = { font: { bold: true } };
+      }
+    }
+  }
+  
   XLSX.utils.book_append_sheet(wb, wsSummary, L('Özet', 'Summary'));
 
   // ─── Sheet 2: Rasyon Bileşenleri ───────────────────────────────────────────
@@ -85,11 +114,23 @@ export function generateRationExcel({ animal, result }) {
   itemsRows.push([L('TOPLAM', 'TOTAL'), '', totalDm, totalAsFed, 100, totalCost]);
   const wsItems = XLSX.utils.aoa_to_sheet([itemsHeader, ...itemsRows]);
   wsItems['!cols'] = [{ wch: 35 }, { wch: 18 }, { wch: 15 }, { wch: 15 }, { wch: 12 }, { wch: 15 }];
-  wsItems['!views'] = [{ state: 'frozen', ySplit: 1 }];
+  wsItems['!views'] = [{ state: 'frozen', xSplit: 0, ySplit: 1 }];
   wsItems['!autofilter'] = { ref: wsItems['!ref'] };
 
-  // Fiyat/Tutar kolonunu formatla (F sütunu = c: 5)
   const rangeItems = XLSX.utils.decode_range(wsItems['!ref']);
+  // Başlıkları Renklendir
+  for (let C = rangeItems.s.c; C <= rangeItems.e.c; ++C) {
+    const cell = wsItems[XLSX.utils.encode_cell({c: C, r: 0})];
+    if (cell) {
+      cell.s = {
+        fill: { fgColor: { rgb: "1F497D" } }, // Koyu Mavi
+        font: { bold: true, color: { rgb: "FFFFFF" } },
+        alignment: { horizontal: "center", vertical: "center" }
+      };
+    }
+  }
+
+  // Fiyat/Tutar kolonunu formatla (F sütunu = c: 5)
   for (let R = rangeItems.s.r + 1; R <= rangeItems.e.r; ++R) {
     const cell = wsItems[XLSX.utils.encode_cell({c: 5, r: R})];
     if (cell && cell.t === 'n') cell.z = '#,##0.00_"₺"';
@@ -107,8 +148,22 @@ export function generateRationExcel({ animal, result }) {
   ]);
   const wsDiag = XLSX.utils.aoa_to_sheet([diagHeader, ...diagRows]);
   wsDiag['!cols'] = [{ wch: 30 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 18 }];
-  wsDiag['!views'] = [{ state: 'frozen', ySplit: 1 }];
+  wsDiag['!views'] = [{ state: 'frozen', xSplit: 0, ySplit: 1 }];
   wsDiag['!autofilter'] = { ref: wsDiag['!ref'] };
+  
+  // Başlıkları Renklendir
+  const rangeDiag = XLSX.utils.decode_range(wsDiag['!ref']);
+  for (let C = rangeDiag.s.c; C <= rangeDiag.e.c; ++C) {
+    const cell = wsDiag[XLSX.utils.encode_cell({c: C, r: 0})];
+    if (cell) {
+      cell.s = {
+        fill: { fgColor: { rgb: "1F497D" } }, // Koyu Mavi
+        font: { bold: true, color: { rgb: "FFFFFF" } },
+        alignment: { horizontal: "center", vertical: "center" }
+      };
+    }
+  }
+  
   XLSX.utils.book_append_sheet(wb, wsDiag, L('Diagnostik', 'Diagnostics'));
 
   // ─── Sheet 4: Tam Besin Profili ────────────────────────────────────────────
@@ -119,6 +174,7 @@ export function generateRationExcel({ animal, result }) {
     ['NEL',          c.nel_mcal,   L('Mcal/gün', 'Mcal/d')],
     [L('HP', 'CP'),  c.cp_g,       UGD],
     [L('HP', 'CP'),  c.cp_pct,     UDM],
+    ['MP',           c.mp_g || 0,  UGD],
     ['RUP',          c.rup_g,      UGD],
     ['RDP',          c.rdp_g,      UGD],
     ['NDF',          c.ndf_pct,    UDM],
@@ -142,8 +198,22 @@ export function generateRationExcel({ animal, result }) {
   ];
   const wsProfile = XLSX.utils.aoa_to_sheet(profile);
   wsProfile['!cols'] = [{ wch: 25 }, { wch: 18 }, { wch: 18 }];
-  wsProfile['!views'] = [{ state: 'frozen', ySplit: 1 }];
+  wsProfile['!views'] = [{ state: 'frozen', xSplit: 0, ySplit: 1 }];
   wsProfile['!autofilter'] = { ref: wsProfile['!ref'] };
+  
+  // Başlıkları Renklendir
+  const rangeProf = XLSX.utils.decode_range(wsProfile['!ref']);
+  for (let C = rangeProf.s.c; C <= rangeProf.e.c; ++C) {
+    const cell = wsProfile[XLSX.utils.encode_cell({c: C, r: 0})];
+    if (cell) {
+      cell.s = {
+        fill: { fgColor: { rgb: "1F497D" } }, // Koyu Mavi
+        font: { bold: true, color: { rgb: "FFFFFF" } },
+        alignment: { horizontal: "center", vertical: "center" }
+      };
+    }
+  }
+
   XLSX.utils.book_append_sheet(wb, wsProfile, L('Besin Profili', 'Nutrient Profile'));
 
   // ─── Sheet 5: AA Paneli ────────────────────────────────────────────────────
@@ -196,7 +266,20 @@ export function generateRationExcel({ animal, result }) {
 
     const wsAA = XLSX.utils.aoa_to_sheet(aaData);
     wsAA['!cols'] = [{ wch: 35 }, { wch: 22 }, { wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 15 }];
-    wsAA['!views'] = [{ state: 'frozen', ySplit: 6 }]; // AA tablosu başlığı 7. satırda (indeks 6)
+    wsAA['!views'] = [{ state: 'frozen', xSplit: 0, ySplit: 7 }]; // AA tablosu başlığı 7. satırda (indeks 6)
+    
+    // AA başlığını renklendir (Satır indeksi 6)
+    const rangeAA = XLSX.utils.decode_range(wsAA['!ref']);
+    for (let C = rangeAA.s.c; C <= rangeAA.e.c; ++C) {
+      const cell = wsAA[XLSX.utils.encode_cell({c: C, r: 6})];
+      if (cell && cell.v) {
+        cell.s = {
+          fill: { fgColor: { rgb: "1F497D" } }, // Koyu Mavi
+          font: { bold: true, color: { rgb: "FFFFFF" } },
+          alignment: { horizontal: "center", vertical: "center" }
+        };
+      }
+    }
     
     // Filtre opsiyonel ama karışık yapısı yüzünden bu sayfaya sadece sütun genişliği ve dondurma yeterli
     XLSX.utils.book_append_sheet(wb, wsAA, L('AA Paneli', 'AA Panel'));
