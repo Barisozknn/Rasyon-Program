@@ -131,6 +131,10 @@ export function renderRumenHealthPanel(composition, animal) {
   
   let fpRatioStatus = 'ok';
   let fpStatusText = '✓ Sağlıklı (İdeal)';
+  
+  let ketosisRiskLabel = '✓ Düşük Risk';
+  let ketosisColor = 'var(--primary)';
+
   if (fpRatioValue !== null) {
     if (fpRatioValue < fpMin) {
       fpRatioStatus = 'below'; 
@@ -138,11 +142,20 @@ export function renderRumenHealthPanel(composition, animal) {
     } else if (fpRatioValue > fpMax) {
       fpRatioStatus = 'above';
       fpStatusText = '↑ Subklinik Ketozis (Yüksek)';
+      
+      const ketoHigh = isJersey ? 1.60 : 1.50;
+      if (fpRatioValue >= ketoHigh) {
+        ketosisRiskLabel = '⛔ Yüksek Risk';
+        ketosisColor = 'var(--danger)';
+      } else {
+        ketosisRiskLabel = '⚠ Orta Risk';
+        ketosisColor = 'var(--warning)';
+      }
     }
   }
 
   return `
-    <div class="res-grid-4">
+    <div class="res-grid-5">
       <div class="summary-card" style="background:${assessment.grade === 'A' || assessment.grade === 'B' ? 'var(--primary-light)' : 'var(--below-bg)'}">
         <div class="val" style="color:${gradeColor}; font-size:2.5rem">${assessment.grade}</div>
         <div class="lbl">${t('rumen.health_grade')}</div>
@@ -158,6 +171,10 @@ export function renderRumenHealthPanel(composition, animal) {
       <div class="summary-card">
         <div class="val" style="color:${phColor}; font-size:1rem">${saraRiskLabel}</div>
         <div class="lbl">${t('rumen.sara_risk')}</div>
+      </div>
+      <div class="summary-card">
+        <div class="val" style="color:${ketosisColor}; font-size:1rem">${ketosisRiskLabel}</div>
+        <div class="lbl">${t('rumen.ketosis_risk')}</div>
       </div>
     </div>
 

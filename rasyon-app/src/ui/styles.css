@@ -1524,6 +1524,13 @@ body {
 
 /* ─── Responsive grid yardımcı sınıfları (panellerdeki inline grid yerine) ──
    Kullanım: class="res-grid-3" → masaüstü 3 kolon, tablet 2, mobil 1-2 kolon. */
+.res-grid-5 {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
 .res-grid-4 {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -2847,6 +2854,7 @@ details.acc-panel table.diag-table {
     flex: 1 1 calc(50% - 0.4rem);
   }
 
+  .res-grid-5>*,
   .res-grid-4>*,
   .res-grid-3>*,
   .res-grid-2>*,
