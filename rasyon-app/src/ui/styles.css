@@ -3790,11 +3790,20 @@ details.acc-panel table.diag-table {
 @media (max-width: 992px), (max-height: 500px) {
   .ai-panel {
     flex-direction: column;
-    height: calc(100vh - 140px); /* Account for bottom nav in mobile */
+    height: calc(100vh - 140px); /* Account for bottom nav in mobile portrait */
     border: none;
     box-shadow: none;
     background: var(--background);
   }
+}
+
+@media ((max-width: 992px) or (max-height: 500px)) and (orientation: landscape) {
+  .ai-panel {
+    height: calc(100vh - 80px) !important;
+  }
+}
+
+@media (max-width: 992px), (max-height: 500px) {
   
   .ai-main {
     background: var(--surface);

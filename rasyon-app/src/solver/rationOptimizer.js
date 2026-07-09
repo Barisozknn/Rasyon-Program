@@ -492,7 +492,9 @@ function composeResult({ feeds, solution, dmi, dmi_kg, nel, mp, minerals, traceM
   // Süt humması (hipokalsemi) risk skoru — FAZ 13.8 (Goff & Horst)
   // DCAD + Ca%KM + parite bazlı; esas geçiş dönemi (close_up) için anlamlı.
   const caPctDM = dmi_kg > 0 ? composition.ca_g / dmi_kg / 10 : 0;
-  const milkFever = milkFeverRisk(composition.dcad_meq ?? 0, caPctDM, animal.parity || 2);
+  const milkFever = animal.lactationStage === 'close_up' 
+    ? milkFeverRisk(composition.dcad_meq ?? 0, caPctDM, animal.parity || 2) 
+    : null;
 
   // Rumen pH 24 saatlik dinamik simülasyon (FAZ 8)
   const rumenDynamics = simulateRumenPH24h({
