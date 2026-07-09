@@ -320,3 +320,99 @@ export function downloadRationExcel({ animal, result, filename }) {
   const name = filename || `rasyon_${new Date().toISOString().slice(0, 10)}.xlsx`;
   XLSX.writeFile(wb, name);
 }
+
+/**
+ * Günlük Yükleme (TMR) İhtiyacı tablosunu Excel olarak indirir
+ */
+export function downloadTmrExcel(results) {
+  const lang = getSettings().language === 'en' ? 'en' : 'tr';
+  const L = (tr, en) => (lang === 'en' ? en : tr);
+
+  const tmrTotals = {};
+  results.filter(r => r.result && r.result.items).forEach(r => {
+    r.result.items.forEach(item => {
+      const feedId = item.id || item.feedId || item.name;
+      const feedName = item.name;
+      const dailyKg = item.asFedKg * (r.groupSize || 1);
+      if (!tmrTotals[feedId]) {
+        tmrTotals[feedId] = { name: feedName, kg: 0 };
+      }
+      tmrTotals[feedId].kg += dailyKg;
+    });
+  });
+
+  const tmrRowsData = Object.values(tmrTotals)
+    .sort((a, b) => b.kg - a.kg)
+    .map(t => [t.name, Number(t.kg.toFixed(1)), Number((t.kg * 30).toFixed(1))]);
+
+  const wb = XLSX.utils.book_new();
+
+  const titleRow = [L('Günlük Yükleme (TMR) İhtiyacı', 'Daily Loading (TMR) Requirement')];
+  const dateRow = [L('Tarih', 'Date'), new Date().toLocaleString(lang === 'en' ? 'en-GB' : 'tr-TR')];
+  
+  const headers = [L('Yem Adı', 'Feed Name'), L('Günlük Toplam (Kg)', 'Daily Total (Kg)'), L('Aylık Toplam (Kg)', 'Monthly Total (Kg)')];
+  
+  const allData = [
+    titleRow,
+    dateRow,
+    [],
+    headers,
+    ...tmrRowsData
+  ];
+
+  const ws = XLSX.utils.aoa_to_sheet(allData);
+  
+  // Sütun genişlikleri
+  ws['!cols'] = [{ wch: 40 }, { wch: 25 }, { wch: 25 }];
+  
+  // Tasarım
+  const range = XLSX.utils.decode_range(ws['!ref']);
+  for (let R = range.s.r; R <= range.e.r; ++R) {
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+      const cell = ws[XLSX.utils.encode_cell({c: C, r: R})];
+      if (!cell) continue;
+      
+      const isNum = typeof cell.v === 'number';
+      
+      if (R === 0 && C === 0) {
+        // Başlık
+        cell.s = { font: { bold: true, sz: 16, color: { rgb: "FF004B87" } } };
+      } else if (R === 3) {
+        // Tablo Header
+        cell.s = { 
+          fill: { fgColor: { rgb: "FF004B87" } }, 
+          font: { bold: true, color: { rgb: "FFFFFFFF" } },
+          alignment: { horizontal: "center", vertical: "center" },
+          border: {
+            top: { style: "thin", color: { rgb: "FFBFBFBF" } },
+            bottom: { style: "medium", color: { rgb: "FF004B87" } },
+            left: { style: "thin", color: { rgb: "FFBFBFBF" } },
+            right: { style: "thin", color: { rgb: "FFBFBFBF" } }
+          }
+        };
+      } else if (R > 3) {
+        // Tablo Satırları (Zebra)
+        const isEven = (R % 2 === 0);
+        cell.s = { 
+          fill: { fgColor: { rgb: isEven ? "FFF2F6FA" : "FFFFFFFF" } },
+          border: {
+            top: { style: "thin", color: { rgb: "FFE5E5E5" } },
+            bottom: { style: "thin", color: { rgb: "FFE5E5E5" } },
+            left: { style: "thin", color: { rgb: "FFE5E5E5" } },
+            right: { style: "thin", color: { rgb: "FFE5E5E5" } }
+          },
+          alignment: { horizontal: isNum ? "right" : "left", vertical: "center" }
+        };
+        if (isNum) {
+          cell.z = '#,##0.0 "kg"';
+        }
+      }
+    }
+  }
+
+  XLSX.utils.book_append_sheet(wb, ws, 'TMR İhtiyacı');
+  
+  const name = `tmr_ihtiyaci_${new Date().toISOString().slice(0, 10)}.xlsx`;
+  XLSX.writeFile(wb, name);
+}
+

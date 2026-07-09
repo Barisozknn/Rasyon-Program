@@ -622,3 +622,112 @@ export async function downloadHerdSummaryPDF(batchResults, meta = {}, filename) 
   const name = filename || `surusozet_${new Date().toISOString().slice(0, 10)}.pdf`;
   doc.save(name);
 }
+
+/**
+ * Sadece Günlük Yükleme (TMR) İhtiyacı tablosunu PDF olarak indirir
+ */
+export async function downloadTmrPDF(batchResults, filename) {
+  const fontBase64 = await loadTurkishFont();
+  const hasFont = !!fontBase64;
+
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+  const fontBoldBase64H = await loadTurkishFontBold();
+  if (hasFont) {
+    doc.addFileToVFS('DejaVuSans.ttf', fontBase64);
+    doc.addFont('DejaVuSans.ttf', 'DejaVuSans', 'normal');
+    if (fontBoldBase64H) {
+      doc.addFileToVFS('DejaVuSans-Bold.ttf', fontBoldBase64H);
+      doc.addFont('DejaVuSans-Bold.ttf', 'DejaVuSans', 'bold');
+    }
+  }
+  const BODY_FONT = hasFont ? 'DejaVuSans' : 'helvetica';
+  const BOLD_FONT_H = hasFont ? 'DejaVuSans' : 'helvetica';
+  const tblBody   = hasFont ? { font: 'DejaVuSans', fontStyle: 'normal' } : {};
+  const str       = hasFont ? (s) => (s ?? '') : ascii;
+
+  const lang = getSettings().language === 'en' ? 'en' : 'tr';
+  const L = (tr, en) => (lang === 'en' ? en : tr);
+
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const margin = 15;
+  let y = margin;
+
+  // Başlık
+  doc.setFontSize(16);
+  doc.setFont(BOLD_FONT_H, 'bold');
+  doc.setTextColor(0, 75, 135); // Koyu Mavi
+  doc.text(str(L('Günlük Yükleme (TMR) İhtiyacı', 'Daily Loading (TMR) Requirement')), pageWidth / 2, y, { align: 'center' });
+  y += 7;
+
+  doc.setFontSize(9);
+  doc.setFont(BODY_FONT, 'normal');
+  doc.setTextColor(100);
+  doc.text(`${new Date().toLocaleString(lang === 'en' ? 'en-GB' : 'tr-TR')} | ${batchResults.length} ${L('profil hesaplandı', 'profiles calculated')}`,
+    pageWidth / 2, y, { align: 'center' });
+  y += 10;
+
+  // TMR Tablosu Veri Hazırlama
+  const tmrTotals = {};
+  batchResults.filter(r => r.result && r.result.items).forEach(r => {
+    r.result.items.forEach(item => {
+      const feedId = item.id || item.feedId || item.name;
+      const feedName = item.name;
+      const dailyKg = item.asFedKg * (r.groupSize || 1);
+      if (!tmrTotals[feedId]) {
+        tmrTotals[feedId] = { name: feedName, kg: 0 };
+      }
+      tmrTotals[feedId].kg += dailyKg;
+    });
+  });
+
+  const tmrArray = Object.values(tmrTotals).sort((a, b) => b.kg - a.kg);
+  
+  if (tmrArray.length === 0) {
+    doc.setFontSize(11);
+    doc.text(str(L('Hesaplanmış TMR ihtiyacı bulunamadı.', 'No calculated TMR requirement found.')), margin, y);
+    doc.save(filename || `tmr_ihtiyaci_${new Date().toISOString().slice(0, 10)}.pdf`);
+    return;
+  }
+
+  const locale = lang === 'en' ? 'en-GB' : 'tr-TR';
+  const tmrRowsList = tmrArray.map(t => [
+    str(t.name),
+    `${t.kg.toLocaleString(locale, { maximumFractionDigits: 1 })} kg`,
+    `${(t.kg * 30).toLocaleString(locale, { maximumFractionDigits: 1 })} kg`
+  ]);
+
+  autoTable(doc, {
+    startY: y,
+    margin: { left: margin, right: margin },
+    head: [[str(L('Yem Adı', 'Feed Name')), str(L('Günlük Toplam (Kg)', 'Daily Total (Kg)')), str(L('Aylık Toplam (Kg)', 'Monthly Total (Kg)'))]],
+    body: tmrRowsList,
+    styles: { fontSize: 9, cellPadding: 2, ...tblBody },
+    headStyles: { fillColor: [0, 75, 135], textColor: 255, fontSize: 10, fontStyle: 'bold', halign: 'center' },
+    columnStyles: {
+      0: { fontStyle: 'bold' },
+      1: { halign: 'right', cellWidth: 45 },
+      2: { halign: 'right', cellWidth: 45 },
+    },
+    alternateRowStyles: { fillColor: [242, 246, 250] },
+    didParseCell: data => {
+      if (data.section === 'body') {
+        data.cell.styles.textColor = [50, 50, 50];
+      }
+    }
+  });
+
+  // Alt bilgi
+  const pageCount = doc.internal.getNumberOfPages();
+  for (let p = 1; p <= pageCount; p++) {
+    doc.setPage(p);
+    doc.setFontSize(8);
+    doc.setTextColor(120);
+    doc.text(L(`Süt Sığırı Rasyon Programı — Sayfa ${p} / ${pageCount}`, `Dairy Cattle Ration Program — Page ${p} / ${pageCount}`),
+      pageWidth / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
+  }
+
+  const name = filename || `tmr_ihtiyaci_${new Date().toISOString().slice(0, 10)}.pdf`;
+  doc.save(name);
+}
+

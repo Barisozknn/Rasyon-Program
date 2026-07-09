@@ -487,8 +487,14 @@ function renderBatchResults(el, results, milkPrice) {
 
       return tmrRows ? `
         <div class="card mt-2 p-1 border-primary">
-          <div class="card-title text-primary" style="margin-bottom:0.5rem">
-            <i class="ti ti-truck-delivery"></i> Günlük Yükleme (TMR) İhtiyacı
+          <div class="flex-between" style="margin-bottom:0.5rem">
+            <div class="card-title text-primary" style="margin-bottom:0">
+              <i class="ti ti-truck-delivery"></i> Günlük Yükleme (TMR) İhtiyacı
+            </div>
+            <div class="flex gap-1 no-print">
+              <button class="btn btn-sm btn-outline" id="btn-tmr-pdf" title="TMR İhtiyacını PDF Olarak İndir" style="border-color:var(--danger); color:var(--danger)"><i class="ti ti-file-type-pdf"></i> PDF İndir</button>
+              <button class="btn btn-sm btn-outline" id="btn-tmr-excel" title="TMR İhtiyacını Excel Olarak İndir" style="border-color:var(--success); color:var(--success)"><i class="ti ti-file-spreadsheet"></i> Excel İndir</button>
+            </div>
           </div>
           <div class="text-small text-muted" style="margin-bottom:1rem">
             Tüm hesaplanan grupların günlük ve aylık toplam karma ihtiyacı
@@ -598,22 +604,55 @@ function renderRow(r, idx) {
 // ─── Sürü PDF İndirme (FAZ 6 plan #4) ────────────────────────────────────────
 function attachBatchPDFHandler(container) {
   const btn = container.querySelector('#btn-herd-pdf');
-  if (!btn) return;
-  btn.addEventListener('click', async () => {
-    if (!_lastBatchResults || _lastBatchResults.length === 0) {
-      showToast(t('herd.pdf_run_first'), 'error');
-      return;
-    }
-    try {
-      showToast(t('herd.pdf_prep'), 'info', 3000);
-      const { downloadHerdSummaryPDF } = await import('../../reports/pdfExport.js');
-      await downloadHerdSummaryPDF(_lastBatchResults, { milkPrice_tl: _lastMilkPrice });
-      showToast(t('herd.pdf_done'), 'success');
-    } catch (err) {
-      console.error('Sürü PDF hatası:', err);
-      showToast(t('herd.pdf_err') + err.message, 'error');
-    }
-  });
+  if (btn) {
+    btn.addEventListener('click', async () => {
+      if (!_lastBatchResults || _lastBatchResults.length === 0) {
+        showToast(t('herd.pdf_run_first'), 'error');
+        return;
+      }
+      try {
+        showToast(t('herd.pdf_prep'), 'info', 3000);
+        const { downloadHerdSummaryPDF } = await import('../../reports/pdfExport.js');
+        await downloadHerdSummaryPDF(_lastBatchResults, { milkPrice_tl: _lastMilkPrice });
+        showToast(t('herd.pdf_done'), 'success');
+      } catch (err) {
+        console.error('Sürü PDF hatası:', err);
+        showToast(t('herd.pdf_err') + err.message, 'error');
+      }
+    });
+  }
+
+  const btnTmrPdf = container.querySelector('#btn-tmr-pdf');
+  if (btnTmrPdf) {
+    btnTmrPdf.addEventListener('click', async () => {
+      if (!_lastBatchResults || _lastBatchResults.length === 0) return;
+      try {
+        showToast('PDF hazırlanıyor...', 'info', 2000);
+        const { downloadTmrPDF } = await import('../../reports/pdfExport.js');
+        await downloadTmrPDF(_lastBatchResults);
+        showToast('TMR PDF indirildi', 'success');
+      } catch (err) {
+        console.error('TMR PDF hatası:', err);
+        showToast('PDF hatası: ' + err.message, 'error');
+      }
+    });
+  }
+
+  const btnTmrExcel = container.querySelector('#btn-tmr-excel');
+  if (btnTmrExcel) {
+    btnTmrExcel.addEventListener('click', async () => {
+      if (!_lastBatchResults || _lastBatchResults.length === 0) return;
+      try {
+        showToast('Excel hazırlanıyor...', 'info', 2000);
+        const { downloadTmrExcel } = await import('../../reports/excelExport.js');
+        await downloadTmrExcel(_lastBatchResults);
+        showToast('TMR Excel indirildi', 'success');
+      } catch (err) {
+        console.error('TMR Excel hatası:', err);
+        showToast('Excel hatası: ' + err.message, 'error');
+      }
+    });
+  }
 }
 
 // ─── Sürü Geneli Yem Seçimi (Bağımsız Modül) ─────────────────────────────────
