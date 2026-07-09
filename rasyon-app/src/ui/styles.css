@@ -3787,7 +3787,7 @@ details.acc-panel table.diag-table {
   display: none;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 992px), (max-height: 500px) {
   .ai-panel {
     flex-direction: column;
     height: calc(100vh - 140px); /* Account for bottom nav in mobile */

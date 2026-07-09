@@ -458,10 +458,9 @@ export async function renderAiAssistantPanel(container) {
     const typingId = 'typing-indicator';
     const typingHtml = `
       <div class="ai-message ai-message-assistant" id="${typingId}">
-        <div class="ai-message-content typing">
-          <div class="typing-indicator">
-            <span></span><span></span><span></span>
-          </div>
+        <div class="ai-message-content typing" style="display: flex; align-items: center; gap: 0.5rem; opacity: 0.7;">
+          <i class="ti ti-loader ti-spin" style="font-size: 1.2rem;"></i>
+          <span style="font-style: italic;">Asistan düşünüyor...</span>
         </div>
       </div>
     `;

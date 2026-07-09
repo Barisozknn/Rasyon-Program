@@ -20,6 +20,7 @@ export const TABLE_MAP = {
   fieldObservations: 'field_observations',
   farms: 'farms',
   userFeeds: 'user_feeds',   // FAZ 16.11 — advisor-global kullanıcı yemleri
+  aiChats: 'ai_chats',       // FAZ 4 — AI Sohbet Geçmişi
 };
 
 /** Sahip-kapsamlı (farm_id taşımayan) store'lar: çiftlikler + kullanıcı yemleri. */
