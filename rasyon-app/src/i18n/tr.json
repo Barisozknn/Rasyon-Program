@@ -24,7 +24,6 @@
     "include_data": "Çiftlik Verilerimi Ekle (Rasyon Analizi İçin)",
     "systemPrompt": "Sen NASEM 2021, NRC 2001 ve CNCPS standartlarına tam hakîm; Ziraat Mühendisliği, Zootekni ve Veteriner Hekimlik alanlarında en üst düzey akademik ve pratik bilgiye sahip bir Uzman Başdanışmansın. Uzmanlık alanların sadece süt sığırı rasyonu ile sınırlı değildir; Zooloji, Hayvansal Üretim Sistemleri, Hayvan Ekolojisi, Tarımsal Biyoteknoloji, Tarımsal Mekanizasyon, Yem Bitkileri ve Çayır Mera Yönetimi, Entomoloji ve Fitopatoloji (kısmen), Hayvan Besleme, Besleme Ekolojisi, İstatistik, Hayvan Anatomisi ve Fizyolojisi, Hayvan Barınakları, Hayvan Besleme Biyokimyası, Yemler Bilgisi, Katkıları ve Toksikolojisi, Etoloji, Genetik, Islah, Yetiştirme, Hayvan Sağlığı, Hijyeni ve Hastalıkları, Üreme ve Yapay Tohumlama, Üretim Fizyolojisi, Ruminant ve Kanatlı (Kümes) Besleme, Sığır ve Koyun Yetiştiriciliği, Sağlık Koruma Yönetimi, Sürü Yönetimi ve Ekonomik Analiz gibi tüm hayvancılık ve ziraat disiplinlerini kapsar.\n\nKullanıcının çiftlik verileri aşağıdaki JSON yapısında sağlanmaktadır:\n\n{{data}}\n\nBu JSON şu bölümleri içerir:\n\n**currentSession** — O an aktif rasyon oturumu:\n  - animal: hayvan profili (bw, milkYield, milkFat, milkProtein, breed, dim, parity)\n  - feeds: seçili yemler ve miktarları\n  - rationResult: optimize sonucu (dmi, nel, cp, ndf, cost, statusName)\n\n**rationHistory** — Kullanıcının son 5 kayıtlı rasyon snapshootu:\n  - name, savedAt, status, totalCost\n  - animal: o rasyon için hayvan profili\n  - ingredients: rasyon bileşenleri listesi. Her hammadde için: name (yem adı), dmKg (KM kg/gün), asFedKg (yaş madde kg/gün), pctDm (KM içindeki pay yüzdesi), costPerDay (günlük maliyet)\n  - composition: tam besin madde analizi. Alanlar: nel_mcal (NEL Mcal/gün), cp_g (HP g/gün), cp_pct (HP yüzde KM), mp_g (Sağlanan MP g/gün), rup_g (RUP g/gün), rdp_g (RDP g/gün), ndf_pct (NDF yüzde KM), adf_pct (ADF yüzde KM), nfc_pct (NFC yüzde KM), starch_pct (nişasta yüzde KM), fat_pct (yağ yüzde KM), ash_pct (kül yüzde KM), ca_g (Ca g/gün), p_g (P g/gün), mg_g (Mg g/gün), k_g (K g/gün), na_g (Na g/gün), dcad_meq (DCAD mEq/100g)\n  - requirements: hedef NEL (mcal) ve MP (g/gün) değerleri\n  - milkFever: süt humması risk skoru\n  - infeasibilityDiagnosis: (Eğer varsa) Çözülemeyen rasyonlarda birbiriyle çelişen kısıtların teşhisi (IIS).\n  - relaxation: (Eğer varsa) Rasyonu çözebilmek için esnetilmek zorunda kalınan kısıtlar.\n\n**animalProfiles** — Kayıtlı tüm hayvan profilleri (name, breed, bw, milkYield, parity, lactationStage, dim)\n\n**recentObservations** — Tüm saha gözlemleri (date, milkYield, milkFat, milkProtein, bcs, dmiActual, notes)\n\n**farm** — Çiftlik ve sürü bilgisi (name, address, advisor, herdSize)\n\nGörevin:\n1. Kullanıcının sorusunu geniş ziraat, zootekni ve veterinerlik bilginle, çiftlik verilerini dikkate alarak yanıtla.\n2. Rasyon karşılaştırması yaparken ingredients ve composition alanlarını aktif kullan; hammadde miktarlarını ve besin değerlerini somut olarak raporla.\n3. Gözlem trendlerini yorumla (süt verimi, BCS, DMI zamanla nasıl değişmiş?).\n3b. Eğer currentSession veya rationHistory içinde statusName 'infeasible' ise, infeasibilityDiagnosis ve relaxation verilerini dikkatlice incele. Kullanıcıya hangi besin kısıtlarının birbiriyle çeliştiğini anlaşılır bir Türkçe ile anlat ve rasyonu çözebilmesi için pratik zooteknik öneriler ver (örneğin: 'Şu yemi eklemelisin', 'Şu kısıtı esnetmelisin').\n4. Eksik veya null veri varsa bunu kullanıcıya belirt, sonuç üretemiyorsan nedenini açıkla.\n5. Pratik, uygulanabilir ve bilimsel tavsiyeleri dengeli sun; akademik referansları gerektiğinde ekle.\n\nÇOK ÖNEMLİ KURALLAR:\n1. KESİNLİKLE VE SADECE TÜRKÇE YANIT VER. Asla Çince (örneğin 详细), Japonca, İngilizce veya başka bir dilde kelime kullanma! Yanıtın %100 kusursuz Türkçe olmalıdır.\n2. Yanıtlarını HER ZAMAN Markdown formatında yapılandır. Önemli vurguları **kalın** yap, listeler için madde imleri kullan, gerektiğinde tablolar oluştur.\n3. Yanıtın son derece profesyonel, anlaşılır ve akademik/pratik bir dengede olmalıdır.\n4. Teknik, zootekni ve rasyon sorularına vereceğin cevapları HER ZAMAN maddeler (bullet points) halinde ver. Önce sorunu tanımla, sonra çözümü yaz.\n5. Emin olmadığın konularda asla varsayım yapma. Sadece rasyon, hayvan besleme veya ziraat/veterinerlik üzerine olan sorulara cevap ver.\n6. \"Merhaba\", \"Nasılsın\" gibi teknik olmayan, sohbet amaçlı sorulara gereksiz yere uzatmadan, çok kısa ve net cevap verip konuyu ana işine getir.\n7. Eğer kullanıcı tarım, ziraat, hayvancılık, zootekni veya veterinerlik alanları dışında tamamen alakasız bir konu sorarsa, asla hata verme. Bunun yerine nazikçe 'Ben tarım, zootekni ve veterinerlik alanlarında uzmanlaşmış bir asistanım, bu konuda yardımcı olamıyorum' şeklinde cevap ver."
   },
-
   "bottomNav": {
     "more": "Menü"
   },
@@ -36,7 +35,8 @@
     "add": "Ekle",
     "close": "Kapat",
     "loading": "Yükleniyor...",
-    "optimize": "Rasyonu Optimize Et"
+    "optimize": "Rasyonu Optimize Et",
+    "tab_help_title": "Bu sekme ne işe yarar?"
   },
   "dashboard": {
     "quick_actions": "Hızlı İşlemler",
@@ -1187,7 +1187,52 @@
     "herd_co2": "Sürü CO₂ eşdeğeri",
     "pdf_done": "PDF hazır!",
     "pdf_err": "PDF oluşturma hatası",
-    "pdf_prep": "PDF hazırlanıyor..."
+    "pdf_prep": "PDF hazırlanıyor...",
+    "batch_panel_title": "Çiftlik Yönetim ve TMR Paneli",
+    "assignments_title": "Aktif Rasyon Atamaları",
+    "assignments_desc": "Aşağıdaki her grup/profil için Rasyon Kurucu'da kaydettiğiniz reçetelerden birini seçin.",
+    "col_profile_name": "Profil / Grup Adı",
+    "col_herd": "Bağlı Olduğu Sürü",
+    "col_active_ration": "Aktif Kayıtlı Rasyon",
+    "btn_calc_farm": "Çiftlik Tablosunu Hesapla",
+    "select_ration": "— Rasyon Seçin —",
+    "tmr_title": "Günlük Yükleme (TMR) İhtiyacı",
+    "tmr_desc": "Tüm hesaplanan grupların günlük ve aylık toplam karma ihtiyacı.",
+    "col_feed_name": "Yem Adı",
+    "col_daily_total": "Günlük Toplam (Kg)",
+    "col_monthly_total": "Aylık Toplam (Kg)",
+    "btn_pdf_tmr": "TMR İhtiyacını PDF Olarak İndir",
+    "btn_excel_tmr": "TMR İhtiyacını Excel Olarak İndir",
+    "stock_title": "Stok Takibi",
+    "stock_desc": "Günlük TMR ihtiyacına göre stoklarınızın ne kadar süre yeteceğini hesaplayın.",
+    "col_requirement": "İhtiyaç",
+    "col_stock": "Stok Miktarı",
+    "col_planned_time": "Planlanan Zaman",
+    "btn_pdf_stock": "Stok Raporunu PDF İndir",
+    "btn_excel_stock": "Stok Raporunu Excel İndir",
+    "stock_missing_ton": "{val} ton eksik",
+    "stock_missing_kg": "{val} kg eksik",
+    "stock_enough": "{val} gün yetecek",
+    "btn_clear": "Temizle",
+    "calculating": "Hesaplanıyor...",
+    "calculating_tmr": "TMR İhtiyaçları Hesaplanıyor...",
+    "pdf_preparing": "PDF hazırlanıyor...",
+    "excel_preparing": "Excel hazırlanıyor...",
+    "stock_pdf_preparing": "Stok PDF hazırlanıyor...",
+    "stock_excel_preparing": "Stok Excel hazırlanıyor...",
+    "saved_ration_missing": "Kayıtlı rasyon atanmamış",
+    "ration_not_found": "Atanan rasyon bulunamadı (silinmiş olabilir)",
+    "ration_data_missing": "Kayıtlı rasyonun sonuç verisi eksik",
+    "progress_calc": "{name} profil için hesaplama tamamlandı",
+    "total_summary": "Toplam Özet",
+    "comparative_table": "Karşılaştırma Tablosu",
+    "daily_loading": "Günlük Yükleme (TMR) İhtiyacı",
+    "day": "gün",
+    "days": "gün",
+    "week": "hafta",
+    "month": "ay",
+    "year": "yıl",
+    "stock_saved": "Stok bilgileri başarıyla kaydedildi"
   },
   "imp": {
     "aria": "Yem içe aktarma",
@@ -1771,5 +1816,16 @@
     "save": "Kaydet",
     "saved": "Çiftlik kaydedildi",
     "title": "Çiftlik Yönetimi"
+  },
+  "tabHelp": {
+    "dashboard": "<b>🏠 Dashboard</b> — Programa giriş ekranı.<br>• <b>Makro Özet:</b> Son optimize edilen rasyonu ve ekonomik durumu tek bakışta gösterir.<br>• <b>Trendler:</b> Son 7 güne ait saha gözlemlerini değerlendirir.<br>• <b>Hatırlatıcılar:</b> Süt humması riski, eksik ölçüm ve düşen süt verimi gibi konularda sizi uyarır.",
+    "animal": "<b>📋 Hayvan Profili</b> — Rasyonun hazırlanacağı hedef hayvanı tanımlar.<br>• <b>Parametreler:</b> Ağırlık, süt verimi ve laktasyon sayısına göre enerji/protein ihtiyaçlarını hesaplar.<br>• <b>Gruplama:</b> Profilleri bir sürü grubuna bağlayarak, çiftlik panelinde sürü ölçek TMR hesaplayabilirsiniz.",
+    "feeds": "<b>🌾 Yem Kütüphanesi</b> — Tüm yem ve katkı maddelerinin yönetim panelidir.<br>• <b>Yemlerim:</b> Kuru madde, NDF, nişasta gibi değerlerini düzenleyebildiğiniz yerel yemleriniz.<br>• <b>Bulut Veritabanı:</b> 500+ şablon içeren resmi veritabanı (NRC, NASEM, CNCPS).<br>• <b>Klonlama:</b> Buluttaki bir yemi düzenlemek için kütüphanenize kopyalayın.",
+    "ration": "<b>⚖️ Rasyon Kurucu</b> — Yemleri seçtiğiniz ve kuralları belirlediğiniz ana modüldür.<br>• <b>Seçim:</b> Yemleri sürükleyip bırakarak listeye ekleyin.<br>• <b>Kısıtlamalar:</b> Optimizasyon hedefleri (örn. NDF %28-35, DCAD -100).<br>• <b>Optimize Et:</b> Kurallarınıza uyan en ucuz kombinasyonu bulur.",
+    "results": "<b>📊 Sonuçlar Paneli</b> — Optimize edilen rasyonun detaylı analizidir.<br>• <b>Uyum:</b> Hangi kısıtlamaların sağlandığını veya esnetildiğini gösterir.<br>• <b>İşkembe ve DCAD:</b> Ketozis/SARA riskleri, geçiş dönemi DCAD dengesi.<br>• <b>Dışa Aktar:</b> Geçmişe kaydedin veya PDF/Excel olarak indirin.",
+    "herd": "<b>🚜 Çiftlik Yönetim ve TMR Paneli</b> — Çiftliğinizdeki tüm grupların yem yönetimini tek ekrandan yapmanızı sağlar.<br>• <b>Rasyon Atama:</b> Kayıtlı rasyonları ilgili gruplara atayın.<br>• <b>Günlük TMR İhtiyacı:</b> Hayvan sayıları üzerinden çiftliğinizin günlük toplam karma yem tonajını hesaplar.<br>• <b>Maliyet Takibi:</b> Tüm çiftliğin makro karlılığını gösterir.<br>• <b>Stok Takibi:</b> Sürünüzün TMR ihtiyacına göre mevcut yem stoklarınızın kaç gün yeteceğini hesaplar.",
+    "prices": "<b>💰 Fiyat Yöneticisi</b> — Hızlı yem fiyatı güncelleyicisi.<br>• <b>Merkezi:</b> Tüm yem fiyatlarınızı tek bir yerden güncelleyin.<br>• <b>Kaydet:</b> Güncellenen fiyatlar gelecekteki optimizasyonlarda ve IOFC hesaplarında kullanılır.",
+    "observations": "<b>📊 Saha Gözlemleri</b> — Gerçek saha verisi giriş modülü.<br>• <b>Ölçümler:</b> Gerçekleşen süt verimi, kondisyon (BCS) ve idrar pH kayıtları.<br>• <b>Takip:</b> Dashboard trendleri ve doğru uyarılar için gereklidir.",
+    "settings": "<b>⚙️ Ayarlar</b> — Genel uygulama tercihleri.<br>• <b>Yerelleştirme:</b> Dil ve birim sistemlerini (metrik/emperyal) değiştirin.<br>• <b>Hesaplama:</b> CNCPS iteratif motorunu veya DMI tokluk modellerini açıp kapatın.<br>• <b>Bulut Senkronizasyonu:</b> Bulut yedekleme anahtarlarını ve veri aktarımını yönetin."
   }
 }

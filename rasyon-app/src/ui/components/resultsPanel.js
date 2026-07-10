@@ -72,14 +72,10 @@ export function renderResultsPanel(container, state) {
       <!-- 📖 Sekme Yardımı -->
       <details class="tab-help-accordion" style="margin-bottom:0.75rem">
         <summary style="cursor:pointer; font-weight:600; color:var(--primary); display:flex; align-items:center; gap:0.4rem">
-          <i class="ti ti-info-circle"></i> Bu sekme ne işe yarar? <span style="font-size:0.75rem; font-weight:400; color:var(--text-muted); margin-left:auto">▾</span>
+          <i class="ti ti-info-circle"></i> ${t('common.tab_help_title')} <span style="font-size:0.75rem; font-weight:400; color:var(--text-muted); margin-left:auto">▾</span>
         </summary>
         <div class="info-box" style="margin-top:0.5rem; font-size:0.85rem; line-height:1.7">
-          <b>📊 Sonuçlar</b> — Optimize edilmiş rasyonun tüm detaylarını buradan inceleyin.<br>
-          • <b>Özet kartlar:</b> KM tüketimi, NEL, MP, NDF, toplam maliyet özetlenir.<br>
-          • <b>Diagnostik:</b> Hangi besin maddesinin karşılanıp karşılanmadığını gösterir; yeşil = tam, sarı = yakın, kırmızı = eksik.<br>
-          • <b>Amino Asit Dengesi:</b> Tedarik (rasyondan) vs. Gereksinim (hayvan profilinden sabit hesaplanan hedef) karşılaştirması.<br>
-          • <b>PDF / Excel</b> butonlarıyla raporu dışa aktarabilir, <b>Kaydet</b> ile geçmişe ekleyebilirsiniz.
+          ${t('tabHelp.results')}
         </div>
       </details>
 
@@ -136,14 +132,10 @@ export function renderResultsPanel(container, state) {
     <!-- 📖 Sekme Yardımı -->
     <details class="tab-help-accordion" style="margin-bottom:0.75rem">
       <summary style="cursor:pointer; font-weight:600; color:var(--primary); display:flex; align-items:center; gap:0.4rem">
-        <i class="ti ti-info-circle"></i> Bu sekme ne işe yarar? <span style="font-size:0.75rem; font-weight:400; color:var(--text-muted); margin-left:auto">▾</span>
+        <i class="ti ti-info-circle"></i> ${t('common.tab_help_title')} <span style="font-size:0.75rem; font-weight:400; color:var(--text-muted); margin-left:auto">▾</span>
       </summary>
       <div class="info-box" style="margin-top:0.5rem; font-size:0.85rem; line-height:1.7">
-        <b>📊 Sonuçlar</b> — Optimize edilmiş rasyonun tüm detaylarını buradan inceleyin.<br>
-        • <b>Özet kartlar:</b> KM tüketimi, NEL, MP, NDF, toplam maliyet özetlenir.<br>
-        • <b>Diagnostik:</b> Hangi besin maddesinin karşılanıp karşılanmadığını gösterir; yeşil = tam, sarı = yakın, kırmızı = eksik.<br>
-        • <b>Amino Asit Dengesi:</b> Tedarik (rasyondan) vs. Gereksinim (hayvan profilinden sabit hesaplanan hedef) karşılaştırması.<br>
-        • <b>PDF / Excel</b> butonlarıyla raporu dışa aktarabilir, <b>Kaydet</b> ile geçmişe ekleyebilirsiniz.
+        ${t('tabHelp.results')}
       </div>
     </details>
 

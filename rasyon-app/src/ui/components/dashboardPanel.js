@@ -102,16 +102,10 @@ export async function renderDashboardPanel(container, state, options = {}) {
       <!-- 📖 Sekme Yardımı -->
       <details class="tab-help-accordion" style="margin-bottom:0.75rem; grid-column: 1/-1">
         <summary style="cursor:pointer; font-weight:600; color:var(--primary); display:flex; align-items:center; gap:0.4rem">
-          <i class="ti ti-info-circle"></i> Bu sekme ne işe yarar? <span style="font-size:0.75rem; font-weight:400; color:var(--text-muted); margin-left:auto">▾</span>
+          <i class="ti ti-info-circle"></i> ${t('common.tab_help_title')} <span style="font-size:0.75rem; font-weight:400; color:var(--text-muted); margin-left:auto">▾</span>
         </summary>
         <div class="info-box" style="margin-top:0.5rem; font-size:0.85rem; line-height:1.7">
-          <b>🏠 Ana Panel</b> — Programın genel durumuna tek bakışta göz atın.<br>
-          • <b>Hızlı İşlemler:</b> Hayvan profili oluşturmak, rasyon optimize etmek veya fiyat güncellemek için kısayol butonları.<br>
-          • <b>Son Rasyon:</b> En son optimize ettiğiniz rasyonun KM tüketimi, NEL, HP ve maliyeti.<br>
-          • <b>Sürü Durumu:</b> Kayıtlı hayvan profilleri ve sürü gruplarının özeti.<br>
-          • <b>IOFC Tahmini:</b> Son rasyona ve süt fiyatına göre inek başı ve sürü ölçeğinde tahmini günlük kâr.<br>
-          • <b>Hatırlatıcılar:</b> BCS düşüşü, DCAD sorunu veya rasyon infeasibility gibi önemli uyarılar burada görünür.<br>
-          • <b>Trend Grafiği:</b> Son 7 günün gözlem verileri (süt verimi + BCS zaman serisi).
+          ${t('tabHelp.dashboard')}
         </div>
       </details>
 
@@ -558,14 +552,14 @@ function buildReminders({ lastResult, observations, profiles, animal = {}, stock
       if (stockKg < requiredKg) {
         const missingKg = requiredKg - stockKg;
         let missingText = missingKg >= 1000 
-          ? (missingKg / 1000).toLocaleString(undefined, {maximumFractionDigits:1}) + ' ton eksik'
-          : missingKg.toLocaleString(undefined, {maximumFractionDigits:1}) + ' kg eksik';
+          ? t('dashboard.missing_ton', { val: (missingKg / 1000).toLocaleString(undefined, {maximumFractionDigits:1}) })
+          : t('dashboard.missing_kg', { val: missingKg.toLocaleString(undefined, {maximumFractionDigits:1}) });
         
         reminders.push({
           level: 'danger',
           icon: 'ti-packages',
-          title: 'Yetersiz Yem Stoğu',
-          text: `${stock.feedName || 'Yem'} stoğu yetersiz (${missingText}). Plan: ${stock.planQty} ${stock.planUnit}.`,
+          title: t('dashboard.stock_alert_title'),
+          text: t('dashboard.stock_alert_text', { feed: stock.feedName || 'Yem', missing: missingText, plan: stock.planQty, unit: stock.planUnit }),
           nav: 'herd',
         });
       }

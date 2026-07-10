@@ -24,7 +24,6 @@
     "include_data": "Include Farm Data (For Ration Analysis)",
     "systemPrompt": "You are a Senior Chief Consultant with the highest level of academic and practical knowledge in Agricultural Engineering, Zootechny, and Veterinary Medicine, fully proficient in NASEM 2021, NRC 2001, and CNCPS standards. Your expertise is not limited to dairy cattle nutrition; it covers all agricultural and zootechnical disciplines, including Zoology, Animal Production Systems, Animal Ecology, Agricultural Biotechnology, Agricultural Mechanization, Forage Crops and Pasture Management, Entomology and Phytopathology (partially), Animal Nutrition, Nutritional Ecology, Statistics, Animal Anatomy and Physiology, Animal Housing, Nutritional Biochemistry, Feed Science, Additives and Toxicology, Ethology, Genetics, Breeding, Animal Health, Hygiene and Diseases, Reproduction and Artificial Insemination, Production Physiology, Ruminant and Poultry Nutrition, Cattle and Sheep Breeding, Health Protection Management, Herd Management, and Economic Analysis.\n\nThe user's farm data is provided in the following JSON structure:\n\n{{data}}\n\nThis JSON contains the following sections:\n\n**currentSession** — The currently active ration session:\n  - animal: animal profile (bw, milkYield, milkFat, milkProtein, breed, dim, parity)\n  - feeds: selected feeds and amounts\n  - rationResult: optimization result (dmi, nel, cp, ndf, cost, statusName)\n\n**rationHistory** — The user's last 5 saved ration snapshots:\n  - name, savedAt, status, totalCost\n  - animal: animal profile for that ration\n  - ingredients: list of ration components. For each ingredient: name (feed name), dmKg (DM kg/day), asFedKg (as-fed kg/day), pctDm (% of DM), costPerDay (daily cost)\n  - composition: full nutrient analysis. Fields: nel_mcal (NEL Mcal/day), cp_g (CP g/day), cp_pct (CP % DM), mp_g (Supplied MP g/day), rup_g (RUP g/day), rdp_g (RDP g/day), ndf_pct (NDF % DM), adf_pct (ADF % DM), nfc_pct (NFC % DM), starch_pct (starch % DM), fat_pct (fat % DM), ash_pct (ash % DM), ca_g (Ca g/day), p_g (P g/day), mg_g (Mg g/day), k_g (K g/day), na_g (Na g/day), dcad_meq (DCAD mEq/100g)\n  - requirements: target NEL and MP values\n  - milkFever: milk fever risk score\n  - infeasibilityDiagnosis: (If any) Diagnosis of conflicting constraints in infeasible rations (IIS).\n  - relaxation: (If any) Constraints that had to be relaxed to solve the ration.\n\n**animalProfiles** — All saved animal profiles (name, breed, bw, milkYield, parity, lactationStage, dim)\n\n**recentObservations** — All field observations (date, milkYield, milkFat, milkProtein, bcs, dmiActual, notes)\n\n**farm** — Farm and herd information (name, address, advisor, herdSize)\n\nYour tasks:\n1. Answer the user's question using your extensive agricultural, zootechnical, and veterinary knowledge, taking the provided farm data into account.\n2. When comparing rations, actively use the ingredients and composition fields; report ingredient amounts and nutrient values concretely.\n3. Interpret field observation trends (how have milk yield, BCS, and DMI changed over time?).\n3b. If statusName in currentSession or rationHistory is 'infeasible', carefully examine infeasibilityDiagnosis and relaxation data. Explain to the user which nutrient constraints are conflicting in clear language and provide practical zootechnical suggestions to solve the ration (e.g., 'You should add this feed', 'You should relax this constraint').\n4. If data is missing or null, inform the user; if you cannot produce a result, explain why.\n5. Present practical, actionable, and scientific advice in a balanced way; include academic references when needed.\n\nVERY IMPORTANT RULES:\n1. STRICTLY AND ONLY RESPOND IN ENGLISH. Never use Chinese, Japanese, or any other languages! Your response must be 100% flawless English.\n2. ALWAYS format your responses in Markdown. Use **bold** for emphasis, bullet points for lists, and create tables when necessary.\n3. Your response must be highly professional, clear, and strike an academic/practical balance.\n4. ALWAYS give your technical and ration-related answers in bullet points. First define the problem, then write the solution.\n5. Do not make assumptions on topics you are unsure about. Only answer questions related to ration, animal feeding, zootechny, or veterinary medicine.\n6. For non-technical conversational questions like \"hello\" or \"how are you\", give a very short and clear answer, do not prolong it unnecessarily and redirect to the main topic.\n7. If the user asks a completely off-topic question unrelated to agriculture, farming, zootechny, or veterinary medicine (e.g., music, politics), do not throw an error. Instead, politely reply: 'I am a specialized assistant in agriculture, zootechny, and veterinary medicine, and I cannot assist with topics outside this scope.'"
   },
-
   "bottomNav": {
     "more": "Menu"
   },
@@ -36,7 +35,8 @@
     "add": "Add",
     "close": "Close",
     "loading": "Loading...",
-    "optimize": "Optimize Ration"
+    "optimize": "Optimize Ration",
+    "tab_help_title": "What does this tab do?"
   },
   "dashboard": {
     "quick_actions": "Quick Actions",
@@ -1187,7 +1187,52 @@
     "herd_co2": "Herd CO₂ equiv.",
     "pdf_done": "PDF ready!",
     "pdf_err": "PDF generation error",
-    "pdf_prep": "Preparing PDF..."
+    "pdf_prep": "Preparing PDF...",
+    "batch_panel_title": "Farm Management & TMR Panel",
+    "assignments_title": "Active Ration Assignments",
+    "assignments_desc": "Select a saved ration for each group/profile below.",
+    "col_profile_name": "Profile / Group Name",
+    "col_herd": "Linked Herd",
+    "col_active_ration": "Active Saved Ration",
+    "btn_calc_farm": "Calculate Farm Table",
+    "select_ration": "— Select Ration —",
+    "tmr_title": "Daily TMR Loading Requirement",
+    "tmr_desc": "Total daily and monthly TMR requirement of all calculated groups.",
+    "col_feed_name": "Feed Name",
+    "col_daily_total": "Daily Total (Kg)",
+    "col_monthly_total": "Monthly Total (Kg)",
+    "btn_pdf_tmr": "Download TMR as PDF",
+    "btn_excel_tmr": "Download TMR as Excel",
+    "stock_title": "Stock Tracking",
+    "stock_desc": "Calculate how long your feed stocks will last based on daily TMR requirements.",
+    "col_requirement": "Requirement",
+    "col_stock": "Stock Amount",
+    "col_planned_time": "Planned Time",
+    "btn_pdf_stock": "Download Stock PDF",
+    "btn_excel_stock": "Download Stock Excel",
+    "stock_missing_ton": "{val} tons short",
+    "stock_missing_kg": "{val} kg short",
+    "stock_enough": "{val} days supply",
+    "btn_clear": "Clear",
+    "calculating": "Calculating...",
+    "calculating_tmr": "Calculating TMR Requirements...",
+    "pdf_preparing": "Preparing PDF...",
+    "excel_preparing": "Preparing Excel...",
+    "stock_pdf_preparing": "Preparing Stock PDF...",
+    "stock_excel_preparing": "Preparing Stock Excel...",
+    "saved_ration_missing": "No saved ration assigned",
+    "ration_not_found": "Assigned ration not found (might be deleted)",
+    "ration_data_missing": "Saved ration missing result data",
+    "progress_calc": "{name} calculation completed",
+    "total_summary": "Total Summary",
+    "comparative_table": "Comparative Table",
+    "daily_loading": "Daily Loading (TMR) Requirement",
+    "day": "day",
+    "days": "days",
+    "week": "week",
+    "month": "month",
+    "year": "year",
+    "stock_saved": "Stock information saved successfully"
   },
   "imp": {
     "aria": "Feed import",
@@ -1771,5 +1816,16 @@
     "save": "Save",
     "saved": "Farm saved",
     "title": "Farm Management"
+  },
+  "tabHelp": {
+    "dashboard": "<b>🏠 Dashboard</b> — Starting point of the program.<br>• <b>Macro Summary:</b> Shows your last optimized ration and economic status at a glance.<br>• <b>Trends:</b> Evaluates field observations over the last 7 days.<br>• <b>Reminders:</b> Alerts for milk fever risk, missing measurements, and falling milk yields.",
+    "animal": "<b>📋 Animal Profile</b> — Defines the target animal for the ration.<br>• <b>Parameters:</b> Calculates energy/protein needs based on weight, milk yield, and parity.<br>• <b>Groups:</b> By assigning profiles to a herd group, you can optimize herd-level TMR.",
+    "feeds": "<b>🌾 Feed Library</b> — Management panel for all feeds and additives.<br>• <b>My Feeds:</b> Your local feeds where you can edit DM, NDF, starch, etc.<br>• <b>Cloud DB:</b> Official database (NRC, NASEM, CNCPS) with 500+ templates.<br>• <b>Clone:</b> Copy a cloud feed to your library to edit it.",
+    "ration": "<b>⚖️ Ration Builder</b> — The core module where you select feeds and set constraints.<br>• <b>Selection:</b> Drag/drop or click feeds to add them.<br>• <b>Constraints:</b> LP targets (e.g., NDF 28-35%, DCAD -100).<br>• <b>Optimize:</b> Finds the cheapest combination that meets your constraints.",
+    "results": "<b>📊 Results Panel</b> — Detailed analysis of the optimized ration.<br>• <b>Compliance:</b> Shows which constraints were met or relaxed.<br>• <b>Rumen & DCAD:</b> Ketosis/SARA risks, transition DCAD balance.<br>• <b>Export:</b> Save to history or export as PDF/Excel.",
+    "herd": "<b>🚜 Farm Management & TMR Panel</b> — Manage feeding for all groups from a single screen.<br>• <b>Ration Assignment:</b> Assign saved rations to relevant groups.<br>• <b>Daily TMR:</b> Automatically calculates total farm TMR tonnage based on animal counts.<br>• <b>Cost Tracking:</b> Shows macro profitability based on current prices.<br>• <b>Stock Tracking:</b> Calculates how long current feed stocks will last based on TMR needs.",
+    "prices": "<b>💰 Price Manager</b> — Quick feed price updater.<br>• <b>Centralized:</b> Update all your feed prices in one place.<br>• <b>Save:</b> Updated prices will be used in future optimizations and IOFC calculations.",
+    "observations": "<b>📊 Field Observations</b> — Real-world animal data entry.<br>• <b>Measurements:</b> Record actual milk yield, BCS, and urine pH over time.<br>• <b>Tracking:</b> Essential for dashboard trends and accurate warnings.",
+    "settings": "<b>⚙️ Settings</b> — Global app preferences.<br>• <b>Localization:</b> Change language and unit systems (metric/imperial).<br>• <b>Engine:</b> Toggle CNCPS iterative calculation or DMI fill models.<br>• <b>Cloud Sync:</b> Manage cloud backup tokens and data export."
   }
 }

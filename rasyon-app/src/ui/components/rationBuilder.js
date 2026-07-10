@@ -172,16 +172,11 @@ export async function renderRationBuilder(container, state, { onOptimize }) {
       <div style="grid-column: 1 / -1; margin-bottom:0.25rem">
         <details class="tab-help-accordion">
           <summary style="cursor:pointer; font-weight:600; color:var(--primary); display:flex; align-items:center; gap:0.4rem">
-            <i class="ti ti-info-circle"></i> Bu sekme ne işe yarar? <span style="font-size:0.75rem; font-weight:400; color:var(--text-muted); margin-left:auto">▾</span>
-          </summary>
-          <div class="info-box" style="margin-top:0.5rem; font-size:0.85rem; line-height:1.7">
-            <b>⚗️ Rasyon Kurucu</b> — Hayvan profilinize uygun optimum yem karmasını oluşturur.<br>
-            • <b>Sol panel:</b> Rasyona dahil edilecek yemleri seçin. Her yem için isteğe bağlı min/maks kg sınırı girebilirsiniz.<br>
-            • <b>Sağ panel:</b> Kısıtları (NDF, NFC, forage, enerji, protein, amino asit…) gözden geçirin. Koyu renkli (hesaplanan) placeholder değerleri LP'nin otomatik uyguladığı minimumları gösterir; alanı boş bırakırsanız bu değerler kullanılır.<br>
-            • <b>Zorunlu kısıtlar:</b> İnfeasibility durumunda bile gevşetilmez (varsayılan: kaba yem oranı). Dikkatli kullanın.<br>
-            • <b>İleri Kısıtlar:</b> Amino asit, iz mineral, vitamin ve TMR nem kısıtları buradadır — genellikle boş bırakmak yeterlidir.<br>
-            • Hazır olunca <b>Optimize Et</b> butonuna basın; sonuç otomatik olarak <b>Sonuçlar</b> sekmesine taşır.
-          </div>
+            <i class="ti ti-info-circle"></i> ${t('common.tab_help_title')} <span style="font-size:0.75rem; font-weight:400; color:var(--text-muted); margin-left:auto">▾</span>
+        </summary>
+        <div class="info-box" style="margin-top:0.5rem; font-size:0.85rem; line-height:1.7">
+          ${t('tabHelp.ration')}
+        </div>
         </details>
       </div>
 

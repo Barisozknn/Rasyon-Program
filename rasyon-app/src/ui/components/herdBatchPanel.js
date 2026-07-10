@@ -36,18 +36,15 @@ export async function renderHerdBatchPanel(container, state) {
       <!-- 📖 Sekme Yardımı -->
       <details class="tab-help-accordion" style="margin-bottom:0.75rem">
         <summary style="cursor:pointer; font-weight:600; color:var(--primary); display:flex; align-items:center; gap:0.4rem">
-          <i class="ti ti-info-circle"></i> Bu sekme ne işe yarar? <span style="font-size:0.75rem; font-weight:400; color:var(--text-muted); margin-left:auto">▾</span>
+          <i class="ti ti-info-circle"></i> ${t('common.tab_help_title')} <span style="font-size:0.75rem; font-weight:400; color:var(--text-muted); margin-left:auto">▾</span>
         </summary>
         <div class="info-box" style="margin-top:0.5rem; font-size:0.85rem; line-height:1.7">
-          <b>🚜 Çiftlik Yönetim ve TMR Paneli</b> — Çiftliğinizdeki tüm grupların yem yönetimini tek ekrandan yapmanızı sağlar.<br>
-          • <b>Rasyon Atama:</b> Kuru dönem, sağmal veya düveleriniz için hazırladığınız kayıtlı rasyonları ilgili gruplara atayın.<br>
-          • <b>Günlük TMR İhtiyacı:</b> Tüm grupların hayvan sayıları ve reçeteleri üzerinden çiftliğinizin günlük toplam karma yem (TMR) tonajını otomatik hesaplar.<br>
-          • <b>Maliyet Takibi:</b> Güncel fiyatlar üzerinden tüm çiftliğin makro karlılığını gösterir.
+          ${t('tabHelp.herd')}
         </div>
       </details>
 
       <div class="card">
-        <div class="card-title">Çiftlik Yönetim ve TMR Paneli</div>
+        <div class="card-title">${t('herd.batch_panel_title')}</div>
         <div class="empty-state" style="padding:2.5rem">
           <div class="icon"><i class="ti ti-users"></i></div>
           <p>${t('herd.empty_no_profile')}</p>
@@ -61,39 +58,31 @@ export async function renderHerdBatchPanel(container, state) {
     <!-- 📖 Sekme Yardımı -->
     <details class="tab-help-accordion" style="margin-bottom:0.75rem">
       <summary style="cursor:pointer; font-weight:600; color:var(--primary); display:flex; align-items:center; gap:0.4rem">
-        <i class="ti ti-info-circle"></i> Bu sekme ne işe yarar? <span style="font-size:0.75rem; font-weight:400; color:var(--text-muted); margin-left:auto">▾</span>
+        <i class="ti ti-info-circle"></i> ${t('common.tab_help_title')} <span style="font-size:0.75rem; font-weight:400; color:var(--text-muted); margin-left:auto">▾</span>
       </summary>
       <div class="info-box" style="margin-top:0.5rem; font-size:0.85rem; line-height:1.7">
-        <b>🚜 Çiftlik Yönetim ve TMR Paneli</b> — Çiftliğinizdeki tüm grupların yem yönetimini tek ekrandan yapmanızı sağlar.<br>
-        • <b>Rasyon Atama:</b> Kuru dönem, sağmal veya düveleriniz için hazırladığınız kayıtlı rasyonları ilgili gruplara atayın.<br>
-        • <b>Günlük TMR İhtiyacı:</b> Tüm grupların hayvan sayıları ve reçeteleri üzerinden çiftliğinizin günlük toplam karma yem (TMR) tonajını otomatik hesaplar.<br>
-        • <b>Stok Takibi:</b> Sürünüzün TMR ihtiyacına göre mevcut yem stoklarınızın kaç gün yeteceğini hesaplar.<br>
-        • <b>Maliyet Takibi:</b> Güncel fiyatlar üzerinden tüm çiftliğin makro karlılığını gösterir.
+        ${t('tabHelp.herd')}
       </div>
     </details>
 
     <div class="card">
-      <div class="card-title">Çiftlik Yönetim ve TMR Paneli
+      <div class="card-title">${t('herd.batch_panel_title')}
         <span class="text-small text-muted" style="font-weight:400; margin-left:auto">
           ${t('herd.n_profiles', { n: profiles.length })}
         </span>
       </div>
 
-      <div class="info-box">
-        Bu panelde çiftliğinizdeki tüm hayvan gruplarına <b>kayıtlı rasyonlarınızı</b> atayabilir, güncel maliyetler ve hammadde fiyatları üzerinden çiftliğinizin makro özetini, <b>Günlük TMR (Yem) İhtiyacını</b> ve <b>Stok Durumunu</b> hesaplayabilirsiniz. Sağmallar, kuru dönem veya düveler için hazırladığınız özel reçeteleri kendi gruplarına bağlayarak tek ekrandan tüm çiftlik yükleme tablosunu görebilirsiniz.
-      </div>
-
       <div class="card mb-2" style="border-left: 4px solid var(--primary); padding-bottom: 1rem;">
-        <div class="card-title" style="margin-bottom: 0.5rem">Aktif Rasyon Atamaları</div>
-        <div class="text-small text-muted" style="margin-bottom:1rem">Aşağıdaki her grup/profil için Rasyon Kurucu'da kaydettiğiniz reçetelerden birini seçin.</div>
+        <div class="card-title" style="margin-bottom: 0.5rem">${t('herd.assignments_title')}</div>
+        <div class="text-small text-muted" style="margin-bottom:1rem">${t('herd.assignments_desc')}</div>
         
         <div class="feed-table-wrap">
           <table class="diag-table" style="font-size:0.9rem; min-width: 450px;">
             <thead>
               <tr>
-                <th>Profil / Grup Adı</th>
-                <th>Bağlı Olduğu Sürü</th>
-                <th>Aktif Kayıtlı Rasyon</th>
+                <th>${t('herd.col_profile_name')}</th>
+                <th>${t('herd.col_herd')}</th>
+                <th>${t('herd.col_active_ration')}</th>
               </tr>
             </thead>
             <tbody>
@@ -108,7 +97,7 @@ export async function renderHerdBatchPanel(container, state) {
                     <td>${group ? escHtml(group.name) : '<span class="text-muted">—</span>'}</td>
                     <td>
                       <select class="profile-ration-select" data-profile-id="${p.id}" style="width: 100%; min-width: 150px;">
-                        <option value="">-- Rasyon Seçin --</option>
+                        <option value="">${t('herd.select_ration')}</option>
                         ${rationOpts}
                       </select>
                     </td>
@@ -137,7 +126,7 @@ export async function renderHerdBatchPanel(container, state) {
 
       <div class="flex gap-1 mt-2">
         <button class="btn btn-primary" id="btn-batch-optimize">
-          <i class="ti ti-calculator"></i> Çiftlik Tablosunu Hesapla
+          <i class="ti ti-calculator"></i> ${t('herd.btn_calc_farm')}
         </button>
         <button class="btn btn-secondary btn-sm" id="btn-batch-clear">${t('herd.clear')}</button>
       </div>
@@ -305,9 +294,9 @@ async function runBatchOptimization(container, state, profiles, groups) {
 
   const total = targetProfiles.length;
   let done = 0;
-  showLoading(true, { message: 'TMR İhtiyaçları Hesaplanıyor...', percent: 0, sub: t('herd.profiles_progress', { done: 0, total }) });
+  showLoading(true, { message: t('herd.calculating_tmr'), percent: 0, sub: t('herd.profiles_progress', { done: 0, total }) });
   const resultsEl = container.querySelector('#batch-results');
-  resultsEl.innerHTML = `<div class="empty-state" style="padding:1rem"><p>Hesaplanıyor...</p></div>`;
+  resultsEl.innerHTML = `<div class="empty-state" style="padding:1rem"><p>${t('herd.calculating')}</p></div>`;
 
   try {
     const rations = await rationGetAll();
@@ -318,16 +307,16 @@ async function runBatchOptimization(container, state, profiles, groups) {
     const optimizationPromises = targetProfiles.map(async profile => {
       try {
         if (!profile.targetRationId) {
-           return { profile, result: null, economics: null, groupName: '', groupSize: 1, error: 'Kayıtlı rasyon atanmamış.' };
+           return { profile, result: null, economics: null, groupName: '', groupSize: 1, error: t('herd.saved_ration_missing') };
         }
         
         const ration = rations.find(r => r.id === profile.targetRationId);
         if (!ration) {
-           return { profile, result: null, economics: null, groupName: '', groupSize: 1, error: 'Atanan rasyon bulunamadı (silinmiş olabilir).' };
+           return { profile, result: null, economics: null, groupName: '', groupSize: 1, error: t('herd.ration_not_found') };
         }
 
         if (!ration.result) {
-           return { profile, result: null, economics: null, groupName: '', groupSize: 1, error: 'Kayıtlı rasyonun sonuç verisi eksik.' };
+           return { profile, result: null, economics: null, groupName: '', groupSize: 1, error: t('herd.ration_data_missing') };
         }
 
         // Yeniden optimize etmek yerine kaydedilmiş reçeteyi güncel maliyetlerle klonla
@@ -374,7 +363,7 @@ async function runBatchOptimization(container, state, profiles, groups) {
     await renderBatchResults(resultsEl, results, milkPrice);
     attachBatchPDFHandler(container);
     attachStockHandlers(container);
-    showToast(`${results.length} profil için hesaplama tamamlandı.`, 'success');
+    showToast(t('herd.progress_calc', {name: results.length}), 'success');
   } catch (err) {
     console.error('Toplu optimizasyon hatası:', err);
     resultsEl.innerHTML = `<div class="warn-box">${t('herd.batch_err')}${err.message}</div>`;
@@ -411,7 +400,8 @@ async function renderBatchResults(el, results, milkPrice) {
       </div>
     </div>
 
-    <!-- Toplam özet -->
+    <!-- Toplam özet (Translated) -->
+          <div class="card-title" style="margin-bottom:0.5rem">${t('herd.total_summary')}</div>
     <div class="summary-bar">
       <div class="summary-card">
         <div class="val">${results.length}</div>
@@ -441,7 +431,8 @@ async function renderBatchResults(el, results, milkPrice) {
       </div>
     </div>
 
-    <!-- Karşılaştırma tablosu -->
+    <!-- Karşılaştırma tablosu (Translated) -->
+          <div class="card-title" style="margin-bottom:0.5rem; margin-top:2rem">${t('herd.comparative_table')}</div>
     <div class="feed-table-wrap">
     <table class="diag-table" style="font-size:0.8rem">
       <thead>
@@ -504,23 +495,23 @@ async function renderBatchResults(el, results, milkPrice) {
         <div class="card mt-2 p-1 border-primary">
           <div class="flex-between" style="margin-bottom:0.5rem">
             <div class="card-title text-primary" style="margin-bottom:0">
-              <i class="ti ti-truck-delivery"></i> Günlük Yükleme (TMR) İhtiyacı
+              <i class="ti ti-truck-delivery"></i> ${t('herd.daily_loading')}
             </div>
             <div class="flex gap-1 no-print">
-              <button class="btn btn-sm btn-outline" id="btn-tmr-pdf" title="TMR İhtiyacını PDF Olarak İndir" style="border-color:var(--danger); color:var(--danger); padding:0.4rem 0.6rem;"><i class="ti ti-file-type-pdf"></i></button>
-              <button class="btn btn-sm btn-outline" id="btn-tmr-excel" title="TMR İhtiyacını Excel Olarak İndir" style="border-color:var(--success); color:var(--success); padding:0.4rem 0.6rem;"><i class="ti ti-file-spreadsheet"></i></button>
+              <button class="btn btn-sm btn-outline" id="btn-tmr-pdf" title="${t('herd.btn_pdf_tmr')}" style="border-color:var(--danger); color:var(--danger); padding:0.4rem 0.6rem;"><i class="ti ti-file-type-pdf"></i></button>
+              <button class="btn btn-sm btn-outline" id="btn-tmr-excel" title="${t('herd.btn_excel_tmr')}" style="border-color:var(--success); color:var(--success); padding:0.4rem 0.6rem;"><i class="ti ti-file-spreadsheet"></i></button>
             </div>
           </div>
           <div class="text-small text-muted" style="margin-bottom:1rem">
-            Tüm hesaplanan grupların günlük ve aylık toplam karma ihtiyacı
+            ${t('herd.tmr_desc')}
           </div>
           <div class="feed-table-wrap">
             <table class="diag-table" style="min-width: 450px;">
               <thead>
                 <tr>
-                  <th>Yem Adı</th>
-                  <th class="num">Günlük Toplam (Kg)</th>
-                  <th class="num">Aylık Toplam (Kg)</th>
+                  <th>${t('herd.col_feed_name')}</th>
+                  <th class="num">${t('herd.col_daily_total')}</th>
+                  <th class="num">${t('herd.col_monthly_total')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -583,8 +574,8 @@ async function renderBatchResults(el, results, milkPrice) {
             <div class="flex gap-1 no-print">
               <button class="btn btn-sm btn-secondary" id="btn-stock-clear"><i class="ti ti-trash"></i> Temizle</button>
               <button class="btn btn-sm btn-primary" id="btn-stock-save"><i class="ti ti-device-floppy"></i> Kaydet</button>
-              <button class="btn btn-sm btn-outline" id="btn-stock-pdf" title="Stok Raporunu PDF İndir" style="border-color:var(--danger); color:var(--danger)"><i class="ti ti-file-type-pdf"></i></button>
-              <button class="btn btn-sm btn-outline" id="btn-stock-excel" title="Stok Raporunu Excel İndir" style="border-color:var(--success); color:var(--success)"><i class="ti ti-file-spreadsheet"></i></button>
+              <button class="btn btn-sm btn-outline" id="btn-stock-pdf" title="${t('herd.btn_pdf_stock')}" style="border-color:var(--danger); color:var(--danger)"><i class="ti ti-file-type-pdf"></i></button>
+              <button class="btn btn-sm btn-outline" id="btn-stock-excel" title="${t('herd.btn_excel_stock')}" style="border-color:var(--success); color:var(--success)"><i class="ti ti-file-spreadsheet"></i></button>
             </div>
           </div>
           <div class="text-small text-muted" style="margin-bottom:1rem">
@@ -607,7 +598,7 @@ async function renderBatchResults(el, results, milkPrice) {
               <thead>
                 <tr>
                   <th>Yem Adı</th>
-                  <th class="num">İhtiyaç (kg)</th>
+                  <th class="num">${t('herd.col_requirement')}</th>
                   <th style="text-align:center">Stok Miktarı</th>
                   <th style="text-align:center">Planlanan Zaman</th>
                   <th style="text-align:right; width:140px; min-width:140px; max-width:140px; box-sizing:border-box;">Durum</th>
@@ -734,7 +725,7 @@ function attachBatchPDFHandler(container) {
     btnTmrPdf.addEventListener('click', async () => {
       if (!_lastBatchResults || _lastBatchResults.length === 0) return;
       try {
-        showToast('PDF hazırlanıyor...', 'info', 2000);
+        showToast(t('herd.pdf_preparing'), 'info', 2000);
         const { downloadTmrPDF } = await import('../../reports/pdfExport.js');
         await downloadTmrPDF(_lastBatchResults);
         showToast('TMR PDF indirildi', 'success');
@@ -750,7 +741,7 @@ function attachBatchPDFHandler(container) {
     btnTmrExcel.addEventListener('click', async () => {
       if (!_lastBatchResults || _lastBatchResults.length === 0) return;
       try {
-        showToast('Excel hazırlanıyor...', 'info', 2000);
+        showToast(t('herd.excel_preparing'), 'info', 2000);
         const { downloadTmrExcel } = await import('../../reports/excelExport.js');
         await downloadTmrExcel(_lastBatchResults);
         showToast('TMR Excel indirildi', 'success');
@@ -791,7 +782,7 @@ function attachStockHandlers(container) {
     // Stok yetme süresini hesapla (sadece stok girilmişse)
     if (!isNaN(stockQtyRaw) && isNaN(planQtyRaw)) {
       const daysWillLast = dailyKg > 0 ? Math.floor(stockKg / dailyKg) : 0;
-      statusCell.textContent = `${daysWillLast} gün yetecek`;
+      statusCell.textContent = t('herd.stock_enough', {val: daysWillLast});
       statusCell.style.color = 'var(--text)';
       return;
     }
@@ -848,7 +839,7 @@ function attachStockHandlers(container) {
         });
         
         await farmPut(farm);
-        showToast('Stok bilgileri başarıyla kaydedildi.', 'success');
+        showToast(t('herd.stock_saved'), 'success');
       } catch (err) {
         showToast('Hata: ' + err.message, 'error');
       } finally {
@@ -895,7 +886,7 @@ function attachStockHandlers(container) {
           planUnit: r.querySelector('.plan-unit-input').value,
           status: r.querySelector('.stock-status-cell').textContent.trim()
         }));
-        showToast('Stok PDF hazırlanıyor...', 'info', 2000);
+        showToast(t('herd.stock_pdf_preparing'), 'info', 2000);
         const { downloadStockReportPDF } = await import('../../reports/pdfExport.js');
         await downloadStockReportPDF(data);
         showToast('Stok PDF indirildi', 'success');
@@ -919,7 +910,7 @@ function attachStockHandlers(container) {
           planUnit: r.querySelector('.plan-unit-input').value,
           status: r.querySelector('.stock-status-cell').textContent.trim()
         }));
-        showToast('Stok Excel hazırlanıyor...', 'info', 2000);
+        showToast(t('herd.stock_excel_preparing'), 'info', 2000);
         const { downloadStockReportExcel } = await import('../../reports/excelExport.js');
         await downloadStockReportExcel(data);
         showToast('Stok Excel indirildi', 'success');
