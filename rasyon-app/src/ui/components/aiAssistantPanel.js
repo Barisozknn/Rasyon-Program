@@ -236,7 +236,7 @@ export async function renderAiAssistantPanel(container) {
           <button id="aiCloseSidebarBtn" class="btn btn-icon p-0" style="background: transparent; border:none; color: var(--text-primary);"><i class="ti ti-x" style="font-size: 1.5rem;"></i></button>
         </div>
         <button id="aiNewChatBtn" class="btn btn-primary w-100 mb-3" style="margin-bottom: 1rem; background-color: #1c5237; border-color: #1c5237; border-radius: 1rem; padding: 0.75rem;">
-          <i class="ti ti-plus"></i> Yeni Sohbet
+          <i class="ti ti-plus"></i> ${t('ai.new_chat')}
         </button>
         <div id="aiChatList" class="ai-chat-list">
           <!-- Sohbet Listesi -->
@@ -259,14 +259,14 @@ export async function renderAiAssistantPanel(container) {
         
         <div class="ai-chat-input-wrapper" style="flex-direction: column; align-items: stretch;">
           <div class="mb-2 px-2">
-            <label class="m-0 d-flex align-items-center gap-2" style="cursor: pointer; user-select: none;" title="${t('ai.include_data') || 'Çiftlik Verilerimi Ekle'}">
+            <label class="m-0 d-flex align-items-center gap-2" style="cursor: pointer; user-select: none;" title="${t('ai.include_data') || '${t('ai.add_farm_data').split(' ')[0] + ' ' + t('ai.add_farm_data').split(' ')[1]}'}">
               <div class="custom-toggle-switch">
                 <input type="checkbox" id="aiIncludeDataToggle">
                 <div class="custom-toggle-switch-bg">
                   <div class="custom-toggle-switch-handle"></div>
                 </div>
               </div>
-              <span style="font-size: 0.85rem; color: var(--text-secondary); padding-top: 2px;">${t('ai.include_data') || 'Çiftlik Verilerimi Ekle'}</span>
+              <span style="font-size: 0.85rem; color: var(--text-secondary); padding-top: 2px;">${t('ai.include_data') || '${t('ai.add_farm_data')} </span>
             </label>
           </div>
           <div style="display: flex; gap: 0.5rem; width: 100%;">
@@ -396,8 +396,8 @@ export async function renderAiAssistantPanel(container) {
       chatHistoryEl.insertAdjacentHTML('beforeend', `
         <div class="ai-empty-state">
           <i class="ti ti-sparkles"></i>
-          <p>Merhaba! Rasyon veya hayvan besleme ile ilgili sorularınızı sorabilirsiniz.</p>
-          <p style="font-size:0.8rem; opacity:0.7;">Geçmiş rasyonlarınızı, hayvan profillerinizi ve saha gözlemlerinizi sormaktan çekinmeyin.</p>
+          <p>${t('ai.welcome_title')}</p>
+          <p style="font-size:0.8rem; opacity:0.7;">${t('ai.welcome_subtitle')}</p>
         </div>
       `);
       return;
@@ -448,7 +448,7 @@ export async function renderAiAssistantPanel(container) {
     }
 
     // İlk mesajsa başlık oluştur
-    if (!activeChat.title || activeChat.title === 'Yeni Sohbet') {
+    if (!activeChat.title || activeChat.title === t('ai.new_chat')) {
       activeChat.title = text.length > 25 ? text.substring(0, 25) + '...' : text;
     }
 
@@ -466,7 +466,7 @@ export async function renderAiAssistantPanel(container) {
       <div class="ai-message ai-message-assistant" id="${typingId}">
         <div class="ai-message-content typing" style="display: flex; align-items: center; gap: 0.5rem; opacity: 0.7;">
           <i class="ti ti-loader ti-spin" style="font-size: 1.2rem;"></i>
-          <span style="font-style: italic;">Asistan düşünüyor...</span>
+          <span style="font-style: italic;">${t('ai.assistant_thinking')}</span>
         </div>
       </div>
     `;
@@ -556,7 +556,7 @@ export async function renderAiAssistantPanel(container) {
 
 function startNewChat() {
   const newIdStr = newId();
-  const newChat = { id: newIdStr, title: 'Yeni Sohbet', messages: [], updatedAt: Date.now() };
+  const newChat = { id: newIdStr, title: t('ai.new_chat'), messages: [], updatedAt: Date.now() };
   chats.unshift(newChat);
   activeChatId = newIdStr;
 }
