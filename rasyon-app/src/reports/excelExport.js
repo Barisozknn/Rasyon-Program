@@ -311,7 +311,58 @@ export function generateRationExcel({ animal, result }) {
 
   return wb;
 }
+/**
+ * Stok takibi verilerini Excel'e aktarır.
+ * @param {Array} stockData 
+ */
+export async function downloadStockReportExcel(stockData) {
+  const lang = getSettings().language === 'en' ? 'en' : 'tr';
+  const wb = XLSX.utils.book_new();
 
+  const title = lang === 'en' ? 'FEED STOCK TRACKING REPORT' : 'YEM STOK TAKİBİ RAPORU';
+  const rows = [
+    [title],
+    [lang === 'en' ? 'Date' : 'Tarih', new Date().toLocaleString(lang === 'en' ? 'en-GB' : 'tr-TR')],
+    [],
+    [
+      lang === 'en' ? 'Feed Name' : 'Yem Adı',
+      lang === 'en' ? 'Daily Need (kg)' : 'Günlük İhtiyaç (kg)',
+      lang === 'en' ? 'Stock Amount' : 'Stok Miktarı',
+      lang === 'en' ? 'Planned Time' : 'Planlanan Zaman',
+      lang === 'en' ? 'Status' : 'Durum'
+    ]
+  ];
+
+  stockData.forEach(d => {
+    const stockText = d.stockQty ? `${d.stockQty} ${d.stockUnit}` : '-';
+    const planText = d.planQty ? `${d.planQty} ${d.planUnit}` : '-';
+    rows.push([d.feedName, d.dailyKg, stockText, planText, d.status]);
+  });
+
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = [{ wch: 30 }, { wch: 20 }, { wch: 15 }, { wch: 15 }, { wch: 25 }];
+  
+  // Format headers
+  const range = XLSX.utils.decode_range(ws['!ref']);
+  for (let C = range.s.c; C <= range.e.c; ++C) {
+    const cell = ws[XLSX.utils.encode_cell({c: C, r: 3})];
+    if (cell) {
+      cell.s = { font: { bold: true }, fill: { fgColor: { rgb: "FFD9D9D9" } } };
+    }
+  }
+
+  const cellTitle = ws[XLSX.utils.encode_cell({c: 0, r: 0})];
+  if (cellTitle) cellTitle.s = { font: { bold: true, sz: 14 } };
+
+  XLSX.utils.book_append_sheet(wb, ws, 'Stok Takibi');
+  
+  // FAZ 22: Tarayıcı vs Node(Playwright) ortam kontrolü
+  if (typeof window !== 'undefined' && window.document) {
+    XLSX.writeFile(wb, `Stok_Raporu_${new Date().toISOString().split('T')[0]}.xlsx`);
+  } else {
+    return wb;
+  }
+}
 /**
  * Tarayıcıda Excel dosyasını indirir.
  */

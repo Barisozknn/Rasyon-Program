@@ -731,3 +731,92 @@ export async function downloadTmrPDF(batchResults, filename) {
   doc.save(name);
 }
 
+/**
+ * Stok takibi verilerini PDF'e aktarır.
+ * @param {Array} stockData 
+ * @param {string} filename 
+ */
+export async function downloadStockReportPDF(stockData, filename) {
+  const [fontBase64, fontBoldBase64] = await Promise.all([loadTurkishFont(), loadTurkishFontBold()]);
+  const hasFont = !!fontBase64;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+  if (hasFont) {
+    doc.addFileToVFS('DejaVuSans.ttf', fontBase64);
+    doc.addFont('DejaVuSans.ttf', 'DejaVuSans', 'normal');
+    if (fontBoldBase64) {
+      doc.addFileToVFS('DejaVuSans-Bold.ttf', fontBoldBase64);
+      doc.addFont('DejaVuSans-Bold.ttf', 'DejaVuSans', 'bold');
+    }
+  }
+
+  const BODY_FONT  = hasFont ? 'DejaVuSans' : 'helvetica';
+  const BOLD_FONT  = hasFont ? 'DejaVuSans' : 'helvetica';
+  const tblBody    = hasFont ? { font: 'DejaVuSans', fontStyle: 'normal' } : {};
+  const str        = hasFont ? (s) => (s ?? '') : ascii;
+
+  const lang = getSettings().language === 'en' ? 'en' : 'tr';
+  const L = (tr, en) => (lang === 'en' ? en : tr);
+
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const margin = 15;
+  let y = margin;
+
+  // Başlık
+  doc.setFontSize(16);
+  doc.setFont(BOLD_FONT, 'bold');
+  doc.setTextColor(29, 78, 216);
+  const title = L('YEM STOK TAKİBİ RAPORU', 'FEED STOCK TRACKING REPORT');
+  doc.text(str(title), pageWidth / 2, y, { align: 'center' });
+  y += 7;
+
+  doc.setFontSize(10);
+  doc.setFont(BODY_FONT, 'normal');
+  doc.setTextColor(100);
+  doc.text(`${L('Tarih', 'Date')}: ${new Date().toLocaleString(lang === 'en' ? 'en-GB' : 'tr-TR')}`, pageWidth / 2, y, { align: 'center' });
+  y += 10;
+
+  const rows = stockData.map(d => [
+    str(d.feedName),
+    d.dailyKg.toFixed(1),
+    d.stockQty ? str(`${d.stockQty} ${d.stockUnit}`) : '-',
+    d.planQty ? str(`${d.planQty} ${d.planUnit}`) : '-',
+    str(d.status)
+  ]);
+
+  autoTable(doc, {
+    startY: y,
+    margin: { left: margin, right: margin },
+    head: [[
+      str(L('Yem Adı', 'Feed Name')),
+      str(L('Günlük İhtiyaç (kg)', 'Daily Need (kg)')),
+      str(L('Stok Miktarı', 'Stock Amount')),
+      str(L('Planlanan Zaman', 'Planned Time')),
+      str(L('Durum', 'Status'))
+    ]],
+    body: rows,
+    styles: { fontSize: 9, cellPadding: 2, ...tblBody },
+    headStyles: { fillColor: [0, 75, 135], textColor: 255, fontSize: 10, fontStyle: 'bold', halign: 'center' },
+    columnStyles: {
+      0: { fontStyle: 'bold' },
+      1: { halign: 'right' },
+      2: { halign: 'center' },
+      3: { halign: 'center' },
+      4: { halign: 'center' }
+    },
+    alternateRowStyles: { fillColor: [242, 246, 250] }
+  });
+
+  // Alt bilgi
+  const pageCount = doc.internal.getNumberOfPages();
+  for (let p = 1; p <= pageCount; p++) {
+    doc.setPage(p);
+    doc.setFontSize(8);
+    doc.setTextColor(120);
+    doc.text(str(L(`Süt Sığırı Rasyon Programı — Sayfa ${p} / ${pageCount}`, `Dairy Cattle Ration Program — Page ${p} / ${pageCount}`)),
+      pageWidth / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
+  }
+
+  const outName = filename || `stok_raporu_${new Date().toISOString().slice(0, 10)}.pdf`;
+  doc.save(outName);
+}

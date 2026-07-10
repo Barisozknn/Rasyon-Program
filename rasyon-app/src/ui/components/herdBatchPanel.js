@@ -5,7 +5,7 @@
  * karşılaştırmalı tablo ve toplam sürü-ölçek ekonomik analiz gösterir.
  */
 
-import { animalProfileGetAll, herdGroupGetAll, animalProfilePut, rationGetAll } from '../../data/db.js';
+import { animalProfileGetAll, herdGroupGetAll, animalProfilePut, rationGetAll, getActiveFarmId, farmGetById, farmPut } from '../../data/db.js';
 import { getAllFeeds, FEED_CATEGORIES, feedMatchesQuery } from '../../data/feedService.js';
 import { optimizeViaWorker } from '../../solver/glpkWorker.js';
 import { optimizeHerd } from '../../solver/herdOptimizer.js';
@@ -360,8 +360,9 @@ async function runBatchOptimization(container, state, profiles, groups) {
     _lastBatchResults = results;
     _lastMilkPrice = milkPrice;
 
-    renderBatchResults(resultsEl, results, milkPrice);
+    await renderBatchResults(resultsEl, results, milkPrice);
     attachBatchPDFHandler(container);
+    attachStockHandlers(container);
     showToast(`${results.length} profil için hesaplama tamamlandı.`, 'success');
   } catch (err) {
     console.error('Toplu optimizasyon hatası:', err);
@@ -371,7 +372,10 @@ async function runBatchOptimization(container, state, profiles, groups) {
   }
 }
 
-function renderBatchResults(el, results, milkPrice) {
+async function renderBatchResults(el, results, milkPrice) {
+  const activeFarmId = getActiveFarmId();
+  const activeFarm = activeFarmId ? await farmGetById(activeFarmId) : null;
+  const stockTracking = activeFarm?.stockTracking || {};
   const feasibleCount = results.filter(r => r.result?.feasible).length;
   const totalGroupAnimals = results.reduce((s, r) => s + r.groupSize, 0);
   const totalDailyIOFC = results.reduce(
@@ -485,7 +489,7 @@ function renderBatchResults(el, results, milkPrice) {
           </tr>
         `).join('');
 
-      return tmrRows ? `
+      const tmrCard = tmrRows ? `
         <div class="card mt-2 p-1 border-primary">
           <div class="flex-between" style="margin-bottom:0.5rem">
             <div class="card-title text-primary" style="margin-bottom:0">
@@ -515,6 +519,83 @@ function renderBatchResults(el, results, milkPrice) {
           </div>
         </div>
       ` : '';
+
+      let stockRows = '';
+      if (Object.keys(tmrTotals).length > 0) {
+        stockRows = Object.entries(tmrTotals)
+          .sort((a, b) => b[1].kg - a[1].kg)
+          .map(([feedId, t]) => {
+            const stock = stockTracking[feedId] || {};
+            const stockQty = stock.stockQty || '';
+            const stockUnit = stock.stockUnit || 'kg';
+            const planQty = stock.planQty || '';
+            const planUnit = stock.planUnit || 'gun';
+            
+            return `
+              <tr class="stock-row" data-feed-id="${escHtml(feedId)}" data-daily-kg="${t.kg}">
+                <td>${escHtml(t.name)}</td>
+                <td class="num">${t.kg.toLocaleString(undefined, { maximumFractionDigits: 1 })}</td>
+                <td>
+                  <div class="flex gap-1">
+                    <input type="number" class="stock-qty-input" style="width: 70px" value="${stockQty}" min="0">
+                    <select class="stock-unit-input">
+                      <option value="kg" ${stockUnit === 'kg' ? 'selected' : ''}>kg</option>
+                      <option value="ton" ${stockUnit === 'ton' ? 'selected' : ''}>ton</option>
+                    </select>
+                  </div>
+                </td>
+                <td>
+                  <div class="flex gap-1">
+                    <input type="number" class="plan-qty-input" style="width: 70px" value="${planQty}" min="0">
+                    <select class="plan-unit-input">
+                      <option value="gun" ${planUnit === 'gun' ? 'selected' : ''}>Gün</option>
+                      <option value="hafta" ${planUnit === 'hafta' ? 'selected' : ''}>Hafta</option>
+                      <option value="ay" ${planUnit === 'ay' ? 'selected' : ''}>Ay</option>
+                    </select>
+                  </div>
+                </td>
+                <td class="stock-status-cell" style="font-weight:bold;"></td>
+              </tr>
+            `;
+          }).join('');
+      }
+
+      const stockCard = stockRows ? `
+        <div class="card mt-2 p-1 border-primary">
+          <div class="flex-between" style="margin-bottom:0.5rem">
+            <div class="card-title text-primary" style="margin-bottom:0">
+              <i class="ti ti-packages"></i> Stok Takibi
+            </div>
+            <div class="flex gap-1 no-print">
+              <button class="btn btn-sm btn-secondary" id="btn-stock-clear"><i class="ti ti-trash"></i> Temizle</button>
+              <button class="btn btn-sm btn-primary" id="btn-stock-save"><i class="ti ti-device-floppy"></i> Kaydet</button>
+              <button class="btn btn-sm btn-outline" id="btn-stock-pdf" title="Stok Raporunu PDF İndir" style="border-color:var(--danger); color:var(--danger)"><i class="ti ti-file-type-pdf"></i></button>
+              <button class="btn btn-sm btn-outline" id="btn-stock-excel" title="Stok Raporunu Excel İndir" style="border-color:var(--success); color:var(--success)"><i class="ti ti-file-spreadsheet"></i></button>
+            </div>
+          </div>
+          <div class="text-small text-muted" style="margin-bottom:1rem">
+            Günlük TMR ihtiyacına göre stoklarınızın ne kadar süre yeteceğini hesaplayın.
+          </div>
+          <div class="feed-table-wrap">
+            <table class="diag-table" id="stock-tracking-table" style="min-width: 600px;">
+              <thead>
+                <tr>
+                  <th>Yem Adı</th>
+                  <th class="num">Günlük İhtiyaç (kg)</th>
+                  <th>Stok Miktarı</th>
+                  <th>Planlanan Zaman</th>
+                  <th>Durum</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${stockRows}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ` : '';
+
+      return tmrCard + stockCard;
     })()}
 
     <!-- Rasyon Detay Modal -->
@@ -649,6 +730,173 @@ function attachBatchPDFHandler(container) {
         showToast('TMR Excel indirildi', 'success');
       } catch (err) {
         console.error('TMR Excel hatası:', err);
+        showToast('Excel hatası: ' + err.message, 'error');
+      }
+    });
+  }
+}
+
+// ─── Stok Takibi Etkileşimleri ──────────────────────────────────────────────
+function attachStockHandlers(container) {
+  const table = container.querySelector('#stock-tracking-table');
+  if (!table) return;
+
+  const updateStatus = (row) => {
+    const dailyKg = parseFloat(row.dataset.dailyKg) || 0;
+    const stockQtyRaw = parseFloat(row.querySelector('.stock-qty-input').value);
+    const stockUnit = row.querySelector('.stock-unit-input').value;
+    const planQtyRaw = parseFloat(row.querySelector('.plan-qty-input').value);
+    const planUnit = row.querySelector('.plan-unit-input').value;
+    const statusCell = row.querySelector('.stock-status-cell');
+
+    if (isNaN(stockQtyRaw) && isNaN(planQtyRaw)) {
+      statusCell.textContent = '';
+      return;
+    }
+
+    const stockKg = isNaN(stockQtyRaw) ? 0 : (stockUnit === 'ton' ? stockQtyRaw * 1000 : stockQtyRaw);
+    let planDays = 0;
+    if (!isNaN(planQtyRaw)) {
+      if (planUnit === 'hafta') planDays = planQtyRaw * 7;
+      else if (planUnit === 'ay') planDays = planQtyRaw * 30;
+      else planDays = planQtyRaw;
+    }
+
+    // Stok yetme süresini hesapla (sadece stok girilmişse)
+    if (!isNaN(stockQtyRaw) && isNaN(planQtyRaw)) {
+      const daysWillLast = dailyKg > 0 ? Math.floor(stockKg / dailyKg) : 0;
+      statusCell.textContent = `${daysWillLast} gün yetecek`;
+      statusCell.style.color = 'var(--text)';
+      return;
+    }
+
+    // Hedef ihtiyacı hesapla (ikisi de girilmişse)
+    if (!isNaN(stockQtyRaw) && !isNaN(planQtyRaw)) {
+      const neededKg = dailyKg * planDays;
+      const diffKg = stockKg - neededKg;
+
+      if (diffKg >= 0) {
+        statusCell.textContent = 'Yeterli';
+        statusCell.style.color = 'var(--success)';
+      } else {
+        const missing = Math.abs(diffKg);
+        const missingText = missing >= 1000 ? `${(missing / 1000).toFixed(2)} ton eksik` : `${missing.toFixed(0)} kg eksik`;
+        statusCell.textContent = missingText;
+        statusCell.style.color = 'var(--danger)';
+      }
+    }
+  };
+
+  const rows = table.querySelectorAll('.stock-row');
+  rows.forEach(row => {
+    const inputs = row.querySelectorAll('input, select');
+    inputs.forEach(input => {
+      input.addEventListener('input', () => updateStatus(row));
+      input.addEventListener('change', () => updateStatus(row));
+    });
+    // İlk render'da hesapla
+    updateStatus(row);
+  });
+
+  const btnSave = container.querySelector('#btn-stock-save');
+  if (btnSave) {
+    btnSave.addEventListener('click', async () => {
+      const activeFarmId = getActiveFarmId();
+      if (!activeFarmId) return;
+      try {
+        showLoading(true, { message: 'Kaydediliyor...' });
+        const farm = await farmGetById(activeFarmId);
+        if (!farm) throw new Error('Aktif çiftlik bulunamadı.');
+        
+        farm.stockTracking = farm.stockTracking || {};
+        rows.forEach(row => {
+          const feedId = row.dataset.feedId;
+          farm.stockTracking[feedId] = {
+            stockQty: parseFloat(row.querySelector('.stock-qty-input').value) || '',
+            stockUnit: row.querySelector('.stock-unit-input').value,
+            planQty: parseFloat(row.querySelector('.plan-qty-input').value) || '',
+            planUnit: row.querySelector('.plan-unit-input').value,
+          };
+        });
+        
+        await farmPut(farm);
+        showToast('Stok bilgileri başarıyla kaydedildi.', 'success');
+      } catch (err) {
+        showToast('Hata: ' + err.message, 'error');
+      } finally {
+        showLoading(false);
+      }
+    });
+  }
+
+  const btnClear = container.querySelector('#btn-stock-clear');
+  if (btnClear) {
+    btnClear.addEventListener('click', async () => {
+      rows.forEach(row => {
+        row.querySelector('.stock-qty-input').value = '';
+        row.querySelector('.stock-unit-input').value = 'kg';
+        row.querySelector('.plan-qty-input').value = '';
+        row.querySelector('.plan-unit-input').value = 'gun';
+        updateStatus(row);
+      });
+      
+      const activeFarmId = getActiveFarmId();
+      if (!activeFarmId) return;
+      try {
+        const farm = await farmGetById(activeFarmId);
+        if (farm) {
+          farm.stockTracking = {};
+          await farmPut(farm);
+        }
+      } catch (err) {
+        console.error('Temizleme hatası', err);
+      }
+    });
+  }
+
+  const btnStockPdf = container.querySelector('#btn-stock-pdf');
+  if (btnStockPdf) {
+    btnStockPdf.addEventListener('click', async () => {
+      try {
+        const data = Array.from(rows).map(r => ({
+          feedName: r.cells[0].textContent.trim(),
+          dailyKg: parseFloat(r.dataset.dailyKg) || 0,
+          stockQty: r.querySelector('.stock-qty-input').value,
+          stockUnit: r.querySelector('.stock-unit-input').value,
+          planQty: r.querySelector('.plan-qty-input').value,
+          planUnit: r.querySelector('.plan-unit-input').value,
+          status: r.querySelector('.stock-status-cell').textContent.trim()
+        }));
+        showToast('Stok PDF hazırlanıyor...', 'info', 2000);
+        const { downloadStockReportPDF } = await import('../../reports/pdfExport.js');
+        await downloadStockReportPDF(data);
+        showToast('Stok PDF indirildi', 'success');
+      } catch (err) {
+        console.error('Stok PDF hatası:', err);
+        showToast('PDF hatası: ' + err.message, 'error');
+      }
+    });
+  }
+
+  const btnStockExcel = container.querySelector('#btn-stock-excel');
+  if (btnStockExcel) {
+    btnStockExcel.addEventListener('click', async () => {
+      try {
+        const data = Array.from(rows).map(r => ({
+          feedName: r.cells[0].textContent.trim(),
+          dailyKg: parseFloat(r.dataset.dailyKg) || 0,
+          stockQty: r.querySelector('.stock-qty-input').value,
+          stockUnit: r.querySelector('.stock-unit-input').value,
+          planQty: r.querySelector('.plan-qty-input').value,
+          planUnit: r.querySelector('.plan-unit-input').value,
+          status: r.querySelector('.stock-status-cell').textContent.trim()
+        }));
+        showToast('Stok Excel hazırlanıyor...', 'info', 2000);
+        const { downloadStockReportExcel } = await import('../../reports/excelExport.js');
+        await downloadStockReportExcel(data);
+        showToast('Stok Excel indirildi', 'success');
+      } catch (err) {
+        console.error('Stok Excel hatası:', err);
         showToast('Excel hatası: ' + err.message, 'error');
       }
     });
