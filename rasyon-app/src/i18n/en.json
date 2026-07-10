@@ -1798,7 +1798,10 @@
     "open_account": "Account / Sign In",
     "not_logged_in": "Not signed in (local to this device only)",
     "aria": "Cloud Account",
-    "close": "Close"
+    "close": "Close",
+    "save_sync": "Save / Sync to Cloud",
+    "clear_cloud": "Clear Cloud Data",
+    "auto_save_warning": "Your data is not saved automatically. Don't forget to click \"Save / Sync to Cloud\" when you make changes."
   },
   "farm": {
     "no_farm": "Farm",
@@ -1838,5 +1841,10 @@
     "prices": "<b>💰 Price Manager</b> — Quick feed price updater.<br>• <b>Centralized:</b> Update all your feed prices in one place.<br>• <b>Save:</b> Updated prices will be used in future optimizations and IOFC calculations.",
     "observations": "<b>📊 Field Observations</b> — Real-world animal data entry.<br>• <b>Measurements:</b> Record actual milk yield, BCS, and urine pH over time.<br>• <b>Tracking:</b> Essential for dashboard trends and accurate warnings.",
     "settings": "<b>⚙️ Settings</b> — Global app preferences.<br>• <b>Localization:</b> Change language and unit systems (metric/imperial).<br>• <b>Engine:</b> Toggle CNCPS iterative calculation or DMI fill models.<br>• <b>Cloud Sync:</b> Manage cloud backup tokens and data export."
+  },
+  "pwa": {
+    "new_version": "A new version is ready!",
+    "refresh": "Refresh",
+    "close": "Close"
   }
 }

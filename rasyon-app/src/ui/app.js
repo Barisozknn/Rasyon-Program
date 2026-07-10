@@ -190,6 +190,14 @@ function updateAppUIStrings() {
   const moreLabel = document.querySelector('#bn-more .bn-label');
   if (moreLabel && t('bottomNav.more') !== 'bottomNav.more') moreLabel.textContent = t('bottomNav.more');
 
+  // PWA banner (index.html) translations
+  const pwaMsg = document.querySelector('.pwa-message');
+  if (pwaMsg) pwaMsg.innerHTML = `<i class="ti ti-download"></i> ${t('pwa.new_version')}`;
+  const pwaRefresh = document.getElementById('pwa-refresh');
+  if (pwaRefresh) pwaRefresh.textContent = t('pwa.refresh');
+  const pwaClose = document.getElementById('pwa-close');
+  if (pwaClose) pwaClose.textContent = t('pwa.close');
+
   updatePageTitle();
 }
 

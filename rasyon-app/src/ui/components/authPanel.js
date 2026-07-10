@@ -85,16 +85,16 @@ function renderAccountView(body, user) {
         </div>
         ${state.lastSyncAt ? `<div class="text-small text-muted">${t('cloud.last_sync')}: ${new Date(state.lastSyncAt).toLocaleString()}</div>` : ''}
         <div class="flex gap-1 mt-1" style="flex-wrap:wrap">
-          <button class="btn btn-primary" id="auth-sync-now" ${state.status === 'syncing' ? 'disabled' : ''} style="width: 100%;"><i class="ti ti-cloud-upload"></i> Bulutla Kaydet / Eşitle</button>
+          <button class="btn btn-primary" id="auth-sync-now" ${state.status === 'syncing' ? 'disabled' : ''} style="width: 100%;"><i class="ti ti-cloud-upload"></i> ${t('cloud.save_sync')}</button>
         </div>
         <div class="flex gap-1 mt-1" style="flex-wrap:wrap">
           <button class="btn btn-danger" id="auth-logout">${t('cloud.logout')}</button>
-          <button class="btn btn-danger" id="auth-clear-cloud" style="opacity: 0.9;">Bulut Verilerini Temizle</button>
+          <button class="btn btn-danger" id="auth-clear-cloud" style="opacity: 0.9;">${t('cloud.clear_cloud')}</button>
         </div>
         <div class="flex gap-1 mt-1" style="flex-wrap:wrap">
           <button class="btn-link" id="auth-delete-account" style="opacity: 0.8; font-size: 0.85em;">${t('cloud.delete_account')}</button>
         </div>
-        <div class="text-small text-muted mt-1">Verileriniz otomatik olarak kaydedilmez. Değişiklik yaptığınızda "Bulutla Kaydet / Eşitle" butonuna basmayı unutmayın.</div>
+        <div class="text-small text-muted mt-1">${t('cloud.auto_save_warning')}</div>
       </div>
     `;
     body.querySelector('#auth-sync-now').addEventListener('click', () => syncNow());

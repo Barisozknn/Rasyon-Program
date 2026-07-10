@@ -1798,7 +1798,10 @@
     "open_account": "Hesap / Giriş",
     "not_logged_in": "Giriş yapılmadı (yalnız bu cihazda yerel)",
     "aria": "Bulut Hesabı",
-    "close": "Kapat"
+    "close": "Kapat",
+    "save_sync": "Bulutla Kaydet / Eşitle",
+    "clear_cloud": "Bulut Verilerini Temizle",
+    "auto_save_warning": "Verileriniz otomatik olarak kaydedilmez. Değişiklik yaptığınızda \"Bulutla Kaydet / Eşitle\" butonuna basmayı unutmayın."
   },
   "farm": {
     "no_farm": "Çiftlik",
@@ -1838,5 +1841,10 @@
     "prices": "<b>💰 Fiyat Yöneticisi</b> — Hızlı yem fiyatı güncelleyicisi.<br>• <b>Merkezi:</b> Tüm yem fiyatlarınızı tek bir yerden güncelleyin.<br>• <b>Kaydet:</b> Güncellenen fiyatlar gelecekteki optimizasyonlarda ve IOFC hesaplarında kullanılır.",
     "observations": "<b>📊 Saha Gözlemleri</b> — Gerçek saha verisi giriş modülü.<br>• <b>Ölçümler:</b> Gerçekleşen süt verimi, kondisyon (BCS) ve idrar pH kayıtları.<br>• <b>Takip:</b> Dashboard trendleri ve doğru uyarılar için gereklidir.",
     "settings": "<b>⚙️ Ayarlar</b> — Genel uygulama tercihleri.<br>• <b>Yerelleştirme:</b> Dil ve birim sistemlerini (metrik/emperyal) değiştirin.<br>• <b>Hesaplama:</b> CNCPS iteratif motorunu veya DMI tokluk modellerini açıp kapatın.<br>• <b>Bulut Senkronizasyonu:</b> Bulut yedekleme anahtarlarını ve veri aktarımını yönetin."
+  },
+  "pwa": {
+    "new_version": "Yeni bir sürüm hazır!",
+    "refresh": "Yenile",
+    "close": "Kapat"
   }
 }
