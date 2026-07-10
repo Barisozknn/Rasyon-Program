@@ -10,6 +10,8 @@ import {
   herdGroupGetAll,
   observationGetAll,
   rationGetAll,
+  getActiveFarmId,
+  farmGetById
 } from '../../data/db.js';
 import { calcEconomics } from '../../core/economics.js';
 import { calcLinearTrend } from '../../core/observationAnalysis.js';
@@ -88,8 +90,12 @@ export async function renderDashboardPanel(container, state, options = {}) {
   // Son 7 gün gözlem trendi
   const sevenDayObs = filterLastDays(observations, 7);
 
+  const activeFarmId = getActiveFarmId();
+  const activeFarm = activeFarmId ? await farmGetById(activeFarmId).catch(() => null) : null;
+  const stockTracking = activeFarm?.stockTracking || {};
+
   // Hatırlatıcılar
-  const reminders = buildReminders({ lastResult, observations, profiles, animal: lastAnimal });
+  const reminders = buildReminders({ lastResult, observations, profiles, animal: lastAnimal, stockTracking, groups, rations });
 
   container.innerHTML = `
     <div class="dashboard">
@@ -406,7 +412,7 @@ function renderRemindersCard(reminders) {
 
 // ─── Hatırlatıcı Üreteç ───────────────────────────────────────────────────────
 
-function buildReminders({ lastResult, observations, profiles, animal = {} }) {
+function buildReminders({ lastResult, observations, profiles, animal = {}, stockTracking = {}, groups = [], rations = [] }) {
   const reminders = [];
 
   // Rasyon durumu uyarıları
