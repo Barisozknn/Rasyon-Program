@@ -542,15 +542,15 @@ async function renderBatchResults(el, results, milkPrice) {
             const planQty = stock.planQty || '';
             const planUnit = stock.planUnit || 'gun';
             
-            const inputStyle = 'width:75px; text-align:center; padding:0.35rem; border:1px solid var(--border, #d1d5db); border-radius:12px; background:var(--bg-main, #f9fafb); color:var(--text, #111827); font-size:0.85rem; outline:none; box-shadow:0 1px 2px rgba(0,0,0,0.05); transition:border-color 0.2s;';
-            const selectStyle = 'min-width:85px; padding:0.35rem 1rem 0.35rem 0.5rem; border:1px solid var(--border, #d1d5db); border-radius:12px; background:var(--bg-main, #f9fafb); color:var(--text, #111827); font-size:0.85rem; outline:none; box-shadow:0 1px 2px rgba(0,0,0,0.05); cursor:pointer; transition:border-color 0.2s; appearance:auto;';
+            const inputStyle = 'text-align:center; padding:0.35rem; border:1px solid var(--border, #d1d5db); border-radius:12px; background:var(--bg-main, #f9fafb); color:var(--text, #111827); font-size:0.85rem; outline:none; box-shadow:0 1px 2px rgba(0,0,0,0.05); transition:border-color 0.2s;';
+            const selectStyle = 'padding:0.35rem 1rem 0.35rem 0.5rem; border:1px solid var(--border, #d1d5db); border-radius:12px; background:var(--bg-main, #f9fafb); color:var(--text, #111827); font-size:0.85rem; outline:none; box-shadow:0 1px 2px rgba(0,0,0,0.05); cursor:pointer; transition:border-color 0.2s; appearance:auto;';
 
             return `
               <tr class="stock-row" data-feed-id="${escHtml(feedId)}" data-daily-kg="${t.kg}">
                 <td>${escHtml(t.name)}</td>
                 <td class="num">${t.kg.toLocaleString(undefined, { maximumFractionDigits: 1 })}</td>
                 <td>
-                  <div class="flex gap-1" style="justify-content:center">
+                  <div class="flex gap-1" style="justify-content:center; flex-wrap:nowrap;">
                     <input type="number" class="stock-qty-input" style="${inputStyle}" value="${stockQty}" min="0">
                     <select class="stock-unit-input" style="${selectStyle}">
                       <option value="kg" ${stockUnit === 'kg' ? 'selected' : ''}>kg</option>
@@ -559,7 +559,7 @@ async function renderBatchResults(el, results, milkPrice) {
                   </div>
                 </td>
                 <td>
-                  <div class="flex gap-1" style="justify-content:center">
+                  <div class="flex gap-1" style="justify-content:center; flex-wrap:nowrap;">
                     <input type="number" class="plan-qty-input" style="${inputStyle}" value="${planQty}" min="0">
                     <select class="plan-unit-input" style="${selectStyle}">
                       <option value="gun" ${planUnit === 'gun' ? 'selected' : ''}>Gün</option>
@@ -590,6 +590,18 @@ async function renderBatchResults(el, results, milkPrice) {
           <div class="text-small text-muted" style="margin-bottom:1rem">
             Günlük TMR ihtiyacına göre stoklarınızın ne kadar süre yeteceğini hesaplayın.
           </div>
+          <style>
+            .stock-qty-input, .plan-qty-input { width: 75px; }
+            .stock-unit-input, .plan-unit-input { min-width: 85px; }
+            @media (max-width: 768px) {
+              .stock-qty-input, .plan-qty-input { width: 55px; }
+              .stock-unit-input, .plan-unit-input { 
+                min-width: 60px; 
+                padding-left: 0.2rem !important; 
+                padding-right: 0.8rem !important; 
+              }
+            }
+          </style>
           <div class="feed-table-wrap" style="overflow-x:auto; -webkit-overflow-scrolling:touch; width:100%">
             <table class="diag-table" id="stock-tracking-table" style="min-width: 750px; font-size:0.85rem">
               <thead>
