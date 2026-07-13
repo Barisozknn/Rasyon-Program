@@ -1801,7 +1801,7 @@
     "close": "Close",
     "save_sync": "Save / Sync to Cloud",
     "clear_cloud": "Clear Cloud Data",
-    "auto_save_warning": "Your data is not saved automatically. Don't forget to click \"Save / Sync to Cloud\" when you make changes."
+    "auto_save_warning": "Your data is automatically saved to the cloud when changes are made. You can also sync manually using the button above."
   },
   "farm": {
     "no_farm": "Farm",

@@ -31,6 +31,7 @@ let _adapter = null;
 let _syncing = false;
 let _debounceTimer = null;
 let _autoSyncAttached = false;
+let _pendingSync = false; // sync sırasında değişiklik olursa sonrasında tekrar dene
 
 // ─── Durum yayını ─────────────────────────────────────────────────────────────
 
@@ -96,9 +97,14 @@ export async function startSync(user) {
   if (typeof window !== 'undefined' && !_autoSyncAttached) {
     const handleLocalChange = () => {
       const s = getSettings();
-      if (s.cloud?.autoSync !== false && _adapter && !_syncing) {
-        clearTimeout(_debounceTimer);
-        _debounceTimer = setTimeout(() => syncNow(), 3000);
+      if (s.cloud?.autoSync !== false && _adapter) {
+        if (_syncing) {
+          // Senkronizasyon devam ediyor: bitince tekrar dene
+          _pendingSync = true;
+        } else {
+          clearTimeout(_debounceTimer);
+          _debounceTimer = setTimeout(() => syncNow(), 3000);
+        }
       }
     };
     window.addEventListener('rasyon:local-change', handleLocalChange);
@@ -129,6 +135,7 @@ export async function syncNow() {
     return;
   }
   _syncing = true;
+  _pendingSync = false; // bu sync alıyor, bekleyen bayrağı temizle
   setStatus('syncing', { error: null });
   try {
     // 20 saniye içinde tamamlanmazsa timeout hatası ver
@@ -148,6 +155,11 @@ export async function syncNow() {
     setStatus('error', { error: err.message });
   } finally {
     _syncing = false;
+    // Sync sırasında değişiklik olduysa 2 saniye sonra tekrar dene
+    if (_pendingSync && _adapter) {
+      _pendingSync = false;
+      _debounceTimer = setTimeout(() => syncNow(), 2000);
+    }
   }
 }
 

@@ -1801,7 +1801,7 @@
     "close": "Kapat",
     "save_sync": "Bulutla Kaydet / Eşitle",
     "clear_cloud": "Bulut Verilerini Temizle",
-    "auto_save_warning": "Verileriniz otomatik olarak kaydedilmez. Değişiklik yaptığınızda \"Bulutla Kaydet / Eşitle\" butonuna basmayı unutmayın."
+    "auto_save_warning": "Verileriniz değiştiğinde otomatik olarak buluta kaydedilir. Manuel senkronizasyon için butona basabilirsiniz."
   },
   "farm": {
     "no_farm": "Çiftlik",
