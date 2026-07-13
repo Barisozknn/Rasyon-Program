@@ -600,7 +600,10 @@ function refreshSelectedFeeds(container, state) {
             value="${sf.minKg ?? ''}" placeholder="—" data-idx="${i}" />
           <input type="number" class="limit-max" min="0" step="0.1"
             value="${sf.maxKg ?? ''}" placeholder="—" data-idx="${i}" />
-          <select class="milp-type" data-idx="${i}">${milpOptions(sf.milpType)}</select>
+          <div style="display:flex; flex-direction:column; gap:0.2rem;">
+            <select class="milp-type" data-idx="${i}">${milpOptions(sf.milpType)}</select>
+            ${sf.milpType ? `<label style="font-size:0.7rem; color:var(--text-muted); display:flex; align-items:center; gap:0.2rem;"><input type="checkbox" class="milp-basis" data-idx="${i}" ${sf.milpBasis === 'as_fed' ? 'checked' : ''} /> Taze Bazda</label>` : ''}
+          </div>
           <button class="remove-feed-btn" data-idx="${i}" aria-label="Kaldır"><i class="ti ti-x"></i></button>
         </div>
       `).join('')}
@@ -635,11 +638,20 @@ function refreshSelectedFeeds(container, state) {
     sel.addEventListener('change', () => {
       const idx = +sel.dataset.idx;
       state.selectedFeeds[idx].milpType = sel.value || null;
+      if (!sel.value) state.selectedFeeds[idx].milpBasis = 'dm'; // Reset basis if continuous
+      refreshSelectedFeeds(container, state); // re-render to show/hide checkbox
       // #3: 'Min sipariş' (semicontinuous) Min/Maks kg gerektirir; yoksa kullanıcıyı uyar
       if (sel.value === 'semicontinuous') {
         const sf = state.selectedFeeds[idx];
         if (!(sf.minKg > 0) || !(sf.maxKg > 0)) showToast(t('ration.milp_minorder_warn'), 'warn', 5000);
       }
+    });
+  });
+
+  area.querySelectorAll('.milp-basis').forEach(cb => {
+    cb.addEventListener('change', () => {
+      const idx = +cb.dataset.idx;
+      state.selectedFeeds[idx].milpBasis = cb.checked ? 'as_fed' : 'dm';
     });
   });
 
@@ -960,11 +972,14 @@ async function handleOptimizeClick(container, state, onOptimize) {
   // Feed limitleri (+ FAZ 14.11 MILP tipi: semicontinuous / integer)
   const feedLimits = {};
   for (const sf of state.selectedFeeds) {
-    if (sf.minKg !== null || sf.maxKg !== null || sf.milpType) {
-      const lim = { min: sf.minKg ?? undefined, max: sf.maxKg ?? undefined };
-      if (sf.milpType) lim.type = sf.milpType;  // 'semicontinuous' | 'integer'
-      feedLimits[sf.id] = lim;
+    const lim = {};
+    if (sf.minKg !== undefined && sf.minKg !== null) lim.min = sf.minKg;
+    if (sf.maxKg !== undefined && sf.maxKg !== null) lim.max = sf.maxKg;
+    if (sf.milpType) {
+      lim.type = sf.milpType;  // 'semicontinuous' | 'integer'
+      lim.basis = sf.milpBasis || 'dm'; // 'as_fed' | 'dm'
     }
+    feedLimits[sf.id] = lim;
   }
 
   const composition = readComposition(container);

@@ -772,7 +772,23 @@ export function buildRationLP(input) {
       if (Number.isFinite(maxPct) && maxPct < 100) ub = (maxPct / 100) * dmi_kg;
     }
 
-    // FAZ 14.11: Semi-continuous — yem ya 0 ya [lb, ub] (premiks min-order, lot eşiği).
+    // FAZ 14.11: MILP değişken türleri — semi-continuous & integer.
+    // Taze (as_fed) bazındaysa, x_af değişkeni yarat ve hedef değişken (targetVar) yap.
+    const isAsFed = (lim.basis === 'as_fed' && (lim.type === 'semicontinuous' || lim.type === 'integer'));
+    let targetVar = varName;
+    if (isAsFed) {
+      targetVar = `${varName}_af`;
+      const dmRatio = num(f.dm, 100) / 100;
+      // x_af >= 0 alt sınırı
+      bounds.push({ name: targetVar, type: GLP.LO, lb: 0, ub: 0 });
+      // x_dm - x_af * dmRatio = 0
+      pushConstraint(subjectTo, {
+        name: `link_af_${sanitizeId(f.id)}`,
+        vars: [{ name: varName, coef: 1 }, { name: targetVar, coef: -dmRatio }],
+        lb: 0, ub: 0
+      });
+    }
+
     // glpk semi-continuous tipini exposed etmediği için binary "big-M" formülasyonu:
     //   y ∈ {0,1};  x ≤ ub·y  (y=0 → x=0);  x ≥ lb·y  (y=1 → x≥lb)
     // Standart limit kısıtı eklenmez (yerini bu iki kısıt alır).
@@ -781,12 +797,12 @@ export function buildRationLP(input) {
       binaries.push(yName);
       pushConstraint(subjectTo, {
         name: `sc_max_${sanitizeId(f.id)}`,
-        vars: [{ name: varName, coef: 1 }, { name: yName, coef: -ub }],
+        vars: [{ name: targetVar, coef: 1 }, { name: yName, coef: -ub }],
         ub: 0,  // x − ub·y ≤ 0
       });
       pushConstraint(subjectTo, {
         name: `sc_min_${sanitizeId(f.id)}`,
-        vars: [{ name: varName, coef: 1 }, { name: yName, coef: -lb }],
+        vars: [{ name: targetVar, coef: 1 }, { name: yName, coef: -lb }],
         lb: 0,  // x − lb·y ≥ 0
       });
       return;
@@ -794,13 +810,13 @@ export function buildRationLP(input) {
 
     // FAZ 14.11: Integer — yem miktarı tamsayı kg (lot/çuval bazlı satın alma)
     if (lim.type === 'integer') {
-      generals.push(varName);
+      generals.push(targetVar);
     }
 
     if (lb === undefined && ub === undefined) return;
     pushConstraint(subjectTo, {
       name: `limit_${sanitizeId(f.id)}`,
-      vars: [{ name: varName, coef: 1 }],
+      vars: [{ name: targetVar, coef: 1 }],
       lb,
       ub,
     });
