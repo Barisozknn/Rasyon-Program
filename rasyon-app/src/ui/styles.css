@@ -2671,7 +2671,8 @@ details.acc-panel table.diag-table {
 
   /* FAZ 21: kenar menü gizli — mobilde alt navigasyon (bottom-nav) kullanılır */
   #app {
-    display: block;
+    display: flex;
+    flex-direction: column;
   }
 
   .app-sidebar {
