@@ -183,6 +183,7 @@ body {
   color: var(--text);
   line-height: 1.5;
   height: 100vh;
+  height: 100dvh;
   /* Sorun 4: ekranın yatay kaymasını engelle */
   overflow: hidden;
   max-width: 100vw;
@@ -192,6 +193,7 @@ body {
 #app {
   display: flex;
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;
 }
 
@@ -2684,12 +2686,7 @@ details.acc-panel table.diag-table {
   }
 
   /* Sonuçlar sekmesi kendi padding'ini kendisi ayarlar */
-  .tab-content:not(body:has(#tab-results.active) .tab-content) {
-    padding: 0.85rem 0.85rem calc(5.5rem + env(safe-area-inset-bottom, 0px));
-  }
-
-  /* Diğer sekmeler için kısa yol */
-  body:not(:has(#tab-results.active)) .tab-content {
+  body:not([data-active-tab="results"]) .tab-content {
     padding: 0.85rem 0.85rem calc(5.5rem + env(safe-area-inset-bottom, 0px));
   }
 
@@ -2723,8 +2720,7 @@ details.acc-panel table.diag-table {
   }
 
   /* Sonuçlar sekmesi DIŞINDA tablolar display:block scroll konteyneri */
-  .tab-content:not(body:has(#tab-results.active) .tab-content) table,
-  body:not(:has(#tab-results.active)) .tab-content table {
+  body:not([data-active-tab="results"]) .tab-content table {
     display: block;
     overflow-x: auto;
     white-space: nowrap;
@@ -2794,7 +2790,7 @@ details.acc-panel table.diag-table {
 /* ── Telefon (≤480px) ──────────────────────────────────────────────────────── */
 @media (max-width: 480px) {
   /* Sonuçlar/Fiyat sekmeleri dışındaki sekmeler için padding */
-  body:not(:has(#tab-results.active)):not(:has(#tab-prices.active)) .tab-content {
+  body:not([data-active-tab="results"]):not([data-active-tab="prices"]) .tab-content {
     padding: 0.6rem 0.6rem 4.75rem;
   }
 
@@ -2839,7 +2835,7 @@ details.acc-panel table.diag-table {
   }
 
   /* Özet bar: sonuçlar sekmesi DIŞINDA 2 sütun; sonuçlarda masaüstü gibi auto-fit */
-  body:not(:has(#tab-results.active)) .summary-bar {
+  body:not([data-active-tab="results"]) .summary-bar {
     grid-template-columns: 1fr 1fr !important;
   }
 
@@ -3323,8 +3319,7 @@ details.acc-panel table.diag-table {
 @media (max-width: 768px), ((max-width: 992px) or (max-height: 500px)) and (orientation: landscape) {
 
   /* ── Scroll konteyneri: YALNIZCA .tab-content ── */
-  body[data-active-tab="results"] .tab-content,
-  body:has(#tab-results.active) .tab-content {
+  body[data-active-tab="results"] .tab-content {
     overflow-x: auto !important;
     overflow-y: visible !important;
     -webkit-overflow-scrolling: touch;
@@ -3811,7 +3806,7 @@ details.acc-panel table.diag-table {
   #tab-results.active {
     padding-bottom: 0.85rem !important;
   }
-  body:has(#tab-results.active) .tab-content {
+  body[data-active-tab="results"] .tab-content {
     padding-bottom: 0 !important;
   }
   
