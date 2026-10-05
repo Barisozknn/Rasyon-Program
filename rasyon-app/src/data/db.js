@@ -27,7 +27,7 @@ import { getSettings, clearSettingsDirty, applyRemoteSettings } from './settings
 // ─── Sabitler ───────────────────────────────────────────────────────────────
 
 export const DB_NAME    = 'rasyon-db';
-export const DB_VERSION = 4;  // FAZ 16.10: UUID göçü + farms store + senkron meta, v4: aiChats
+export const DB_VERSION = 6;  // FAZ 16.10: UUID göçü + farms store + senkron meta, v4: aiChats, v6: version fix
 
 /**
  * Senkronizasyona tabi kullanıcı store'ları (çiftlik-kapsamlı).

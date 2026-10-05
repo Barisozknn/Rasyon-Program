@@ -68,14 +68,15 @@
         "c18_0": 3,
         "c18_1": 22,
         "c18_2": 51,
-      "choKdB1": 22,
-      "choKdB2": 4,
-      "protKdB1": 18,
-      "protKdB2": 4,
-      "protKdB3": 0.8,
+        "choKdB1": 22,
+        "choKdB2": 4,
+        "protKdB1": 18,
+        "protKdB2": 4,
+        "protKdB3": 0.8,
         "c18_3": 6
       },
-      "lignin": 3
+      "lignin": 3,
+      "bcarotene": 15
     },
     {
       "id": "tr_corn_silage_mid",
@@ -142,14 +143,15 @@
         "c18_0": 3,
         "c18_1": 22,
         "c18_2": 51,
-      "choKdB1": 22,
-      "choKdB2": 4,
-      "protKdB1": 18,
-      "protKdB2": 4,
-      "protKdB3": 0.8,
+        "choKdB1": 22,
+        "choKdB2": 4,
+        "protKdB1": 18,
+        "protKdB2": 4,
+        "protKdB3": 0.8,
         "c18_3": 6
       },
-      "lignin": 3.5
+      "lignin": 3.5,
+      "bcarotene": 15
     },
     {
       "id": "tr_corn_silage_late",
@@ -216,14 +218,15 @@
         "c18_0": 3,
         "c18_1": 24,
         "c18_2": 50,
-      "choKdB1": 22,
-      "choKdB2": 4,
-      "protKdB1": 18,
-      "protKdB2": 4,
-      "protKdB3": 0.8,
+        "choKdB1": 22,
+        "choKdB2": 4,
+        "protKdB1": 18,
+        "protKdB2": 4,
+        "protKdB3": 0.8,
         "c18_3": 5
       },
-      "lignin": 4.5
+      "lignin": 4.5,
+      "bcarotene": 15
     },
     {
       "id": "nrc_alfalfa_hay_1cut",
@@ -290,14 +293,15 @@
         "c18_0": 3,
         "c18_1": 4,
         "c18_2": 18,
-      "choKdB1": 35,
-      "choKdB2": 6,
-      "protKdB1": 20,
-      "protKdB2": 6,
-      "protKdB3": 1,
+        "choKdB1": 35,
+        "choKdB2": 6,
+        "protKdB1": 20,
+        "protKdB2": 6,
+        "protKdB3": 1,
         "c18_3": 53
       },
-      "lignin": 6.5
+      "lignin": 6.5,
+      "bcarotene": 35
     },
     {
       "id": "nrc_alfalfa_hay_2cut",
@@ -367,14 +371,15 @@
         "c18_0": 3,
         "c18_1": 4,
         "c18_2": 19,
-      "choKdB1": 35,
-      "choKdB2": 6,
-      "protKdB1": 20,
-      "protKdB2": 6,
-      "protKdB3": 1,
+        "choKdB1": 35,
+        "choKdB2": 6,
+        "protKdB1": 20,
+        "protKdB2": 6,
+        "protKdB3": 1,
         "c18_3": 54
       },
-      "lignin": 7.5
+      "lignin": 7.5,
+      "bcarotene": 35
     },
     {
       "id": "nrc_alfalfa_hay_3cut",
@@ -441,14 +446,15 @@
         "c18_0": 3,
         "c18_1": 4,
         "c18_2": 20,
-      "choKdB1": 35,
-      "choKdB2": 6,
-      "protKdB1": 20,
-      "protKdB2": 6,
-      "protKdB3": 1,
+        "choKdB1": 35,
+        "choKdB2": 6,
+        "protKdB1": 20,
+        "protKdB2": 6,
+        "protKdB3": 1,
         "c18_3": 54
       },
-      "lignin": 8.5
+      "lignin": 8.5,
+      "bcarotene": 35
     },
     {
       "id": "tr_wheat_straw",
@@ -515,14 +521,15 @@
         "c18_0": 4,
         "c18_1": 14,
         "c18_2": 35,
-      "choKdB1": 25,
-      "choKdB2": 4,
-      "protKdB1": 15,
-      "protKdB2": 4,
-      "protKdB3": 0.8,
+        "choKdB1": 25,
+        "choKdB2": 4,
+        "protKdB1": 15,
+        "protKdB2": 4,
+        "protKdB3": 0.8,
         "c18_3": 19
       },
-      "lignin": 12
+      "lignin": 12,
+      "bcarotene": 2
     },
     {
       "id": "tr_barley_straw",
@@ -589,14 +596,15 @@
         "c18_0": 4,
         "c18_1": 16,
         "c18_2": 36,
-      "choKdB1": 25,
-      "choKdB2": 4,
-      "protKdB1": 15,
-      "protKdB2": 4,
-      "protKdB3": 0.8,
+        "choKdB1": 25,
+        "choKdB2": 4,
+        "protKdB1": 15,
+        "protKdB2": 4,
+        "protKdB3": 0.8,
         "c18_3": 18
       },
-      "lignin": 11.5
+      "lignin": 11.5,
+      "bcarotene": 2
     },
     {
       "id": "nrc_grass_hay",
@@ -663,14 +671,15 @@
         "c18_0": 2,
         "c18_1": 5,
         "c18_2": 16,
-      "choKdB1": 25,
-      "choKdB2": 4,
-      "protKdB1": 15,
-      "protKdB2": 4,
-      "protKdB3": 0.8,
+        "choKdB1": 25,
+        "choKdB2": 4,
+        "protKdB1": 15,
+        "protKdB2": 4,
+        "protKdB3": 0.8,
         "c18_3": 59
       },
-      "lignin": 5.5
+      "lignin": 5.5,
+      "bcarotene": 15
     },
     {
       "id": "tr_triticale_silage",
@@ -737,14 +746,15 @@
         "c18_0": 2,
         "c18_1": 12,
         "c18_2": 30,
-      "choKdB1": 25,
-      "choKdB2": 4,
-      "protKdB1": 15,
-      "protKdB2": 4,
-      "protKdB3": 0.8,
+        "choKdB1": 25,
+        "choKdB2": 4,
+        "protKdB1": 15,
+        "protKdB2": 4,
+        "protKdB3": 0.8,
         "c18_3": 34
       },
-      "lignin": 5
+      "lignin": 5,
+      "bcarotene": 25
     },
     {
       "id": "nrc_corn_silage_std",
@@ -814,14 +824,15 @@
         "c18_0": 3,
         "c18_1": 22,
         "c18_2": 51,
-      "choKdB1": 22,
-      "choKdB2": 4,
-      "protKdB1": 18,
-      "protKdB2": 4,
-      "protKdB3": 0.8,
+        "choKdB1": 22,
+        "choKdB2": 4,
+        "protKdB1": 18,
+        "protKdB2": 4,
+        "protKdB3": 0.8,
         "c18_3": 6
       },
-      "lignin": 3.5
+      "lignin": 3.5,
+      "bcarotene": 15
     },
     {
       "id": "nrc_corn_grain_coarse",
@@ -891,11 +902,11 @@
         "c18_0": 2,
         "c18_1": 28,
         "c18_2": 53,
-      "choKdB1": 14,
-      "choKdB2": 5,
-      "protKdB1": 12,
-      "protKdB2": 3,
-      "protKdB3": 0.5,
+        "choKdB1": 14,
+        "choKdB2": 5,
+        "protKdB1": 12,
+        "protKdB2": 3,
+        "protKdB3": 0.5,
         "c18_3": 3
       }
     },
@@ -965,11 +976,11 @@
         "c18_0": 2,
         "c18_1": 28,
         "c18_2": 53,
-      "choKdB1": 14,
-      "choKdB2": 5,
-      "protKdB1": 12,
-      "protKdB2": 3,
-      "protKdB3": 0.5,
+        "choKdB1": 14,
+        "choKdB2": 5,
+        "protKdB1": 12,
+        "protKdB2": 3,
+        "protKdB3": 0.5,
         "c18_3": 3
       }
     },
@@ -1038,11 +1049,11 @@
         "c18_0": 1,
         "c18_1": 14,
         "c18_2": 56,
-      "choKdB1": 35,
-      "choKdB2": 6,
-      "protKdB1": 25,
-      "protKdB2": 5,
-      "protKdB3": 0.5,
+        "choKdB1": 35,
+        "choKdB2": 6,
+        "protKdB1": 25,
+        "protKdB2": 5,
+        "protKdB3": 0.5,
         "c18_3": 5
       }
     },
@@ -1111,11 +1122,11 @@
         "c18_0": 1,
         "c18_1": 15,
         "c18_2": 58,
-      "choKdB1": 40,
-      "choKdB2": 6,
-      "protKdB1": 22,
-      "protKdB2": 6,
-      "protKdB3": 0.5,
+        "choKdB1": 40,
+        "choKdB2": 6,
+        "protKdB1": 22,
+        "protKdB2": 6,
+        "protKdB3": 0.5,
         "c18_3": 4
       }
     },
@@ -1176,11 +1187,11 @@
         "c18_0": 1,
         "c18_1": 14,
         "c18_2": 60,
-      "choKdB1": 40,
-      "choKdB2": 6,
-      "protKdB1": 22,
-      "protKdB2": 6,
-      "protKdB3": 0.5,
+        "choKdB1": 40,
+        "choKdB2": 6,
+        "protKdB1": 22,
+        "protKdB2": 6,
+        "protKdB3": 0.5,
         "c18_3": 5
       }
     },
@@ -1252,11 +1263,11 @@
         "c18_0": 4,
         "c18_1": 23,
         "c18_2": 53,
-      "choKdB1": 15,
-      "choKdB2": 6,
-      "protKdB1": 16,
-      "protKdB2": 5,
-      "protKdB3": 0.5,
+        "choKdB1": 15,
+        "choKdB2": 6,
+        "protKdB1": 16,
+        "protKdB2": 5,
+        "protKdB3": 0.5,
         "c18_3": 8
       }
     },
@@ -1325,11 +1336,11 @@
         "c18_0": 4,
         "c18_1": 23,
         "c18_2": 53,
-      "choKdB1": 15,
-      "choKdB2": 6,
-      "protKdB1": 16,
-      "protKdB2": 5,
-      "protKdB3": 0.5,
+        "choKdB1": 15,
+        "choKdB2": 6,
+        "protKdB1": 16,
+        "protKdB2": 5,
+        "protKdB3": 0.5,
         "c18_3": 8
       }
     },
@@ -1398,11 +1409,11 @@
         "c18_0": 3,
         "c18_1": 18,
         "c18_2": 53,
-      "choKdB1": 15,
-      "choKdB2": 4,
-      "protKdB1": 10,
-      "protKdB2": 3,
-      "protKdB3": 0.4,
+        "choKdB1": 15,
+        "choKdB2": 4,
+        "protKdB1": 10,
+        "protKdB2": 3,
+        "protKdB3": 0.4,
         "c18_3": 1
       }
     },
@@ -1539,11 +1550,11 @@
         "c18_0": 4,
         "c18_1": 22,
         "c18_2": 65,
-      "choKdB1": 15,
-      "choKdB2": 5,
-      "protKdB1": 14,
-      "protKdB2": 4,
-      "protKdB3": 0.5,
+        "choKdB1": 15,
+        "choKdB2": 5,
+        "protKdB1": 14,
+        "protKdB2": 4,
+        "protKdB3": 0.5,
         "c18_3": 1
       }
     },
@@ -1612,11 +1623,11 @@
         "c18_0": 2,
         "c18_1": 58,
         "c18_2": 21,
-      "choKdB1": 15,
-      "choKdB2": 5,
-      "protKdB1": 12,
-      "protKdB2": 4,
-      "protKdB3": 0.5,
+        "choKdB1": 15,
+        "choKdB2": 5,
+        "protKdB1": 12,
+        "protKdB2": 4,
+        "protKdB3": 0.5,
         "c18_3": 10
       }
     },
@@ -1821,11 +1832,11 @@
         "c18_0": 2,
         "c18_1": 24,
         "c18_2": 54,
-      "choKdB1": 12,
-      "choKdB2": 4,
-      "protKdB1": 10,
-      "protKdB2": 3,
-      "protKdB3": 0.5,
+        "choKdB1": 12,
+        "choKdB2": 4,
+        "protKdB1": 10,
+        "protKdB2": 3,
+        "protKdB3": 0.5,
         "c18_3": 2
       }
     },
@@ -1894,11 +1905,11 @@
         "c18_0": 2,
         "c18_1": 14,
         "c18_2": 55,
-      "choKdB1": 25,
-      "choKdB2": 4,
-      "protKdB1": 15,
-      "protKdB2": 4,
-      "protKdB3": 0.8,
+        "choKdB1": 25,
+        "choKdB2": 4,
+        "protKdB1": 15,
+        "protKdB2": 4,
+        "protKdB3": 0.8,
         "c18_3": 5
       }
     },
@@ -2575,7 +2586,8 @@
       "protKdB1": 20,
       "protKdB2": 6,
       "protKdB3": 1,
-      "comment": "Fermente yonca; yüksek tampon kapasite; NDF pH etkisi"
+      "comment": "Fermente yonca; yüksek tampon kapasite; NDF pH etkisi",
+      "bcarotene": 40
     },
     {
       "id": "tr_grass_silage",
@@ -2641,7 +2653,8 @@
       "protKdB1": 15,
       "protKdB2": 4,
       "protKdB3": 0.8,
-      "comment": "Nem kontrolü kritik; butirik asit riski"
+      "comment": "Nem kontrolü kritik; butirik asit riski",
+      "bcarotene": 250
     },
     {
       "id": "tr_oat_hay",
@@ -2707,7 +2720,8 @@
       "protKdB1": 15,
       "protKdB2": 4,
       "protKdB3": 0.8,
-      "comment": "Türkiye'de yaygın; iyi fiziksel etkin NDF kaynağı"
+      "comment": "Türkiye'de yaygın; iyi fiziksel etkin NDF kaynağı",
+      "bcarotene": 15
     },
     {
       "id": "tr_oat_silage",
@@ -2773,7 +2787,8 @@
       "protKdB1": 15,
       "protKdB2": 4,
       "protKdB3": 0.8,
-      "comment": "Süt-hamur olum döneminde hasat; iyi fermentasyon"
+      "comment": "Süt-hamur olum döneminde hasat; iyi fermentasyon",
+      "bcarotene": 25
     },
     {
       "id": "tr_vetch_hay",
@@ -2839,7 +2854,8 @@
       "protKdB1": 20,
       "protKdB2": 6,
       "protKdB3": 1,
-      "comment": "Türkiye'de yaygın baklagil yem bitkisi; iyi protein kaynağı"
+      "comment": "Türkiye'de yaygın baklagil yem bitkisi; iyi protein kaynağı",
+      "bcarotene": 15
     },
     {
       "id": "tr_sunflower_silage",
@@ -2905,7 +2921,8 @@
       "protKdB1": 15,
       "protKdB2": 4,
       "protKdB3": 0.8,
-      "comment": "Türkiye'ye özgü; düşük NEL; ancak bol miktarda üretilir"
+      "comment": "Türkiye'ye özgü; düşük NEL; ancak bol miktarda üretilir",
+      "bcarotene": 25
     },
     {
       "id": "tr_sorghum_silage",
@@ -2971,7 +2988,8 @@
       "protKdB1": 15,
       "protKdB2": 4,
       "protKdB3": 0.8,
-      "comment": "2. ürün olarak yaygın; HCN (hidrosiyanik asit) riski var — olgunlaşmadan hasat edilmemeli"
+      "comment": "2. ürün olarak yaygın; HCN (hidrosiyanik asit) riski var — olgunlaşmadan hasat edilmemeli",
+      "bcarotene": 25
     },
     {
       "id": "nrc_bermuda_grass_hay",
@@ -3037,7 +3055,8 @@
       "protKdB1": 15,
       "protKdB2": 4,
       "protKdB3": 0.8,
-      "comment": "Güney bölgeleri için referans; yüksek NDF, düşük NEL"
+      "comment": "Güney bölgeleri için referans; yüksek NDF, düşük NEL",
+      "bcarotene": 15
     },
     {
       "id": "nrc_timothy_hay",
@@ -3103,7 +3122,8 @@
       "protKdB1": 15,
       "protKdB2": 4,
       "protKdB3": 0.8,
-      "comment": "NRC 2001 referans; kalite yem bitkisi"
+      "comment": "NRC 2001 referans; kalite yem bitkisi",
+      "bcarotene": 15
     },
     {
       "id": "tr_whole_crop_wheat_silage",
@@ -3169,7 +3189,8 @@
       "protKdB1": 15,
       "protKdB2": 4,
       "protKdB3": 0.8,
-      "comment": "Süt-hamur olumda biçilir; Türkiye'de yaygınlaşıyor"
+      "comment": "Süt-hamur olumda biçilir; Türkiye'de yaygınlaşıyor",
+      "bcarotene": 25
     },
     {
       "id": "tr_red_clover_hay",
@@ -3235,7 +3256,8 @@
       "protKdB1": 20,
       "protKdB2": 6,
       "protKdB3": 1,
-      "comment": "Baklagil; şişme riski; iyi CP ve Ca kaynağı"
+      "comment": "Baklagil; şişme riski; iyi CP ve Ca kaynağı",
+      "bcarotene": 15
     },
     {
       "id": "tr_corn_ccm",
@@ -3293,7 +3315,8 @@
       "protKdB1": 15,
       "protKdB2": 4,
       "protKdB3": 0.8,
-      "comment": "Yüksek nişasta; dane misirin rutubet korunmuş alternatifi"
+      "comment": "Yüksek nişasta; dane misirin rutubet korunmuş alternatifi",
+      "bcarotene": 25
     },
     {
       "id": "nrc_oat_grain",
@@ -4781,6 +4804,7 @@
       "vitE": 0,
       "lys": 0,
       "met": 0,
+      "niacin": 1000000,
       "pricePerTon": 0,
       "comment": "Ketozis önleme; 6-12 g/gün geçiş dönemi; lipolizi azaltır"
     },
@@ -4834,6 +4858,7 @@
       "vitE": 0,
       "lys": 0,
       "met": 0,
+      "choline": 600,
       "pricePerTon": 0,
       "comment": "Yağlı karaciğer önleme; 15-25 g/gün geçiş dönemi; rumen korumalı form etkili"
     },
