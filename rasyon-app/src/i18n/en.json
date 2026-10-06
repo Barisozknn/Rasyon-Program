@@ -96,7 +96,7 @@
     "stat_annual": "Annual ₺",
     "status_label": "Status",
     "based_on": "based on {n} animals",
-    "iofc_note": "ⓘ Estimate: current ration × total animal count. Use the Farm Panel tab for different periods.",
+    "iofc_note": "ⓘ Estimate: Calculated based on the ration costs assigned to profiles in the Farm Panel. Only animals in groups with an assigned ration are included; others are excluded.",
     "measurements": "measurements",
     "no_obs_7d": "No observations in the last 7 days.",
     "need_2_obs": "At least 2 measurements needed for the trend chart (1 record in the last 7 days).",

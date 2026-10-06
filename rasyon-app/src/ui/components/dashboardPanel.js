@@ -66,9 +66,59 @@ export async function renderDashboardPanel(container, state, options = {}) {
 
   const totalAnimals = groups.reduce((s, g) => s + (g.animalCount || 0), 0);
 
-  // Sürü-ölçek IOFC tahmini — mevcut rasyon × toplam hayvan
+  // Sürü-ölçek IOFC tahmini — Çiftlik Panelindeki profillere atalı rasyonları topla
   let iofcEstimate = null;
-  if (lastResult?.feasible && totalAnimals > 0) {
+  let totalAssignedDailyIOFC = 0;
+  let totalAssignedCows = 0;
+  let totalAssignedMilkYield = 0;
+
+  if (profiles && profiles.length > 0) {
+    profiles.forEach(p => {
+      const groupSize = groups.find(g => g.id === p.groupId)?.animalCount ?? 0;
+      if (groupSize === 0) return;
+
+      if (p.targetRationId) {
+        const ration = rations.find(r => r.id === p.targetRationId);
+        if (ration && ration.result?.feasible) {
+          const econ = calcEconomics({
+            milkYield_kg: p.milkYield ?? 0,
+            milkPrice_tl: milkPrice,
+            feedCost_tl_day: ration.result.totalCost ?? 0,
+            dmi_kg: ration.result.dmi?.achieved_kg ?? 0,
+            milkFat_pct: p.milkFat,
+            milkProtein_pct: p.milkProtein,
+            herdSize: 1
+          });
+          totalAssignedDailyIOFC += econ.daily.iofc_tl * groupSize;
+          totalAssignedMilkYield += (p.milkYield ?? 0) * groupSize;
+          totalAssignedCows += groupSize;
+        }
+      }
+    });
+  }
+
+  // Eğer çiftlik panelinde en az 1 hayvan için atalı rasyon varsa onu kullan
+  if (totalAssignedCows > 0) {
+    const avgPerCow = totalAssignedDailyIOFC / totalAssignedCows;
+    const avgMilk = totalAssignedMilkYield / totalAssignedCows;
+    const mockEcon = calcEconomics({
+      milkYield_kg: avgMilk,
+      milkPrice_tl: milkPrice,
+      feedCost_tl_day: (avgMilk * milkPrice) - avgPerCow, // status hesaplaması için geriye dönük maliyet
+      dmi_kg: 20, 
+      herdSize: 1
+    });
+
+    iofcEstimate = {
+      perCow: avgPerCow,
+      herd: totalAssignedDailyIOFC,
+      monthly: totalAssignedDailyIOFC * 30,
+      annual: totalAssignedDailyIOFC * 365,
+      status: mockEcon.status,
+      assignedCows: totalAssignedCows
+    };
+  } else if (lastResult?.feasible && totalAnimals > 0) {
+    // Çiftlik panelinde hiç rasyon ataması yoksa eski mantık (tekil rasyon x toplam hayvan)
     const econ = calcEconomics({
       milkYield_kg: lastAnimal.milkYield ?? 0,
       milkPrice_tl: milkPrice,
@@ -84,6 +134,7 @@ export async function renderDashboardPanel(container, state, options = {}) {
       monthly: econ.herd.monthlyIOFC_tl,
       annual: econ.herd.annualIOFC_tl,
       status: econ.status,
+      assignedCows: totalAnimals
     };
   }
 
@@ -362,7 +413,7 @@ function renderIOFCCard(iofc, totalAnimals) {
       </div>
       <div class="dash-card-iofc">
         ${t('dashboard.status_label')}: <b style="color:${statusColor}">${escHtml(iofc.status.label)}</b>
-        &middot; ${t('dashboard.based_on', { n: totalAnimals })}
+        &middot; ${t('dashboard.based_on', { n: iofc.assignedCows || totalAnimals })}
       </div>
       <div class="text-small text-muted mt-1">
         ${t('dashboard.iofc_note')}

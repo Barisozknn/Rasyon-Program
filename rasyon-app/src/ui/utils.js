@@ -5,11 +5,21 @@
 export function showToast(msg, type = 'info', duration = 3500) {
   const container = document.getElementById('toast-container');
   if (!container) return;
+
+  // Engelleme (Deduplication): Aynı mesaj zaten ekrandaysa tekrar ekleme
+  for (const child of container.children) {
+    if (child.textContent === msg) return;
+  }
+
   const el = document.createElement('div');
   el.className = `toast toast-${type}`;
   el.textContent = msg;
   container.appendChild(el);
-  setTimeout(() => el.remove(), duration);
+  setTimeout(() => {
+    // el.remove() animasyonlu da yapılabilir ama standart remove() kullanıyoruz
+    el.classList.add('fade-out');
+    setTimeout(() => el.remove(), 300); // Eğer CSS animasyon eklenecekse diye küçük bir pay
+  }, duration);
 }
 
 /**

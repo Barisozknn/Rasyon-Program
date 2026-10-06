@@ -96,7 +96,7 @@
     "stat_annual": "Yıllık ₺",
     "status_label": "Durum",
     "based_on": "{n} baş üzerinden",
-    "iofc_note": "ⓘ Tahmin: mevcut rasyon × toplam hayvan sayısı. Farklı dönemler için Çiftlik Paneli sekmesini kullanın.",
+    "iofc_note": "ⓘ Tahmin: Çiftlik panelindeki profillere atanan rasyon maliyetleri üzerinden hesaplanmıştır. Sadece rasyon atalı gruptaki hayvanlar dâhil edilmiş, diğerleri hesaplama dışı bırakılmıştır.",
     "measurements": "ölçüm",
     "no_obs_7d": "Son 7 günde gözlem kaydı yok.",
     "need_2_obs": "Trend grafiği için en az 2 ölçüm gerekli (son 7 günde 1 kayıt var).",
