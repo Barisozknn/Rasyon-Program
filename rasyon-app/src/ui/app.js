@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Ana Uygulama — Durum yönetimi, tab routing, başlatma
  */
 
@@ -111,15 +111,7 @@ async function switchTab(tab) {
   // Sekme değişince sonuçlar zum'unu sıfırla
   if (tab !== 'results') resetResultsZoom();
 
-  // Mobil yakınlaştırma (zoom) kontrolü: Sadece sonuçlar sekmesinde serbest
-  const viewportMeta = document.querySelector('meta[name="viewport"]');
-  if (viewportMeta) {
-    if (tab === 'results') {
-      viewportMeta.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover');
-    } else {
-      viewportMeta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
-    }
-  }
+  
 
   updatePageTitle(tab);   // FAZ 21: üst-bar sayfa başlığı
   await renderTab(tab);
@@ -798,4 +790,5 @@ document.addEventListener('gestureend', function(e) { e.preventDefault(); }, { p
 
 
 setTimeout(() => { document.querySelectorAll('*').forEach(el => { if(el.offsetWidth > window.innerWidth) console.log('OVERFLOW:', el); }); }, 2000);
+
 

@@ -4287,11 +4287,12 @@ body[data-active-tab="results"] .tab-content {
 
 
 
-body[data-active-tab="results"] .tab-content, body[data-active-tab="results"] #tab-results, body[data-active-tab="results"] .results-grid { padding-bottom: 0 !important; margin-bottom: 0 !important; }
+@media (min-width: 769px) { body[data-active-tab="results"] .tab-content, body[data-active-tab="results"] #tab-results, body[data-active-tab="results"] .results-grid { padding-bottom: 0 !important; margin-bottom: 0 !important; } }
 body[data-active-tab="results"], body[data-active-tab="results"] #app, body[data-active-tab="results"] .app-body, body[data-active-tab="results"] .tab-content, body[data-active-tab="results"] #tab-results { touch-action: pan-y !important; }
 
 
 body[data-active-tab="results"] .table-scroll-wrap, body[data-active-tab="results"] .chart-wrap { touch-action: pan-x pan-y !important; }
+
 
 
 
