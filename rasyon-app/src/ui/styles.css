@@ -4281,3 +4281,6 @@ body[data-active-tab="results"] .tab-content {
 
 
 
+
+#tab-results { touch-action: pan-y !important; }
+

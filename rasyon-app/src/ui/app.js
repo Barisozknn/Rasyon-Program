@@ -796,3 +796,6 @@ document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
 document.addEventListener('gesturechange', function(e) { e.preventDefault(); });
 document.addEventListener('gestureend', function(e) { e.preventDefault(); });
 
+
+setTimeout(() => { document.querySelectorAll('*').forEach(el => { if(el.offsetWidth > window.innerWidth) console.log('OVERFLOW:', el); }); }, 2000);
+
