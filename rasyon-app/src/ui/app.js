@@ -109,7 +109,7 @@ async function switchTab(tab) {
   document.body.setAttribute('data-active-tab', tab);
 
   // Sekme değişince sonuçlar zum'unu sıfırla
-  if (tab !== 'results') resetResultsZoom();
+  
 
   
 
@@ -412,123 +412,12 @@ function toggleTheme() {
 // ilk boyamadan önce çalışır, açık-tema parlaması olmaz).
 applyTheme(getSettings().theme);
 
-// ─── Sonuçlar Sekmesi Parmak Zum (FAZ 22.1) ──────────────────────────────────
-// transform:scale() yalnızca #tab-results'a uygulanır → position:fixed olan
-// bottom-nav tamamen bağımsız kalır ve hiç etkilenmez.
-
-let _resultsZoomScale = 1;
-
-function resetResultsZoom() {
-  const panel = document.getElementById('tab-results');
-  if (!panel) return;
-  _resultsZoomScale = 1;
-  panel.style.transform = '';
-  panel.style.transformOrigin = '';
-  panel.style.marginRight = '';
-  panel.style.marginBottom = '75px';
-}
-window.resetResultsZoom = resetResultsZoom;
-
-function initResultsPinchZoom() {
-  if (!('ontouchstart' in window)) return;   // Masaüstünde devre dışı
-
-  let lastPinchDist = 0;
-  let startScale = 1;
-  let lastTapTime = 0;
-  let isPinching = false;
-
-  /** İki parmak arası mesafe */
-  const pinchDist = (touches) =>
-    Math.hypot(touches[1].clientX - touches[0].clientX,
-      touches[1].clientY - touches[0].clientY);
-
-  /** Scale'i sınırla ve uygula */
-  function applyScale(s) {
-    const panel = document.getElementById('tab-results');
-    if (!panel) return;
-
-    // Panelin o anki içeriğinin gerçek fiziksel boyutları
-    // CSS transform (scale) offsetWidth ve scrollWidth değerlerini etkilemez, her zaman orijinal (unscaled) boyutu verir.
-    // Saniyede 60 kez çalışan touchmove içinde transform'u sıfırlamak performansı (ve alt navigasyonu) bozar, o yüzden doğrudan ölçüyoruz.
-    const w = panel.scrollWidth || 1100;
-    const h = panel.scrollHeight || panel.offsetHeight;
-
-    // Ekranın tam genişliğini al (scrollbar hariç net görünür alan)
-    const viewW = document.documentElement.clientWidth;
-
-    // Sayfanın hiçbir şekilde ekran sınırlarından daha fazla küçülmemesi için minimum zoom oranı
-    const minZoom = Math.min(1, viewW / w);
-    _resultsZoomScale = Math.min(3, Math.max(minZoom, s));
-
-    panel.style.transformOrigin = '0 0';   // sol-üst köşeden ölçekle
-
-    if (_resultsZoomScale === 1) {
-      panel.style.transform = '';
-      panel.style.marginRight = '';
-      // Alt navigasyon (bottom-nav) yüksekliğini kurtarmak için 75px boşluk
-      panel.style.marginBottom = '75px';
-    } else {
-      panel.style.transform = `scale(${_resultsZoomScale.toFixed(3)})`;
-
-      // Transform, HTML elementinin render edilen görselini küçültürken
-      // DOM üzerindeki kapladığı fiziksel çerçeveyi (bounding box) daraltmaz.
-      // Bu yüzden sağda ve altta kalan 'hayalet' alanı negatif margin ile yok ediyoruz.
-      const emptyW = w - (w * _resultsZoomScale);
-      const emptyH = h - (h * _resultsZoomScale);
-
-      panel.style.marginRight = `-${emptyW}px`;
-      // Negatif marjı 75px daha az yaparak altta bottom-nav'ın örteceği ekstra boşluk bırakıyoruz
-      panel.style.marginBottom = `-${emptyH - 75}px`;
-    }
-  }
-
-  // Buluttan yeni veri indiğinde aktif ekranı sessizce tazele
-  window.addEventListener('rasyon:cloud-synced', () => {
-    // Kullanıcı o an bir forma yazı yazıyorsa ekranı yenileme ki yazısı silinmesin
-    if (document.activeElement && ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
-    renderTab(activeTab);
-    showToast('Bulut verileri başarıyla indirildi ve ekrana yansıtıldı.', 'success');
-  });
-
-  /** Sonuçlar sekmesi aktif mi ve gözlem ekranı kapalı mı? */
-  const onResults = () => {
-    // Geçmiş rasyon gözlem ekranı açıkken uzaklaştırmayı (pinch-zoom) kapat
-    if (document.getElementById('history-modal')?.style.display === 'flex') return false;
-    return document.body.getAttribute('data-active-tab') === 'results';
-  };
-
-  document.addEventListener('touchstart', (e) => {
-    if (!onResults()) return;
-
-    if (e.touches.length === 2) {
-      // Kıstırma başlıyor
-      isPinching = true;
-      lastPinchDist = pinchDist(e.touches);
-      startScale = _resultsZoomScale;
-    }
-  }, { passive: true });
-
-  document.addEventListener('touchmove', (e) => {
-    if (!onResults() || e.touches.length !== 2) return;
-
-    // Çift parmakla dokunulduğunda tarayıcının varsayılan sayfa yakınlaştırmasını (native zoom) engelle!
-    // Bu sayede .bottom-nav ve sayfa yapısı bozulmaz. Sadece bizim custom applyScale() çalışır.
-    if (e.cancelable) e.preventDefault();
-
-    isPinching = true;
-    const dist = pinchDist(e.touches);
-    if (lastPinchDist > 0) {
-      applyScale(startScale * (dist / lastPinchDist));
-    }
-  }, { passive: false });
-
-  document.addEventListener('touchend', (e) => {
-    if (e.touches.length < 2) {
-      isPinching = false;
-      lastPinchDist = 0;
-    }
-  }, { passive: true });
-}
+// Buluttan yeni veri indiğinde aktif ekranı sessizce tazele
+window.addEventListener('rasyon:cloud-synced', () => {
+  if (document.activeElement && ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
+  renderTab(activeTab);
+  showToast('Bulut verileri başarıyla indirildi ve ekrana yansıtıldı.', 'success');
+});
 
 // ─── Dokunmatik bilgi tooltip'leri (denetim #23) ─────────────────────────────
 // Mobilde `title` tooltip'i hover olmadığından açılmaz; ℹ️ simgesine tıklayınca/
@@ -724,7 +613,7 @@ async function init() {
   document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
   initKeyboardShortcuts();
   initInfoTooltips();   // denetim #23: dokunmatik tooltip
-  initResultsPinchZoom();  // FAZ 22.1: Sonuçlar sekmesi parmak zum
+  
 
   try {
     // Dört kütüphaneyi birleştir; sürüm farklı → yeniden seed
@@ -790,5 +679,6 @@ document.addEventListener('gestureend', function(e) { e.preventDefault(); }, { p
 
 
 setTimeout(() => { document.querySelectorAll('*').forEach(el => { if(el.offsetWidth > window.innerWidth) console.log('OVERFLOW:', el); }); }, 2000);
+
 
 
