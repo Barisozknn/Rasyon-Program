@@ -3356,7 +3356,7 @@ details.acc-panel table.diag-table {
     flex-direction: column;
     width: 100%;
     padding: 0.85rem;
-    padding-bottom: calc(3.5rem + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
     box-sizing: border-box;
     /* Zoom ve sağa-sola kaymayı engelle */
     touch-action: pan-y;
@@ -4292,6 +4292,7 @@ body[data-active-tab="results"], body[data-active-tab="results"] #app, body[data
 
 
 body[data-active-tab="results"] .table-scroll-wrap, body[data-active-tab="results"] .chart-wrap { touch-action: pan-x pan-y !important; }
+
 
 
 
