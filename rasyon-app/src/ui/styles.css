@@ -1,4 +1,5 @@
-﻿/* ─── Reset & Base ─────────────────────────────────────────────────────────── */
+﻿html, body { overflow-x: hidden !important; max-width: 100vw !important; }
+/* ─── Reset & Base ─────────────────────────────────────────────────────────── */
 *,
 *::before,
 *::after {
@@ -996,7 +997,7 @@ body {
 
 @media (max-width: 900px) {
   .ration-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -1306,7 +1307,7 @@ body {
 
 @media (max-width: 800px) {
   .results-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -2263,7 +2264,7 @@ details.acc-panel table.diag-table {
 
 @media (max-width: 768px) {
   .progress-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -2499,7 +2500,7 @@ details.acc-panel table.diag-table {
 
 @media (max-width: 600px) {
   .dashboard-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .dash-card {
@@ -2822,11 +2823,11 @@ details.acc-panel table.diag-table {
 
   /* Tüm form ızgaraları tek kolon */
   .form-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .constraint-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .app-title {
@@ -3355,7 +3356,7 @@ details.acc-panel table.diag-table {
     flex-direction: column;
     width: 100%;
     padding: 0.85rem;
-    padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(3.5rem + env(safe-area-inset-bottom, 0px));
     box-sizing: border-box;
     /* Zoom ve sağa-sola kaymayı engelle */
     touch-action: pan-y;
@@ -4283,4 +4284,14 @@ body[data-active-tab="results"] .tab-content {
 
 
 #tab-results { touch-action: pan-y !important; }
+
+
+
+body[data-active-tab="results"] .tab-content, body[data-active-tab="results"] #tab-results, body[data-active-tab="results"] .results-grid { padding-bottom: 0 !important; margin-bottom: 0 !important; }
+body[data-active-tab="results"], body[data-active-tab="results"] #app, body[data-active-tab="results"] .app-body, body[data-active-tab="results"] .tab-content, body[data-active-tab="results"] #tab-results { touch-action: pan-y !important; }
+
+
+body[data-active-tab="results"] .table-scroll-wrap, body[data-active-tab="results"] .chart-wrap { touch-action: pan-x pan-y !important; }
+
+
 

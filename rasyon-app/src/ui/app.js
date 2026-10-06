@@ -792,9 +792,9 @@ async function init() {
 init();
 
 // iOS Safari Pinch-Zoom Disable
-document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
-document.addEventListener('gesturechange', function(e) { e.preventDefault(); });
-document.addEventListener('gestureend', function(e) { e.preventDefault(); });
+document.addEventListener('gesturestart', function(e) { e.preventDefault(); }, { passive: false });
+document.addEventListener('gesturechange', function(e) { e.preventDefault(); }, { passive: false });
+document.addEventListener('gestureend', function(e) { e.preventDefault(); }, { passive: false });
 
 
 setTimeout(() => { document.querySelectorAll('*').forEach(el => { if(el.offsetWidth > window.innerWidth) console.log('OVERFLOW:', el); }); }, 2000);
