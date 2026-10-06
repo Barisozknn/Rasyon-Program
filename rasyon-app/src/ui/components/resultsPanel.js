@@ -11,6 +11,7 @@ import { escHtml, showToast, showLoading } from '../utils.js';
 import { t } from '../i18n.js';
 import { getAllFeeds } from '../../data/feedService.js';   // FAZ 17.5: danışmanlık katkısını yem listesine ekle
 import { optimizeViaWorker } from '../../solver/glpkWorker.js';  // FAZ 20.3: senaryo karşılaştırma çözümleri
+import { recommendations } from '../../data/recommendations.js'; // FAZ 23
 import { runScenarioComparison, renderScenarioComparison } from './scenarioCompare.js';  // FAZ 20.3
 import { attachReportHandlers } from './results/historyReports.js';
 import { renderRationItemsTable, renderDiagnostics, renderCompositionTable, renderMissingSources } from './results/tables.js';
@@ -128,6 +129,8 @@ export function renderResultsPanel(container, state) {
   };
   const statusLabel = STATUS_LABELS[statusName] ?? statusName ?? t('results.st_unknown');
 
+  const recWidgetHTML = '';
+
   container.innerHTML = `
     <!-- 📖 Sekme Yardımı -->
     <details class="tab-help-accordion" style="margin-bottom:0.75rem">
@@ -157,6 +160,8 @@ export function renderResultsPanel(container, state) {
         <button class="btn btn-secondary btn-sm" id="btn-scenario" title="${t('scen.btn_title')}"><i class="ti ti-versions"></i> ${t('scen.btn')}</button>
       </div>
     </div>
+
+    ${recWidgetHTML}
 
     <!-- FAZ 20.3: Senaryo karşılaştırma sonuçları (buton tetikler) -->
     <div id="scenario-compare-results" class="no-print"></div>
@@ -231,6 +236,10 @@ export function renderResultsPanel(container, state) {
       <div class="summary-card">
         <div class="val">${composition.nel_mcal.toFixed(1)}</div>
         <div class="lbl">${t('results.sum_nel')}</div>
+      </div>
+      <div class="summary-card" title="${t('results.nel_density_title')}">
+        <div class="val">${(composition.nel_mcal / (dmi.achieved_kg || 1)).toFixed(2)}</div>
+        <div class="lbl">${t('results.sum_nel_density')}</div>
       </div>
       <div class="summary-card" title="${t('results.mp_title')}">
         <div class="val">${(composition.mp_g || 0).toFixed(0)}</div>

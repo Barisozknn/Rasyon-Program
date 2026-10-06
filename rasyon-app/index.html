@@ -3,7 +3,8 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>RasyoMetri</title>
 
   <!-- FAZ 15.3 — PWA meta (manifest link + SW register vite-plugin-pwa tarafından enjekte edilir) -->
@@ -44,8 +45,10 @@
             Yöneticisi</span></button>
         <button class="tab-btn" data-tab="observations"><i class="ti ti-report-analytics tab-icon"></i><span
             class="tab-label">Saha Gözlem</span></button>
-        <button class="tab-btn" data-tab="ai"><i class="ti ti-sparkles tab-icon"></i><span
-            class="tab-label">AI Asistan</span></button>
+        <button class="tab-btn" data-tab="ai"><i class="ti ti-sparkles tab-icon"></i><span class="tab-label">AI
+            Asistan</span></button>
+        <button class="tab-btn" data-tab="recommendations"><i class="ti ti-bulb tab-icon"></i><span
+            class="tab-label">Tavsiyeler</span></button>
         <button class="tab-btn" data-tab="settings"><i class="ti ti-settings tab-icon"></i><span
             class="tab-label">Ayarlar</span></button>
       </nav>
@@ -82,6 +85,40 @@
         <div id="tab-prices" class="tab-panel"></div>
         <div id="tab-observations" class="tab-panel"></div>
         <div id="tab-ai" class="tab-panel"></div>
+        <div id="tab-recommendations" class="tab-panel">
+          <div class="recommendations-container">
+            <!-- 📖 Sekme Yardımı -->
+            <details class="tab-help-accordion" style="margin-bottom:0.75rem">
+              <summary style="cursor:pointer; font-weight:600; color:var(--primary); display:flex; align-items:center; gap:0.4rem">
+                <i class="ti ti-info-circle"></i> Bu sekme ne işe yarar? <span style="font-size:0.75rem; font-weight:400; color:var(--text-muted); margin-left:auto">▾</span>
+              </summary>
+              <div class="info-box" style="margin-top:0.5rem; font-size:0.85rem; line-height:1.7">
+                Bu sekmede süt sığırcılığı ile ilgili NASEM 2021, NRC 2001 ve güncel bilimsel araştırmalara dayalı, %100 güvenilir ve akademik uzman tavsiyeleri yer alır. Kategorilere göre filtreleme yapabilir veya arama çubuğunu kullanarak belirli konuları hızlıca bulabilirsiniz.
+              </div>
+            </details>
+            
+            <div class="recommendations-header">
+              <div class="recommendations-filters">
+                <button class="rec-filter-btn active" data-filter="all">Tüm Tavsiyeler</button>
+                <button class="rec-filter-btn" data-filter="Kuru Dönem / Geçiş">Kuru Dönem</button>
+                <button class="rec-filter-btn" data-filter="Laktasyon Rasyonu">Laktasyon</button>
+                <button class="rec-filter-btn" data-filter="Sağlık / Rumen">Sağlık / Rumen</button>
+                <button class="rec-filter-btn" data-filter="Barınak ve Refah">Barınak</button>
+                <button class="rec-filter-btn" data-filter="Su Tüketimi">Su Tüketimi</button>
+                <button class="rec-filter-btn" data-filter="Buzağı ve Düve">Buzağı</button>
+              </div>
+              <div class="recommendations-search">
+                <div class="search-input-wrapper">
+                  <i class="ti ti-search search-icon"></i>
+                  <input type="text" id="rec-search" placeholder="Tavsiyelerde ara..." />
+                </div>
+              </div>
+            </div>
+            <div class="recommendations-grid" id="recommendations-grid">
+              <!-- JS ile dinamik olarak doldurulacak -->
+            </div>
+          </div>
+        </div>
         <div id="tab-settings" class="tab-panel"></div>
       </main>
     </div><!-- /.app-body -->
@@ -122,8 +159,10 @@
             Yöneticisi</span></button>
         <button class="more-item" data-tab="observations"><i class="ti ti-report-analytics mi-icon"></i><span
             class="mi-label">Saha Gözlem</span></button>
-        <button class="more-item" data-tab="ai"><i class="ti ti-sparkles mi-icon"></i><span
-            class="mi-label">AI Asistan</span></button>
+        <button class="more-item" data-tab="ai"><i class="ti ti-sparkles mi-icon"></i><span class="mi-label">AI
+            Asistan</span></button>
+        <button class="more-item" data-tab="recommendations"><i class="ti ti-bulb mi-icon"></i><span
+            class="mi-label">Tavsiyeler</span></button>
         <button class="more-item" data-tab="settings"><i class="ti ti-settings mi-icon"></i><span
             class="mi-label">Ayarlar</span></button>
       </div>

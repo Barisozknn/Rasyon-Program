@@ -13,7 +13,8 @@
     "prices": "💰 Price Manager",
     "observations": "📊 Field Obs.",
     "settings": "⚙️ Settings",
-    "ai": "🤖 AI Assistant"
+    "ai": "🤖 AI Assistant",
+    "recommendations": "💡 Recommendations"
   },
   "ai": {
     "disclaimer": "⚠️ Disclaimer: This is an AI assistant. Always consult a real zootechnist or veterinarian before applying any decisions.",
@@ -379,6 +380,8 @@
     "tmr_already_wet": "Ration is already wetter than target ({m}% moisture) → no added water needed.",
     "sum_moisture_title": "Ration moisture (100 − DM%); recommended 45-55%",
     "sum_nel": "NEL (Mcal)",
+    "sum_nel_density": "NEL (Mcal/kg DM)",
+    "nel_density_title": "Energy Density in 1 kg of Dry Matter (Mcal/kg)",
     "sum_mp": "MP (g/day)",
     "sum_cp": "CP (%DM, info)",
     "sum_ndf": "NDF (%DM)",
@@ -1842,7 +1845,20 @@
     "herd": "<b>🚜 Farm Management & TMR Panel</b> — Manage feeding for all groups from a single screen.<br>• <b>Ration Assignment:</b> Assign saved rations to relevant groups.<br>• <b>Daily TMR:</b> Automatically calculates total farm TMR tonnage based on animal counts.<br>• <b>Cost Tracking:</b> Shows macro profitability based on current prices.<br>• <b>Stock Tracking:</b> Calculates how long current feed stocks will last based on TMR needs.",
     "prices": "<b>💰 Price Manager</b> — Quick feed price updater.<br>• <b>Centralized:</b> Update all your feed prices in one place.<br>• <b>Save:</b> Updated prices will be used in future optimizations and IOFC calculations.",
     "observations": "<b>📊 Field Observations</b> — Real-world animal data entry.<br>• <b>Measurements:</b> Record actual milk yield, BCS, and urine pH over time.<br>• <b>Tracking:</b> Essential for dashboard trends and accurate warnings.",
-    "settings": "<b>⚙️ Settings</b> — Global app preferences.<br>• <b>Localization:</b> Change language and unit systems (metric/imperial).<br>• <b>Engine:</b> Toggle CNCPS iterative calculation or DMI fill models.<br>• <b>Cloud Sync:</b> Manage cloud backup tokens and data export."
+    "settings": "<b>⚙️ Settings</b> — Global app preferences.<br>• <b>Localization:</b> Change language and unit systems (metric/imperial).<br>• <b>Engine:</b> Toggle CNCPS iterative calculation or DMI fill models.<br>• <b>Cloud Sync:</b> Manage cloud backup tokens and data export.",
+    "recommendations": "<b>💡 Recommendations</b> — This tab contains 100% reliable, academic, and expert recommendations based on NASEM 2021, NRC 2001, and current dairy science research. You can filter by category or use the search bar to quickly find specific topics."
+  },
+  "recommendationsTab": {
+    "search_placeholder": "Search recommendations...",
+    "filter_all": "All Recommendations",
+    "filter_dry": "Dry Period",
+    "filter_lac": "Lactation",
+    "filter_health": "Health / Rumen",
+    "filter_housing": "Housing",
+    "filter_water": "Water Intake",
+    "filter_calf": "Calf",
+    "empty_state": "No recommendations found matching the criteria.",
+    "tip_header": "ZOOTECHNIST TIP:"
   },
   "pwa": {
     "new_version": "A new version is ready!",

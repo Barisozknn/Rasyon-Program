@@ -9,6 +9,7 @@ import { RELAX_PRIORITY } from '../../solver/softConstraints.js';  // FAZ 22.1: 
 import { getSettings } from '../../data/settings.js';
 import { escHtml, showToast } from '../utils.js';
 import { t, feedDisplayName } from '../i18n.js';
+import { recommendations } from '../../data/recommendations.js';
 
 // FAZ 22.1 — Gevşetme önceliği UI: kullanıcı-dostu gruplar → softConstraints token'ları.
 // Grup sırası concat edildiğinde RELAX_PRIORITY'yi BİREBİR üretir (kullanıcı dokunmazsa
@@ -165,9 +166,11 @@ export async function renderRationBuilder(container, state, { onOptimize }) {
   // FAZ 17.4: çok-amaçlı denge aktif mi (herhangi bir ağırlık > 0) → preset düğmesi vurgusu
   const mobActive = ['cost', 'mfd_risk', 'aa_balance'].some(k => (state.objectiveWeights?.[k] ?? 0) > 0);
 
+  const recWidgetHTML = '';
+
   container.innerHTML = `
     <div class="ration-layout">
-
+      ${recWidgetHTML}
       <!-- 📖 Sekme Yardımı (tam genişlik, sadece ilk kart) -->
       <div style="grid-column: 1 / -1; margin-bottom:0.25rem">
         <details class="tab-help-accordion">

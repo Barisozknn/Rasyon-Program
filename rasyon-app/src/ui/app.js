@@ -29,6 +29,7 @@ import { renderHerdBatchPanel } from './components/herdBatchPanel.js';
 import { renderPriceManager } from './components/priceManager.js';
 import { renderObservationsPanel } from './components/observationsPanel.js';
 import { renderAiAssistantPanel } from './components/aiAssistantPanel.js';
+import { renderRecommendationsPanel } from './components/recommendationsPanel.js';
 import { renderSettingsPanel } from './components/settingsPanel.js';
 import { shouldShowOnboarding, showOnboarding } from './components/onboarding.js';
 import { getSettings, saveSettings, migrateDmiMethodToAuto } from '../data/settings.js';
@@ -44,8 +45,8 @@ import { registerSW } from 'virtual:pwa-register';
 
 // FAZ 15.9 — Optimize öncesi state.animal'da kontrol edilecek alanlar (FIELD_RULES anahtarları)
 const ANIMAL_VALIDATE_FIELDS = [
-  'bw','milkYield','milkFat','milkProtein','milkLactose','targetADG',
-  'dim','bcs','ambientTemp','humidity','urinePH','pregnancyMonth','parity',
+  'bw', 'milkYield', 'milkFat', 'milkProtein', 'milkLactose', 'targetADG',
+  'dim', 'bcs', 'ambientTemp', 'humidity', 'urinePH', 'pregnancyMonth', 'parity',
 ];
 
 // ─── Global Uygulama Durumu ──────────────────────────────────────────────────
@@ -82,7 +83,7 @@ export const state = {
 
 // ─── Tab Routing ─────────────────────────────────────────────────────────────
 
-const TABS = ['dashboard', 'animal', 'feeds', 'ration', 'results', 'herd', 'prices', 'observations', 'ai', 'settings'];
+const TABS = ['dashboard', 'animal', 'feeds', 'ration', 'results', 'herd', 'prices', 'observations', 'ai', 'recommendations', 'settings'];
 // FAZ 15.4: mobil alt barda doğrudan gösterilen çekirdek sekmeler (kalanlar "Daha Fazla"da)
 const BOTTOM_NAV_TABS = ['dashboard', 'animal', 'ration', 'results'];
 let activeTab = 'dashboard';
@@ -137,14 +138,15 @@ async function renderTab(tab) {
   const panel = document.getElementById(`tab-${tab}`);
   switch (tab) {
     case 'dashboard': await renderDashboardPanel(panel, state, { onNavigate: switchTab }); break;
-    case 'animal':  renderAnimalForm(panel, state); break;
-    case 'feeds':   await renderFeedDatabase(panel, state); break;
-    case 'ration':  await renderRationBuilder(panel, state, { onOptimize: handleOptimize }); break;
+    case 'animal': renderAnimalForm(panel, state); break;
+    case 'feeds': await renderFeedDatabase(panel, state); break;
+    case 'ration': await renderRationBuilder(panel, state, { onOptimize: handleOptimize }); break;
     case 'results': renderResultsPanel(panel, state); break;
-    case 'herd':    await renderHerdBatchPanel(panel, state); break;
-    case 'prices':  await renderPriceManager(panel, state); break;
+    case 'herd': await renderHerdBatchPanel(panel, state); break;
+    case 'prices': await renderPriceManager(panel, state); break;
     case 'observations': await renderObservationsPanel(panel, state); break;
-    case 'ai':      renderAiAssistantPanel(panel); break;
+    case 'ai': renderAiAssistantPanel(panel); break;
+    case 'recommendations': await renderRecommendationsPanel(panel, state, { onNavigate: switchTab }); break;
     case 'settings': await renderSettingsPanel(panel, state, { onSettingsChange: handleSettingsChange }); break;
   }
 }
@@ -226,10 +228,10 @@ function handleSettingsChange(settings) {
 function applySettingsToState() {
   const s = getSettings();
   const d = s.defaults || {};
-  if (Number.isFinite(d.parity))       state.animal.parity = d.parity;
-  if (Number.isFinite(d.bcs))          state.animal.bcs = d.bcs;
-  if (Number.isFinite(d.ambientTemp))  state.animal.ambientTemp = d.ambientTemp;
-  if (Number.isFinite(d.humidity))     state.animal.humidity = d.humidity;
+  if (Number.isFinite(d.parity)) state.animal.parity = d.parity;
+  if (Number.isFinite(d.bcs)) state.animal.bcs = d.bcs;
+  if (Number.isFinite(d.ambientTemp)) state.animal.ambientTemp = d.ambientTemp;
+  if (Number.isFinite(d.humidity)) state.animal.humidity = d.humidity;
   if (Number.isFinite(d.milkPrice_tl)) state.economics.milkPrice_tl = d.milkPrice_tl;
 }
 
@@ -439,35 +441,35 @@ function initResultsPinchZoom() {
   if (!('ontouchstart' in window)) return;   // Masaüstünde devre dışı
 
   let lastPinchDist = 0;
-  let startScale   = 1;
-  let lastTapTime  = 0;
-  let isPinching   = false;
+  let startScale = 1;
+  let lastTapTime = 0;
+  let isPinching = false;
 
   /** İki parmak arası mesafe */
   const pinchDist = (touches) =>
     Math.hypot(touches[1].clientX - touches[0].clientX,
-               touches[1].clientY - touches[0].clientY);
+      touches[1].clientY - touches[0].clientY);
 
   /** Scale'i sınırla ve uygula */
   function applyScale(s) {
     const panel = document.getElementById('tab-results');
     if (!panel) return;
-    
+
     // Panelin o anki içeriğinin gerçek fiziksel boyutları
     // CSS transform (scale) offsetWidth ve scrollWidth değerlerini etkilemez, her zaman orijinal (unscaled) boyutu verir.
     // Saniyede 60 kez çalışan touchmove içinde transform'u sıfırlamak performansı (ve alt navigasyonu) bozar, o yüzden doğrudan ölçüyoruz.
     const w = panel.scrollWidth || 1100;
     const h = panel.scrollHeight || panel.offsetHeight;
-    
+
     // Ekranın tam genişliğini al (scrollbar hariç net görünür alan)
     const viewW = document.documentElement.clientWidth;
-    
+
     // Sayfanın hiçbir şekilde ekran sınırlarından daha fazla küçülmemesi için minimum zoom oranı
     const minZoom = Math.min(1, viewW / w);
     _resultsZoomScale = Math.min(3, Math.max(minZoom, s));
-    
+
     panel.style.transformOrigin = '0 0';   // sol-üst köşeden ölçekle
-    
+
     if (_resultsZoomScale === 1) {
       panel.style.transform = '';
       panel.style.marginRight = '';
@@ -475,13 +477,13 @@ function initResultsPinchZoom() {
       panel.style.marginBottom = '75px';
     } else {
       panel.style.transform = `scale(${_resultsZoomScale.toFixed(3)})`;
-      
+
       // Transform, HTML elementinin render edilen görselini küçültürken
       // DOM üzerindeki kapladığı fiziksel çerçeveyi (bounding box) daraltmaz.
       // Bu yüzden sağda ve altta kalan 'hayalet' alanı negatif margin ile yok ediyoruz.
       const emptyW = w - (w * _resultsZoomScale);
       const emptyH = h - (h * _resultsZoomScale);
-      
+
       panel.style.marginRight = `-${emptyW}px`;
       // Negatif marjı 75px daha az yaparak altta bottom-nav'ın örteceği ekstra boşluk bırakıyoruz
       panel.style.marginBottom = `-${emptyH - 75}px`;
@@ -508,19 +510,19 @@ function initResultsPinchZoom() {
 
     if (e.touches.length === 2) {
       // Kıstırma başlıyor
-      isPinching   = true;
+      isPinching = true;
       lastPinchDist = pinchDist(e.touches);
-      startScale   = _resultsZoomScale;
+      startScale = _resultsZoomScale;
     }
   }, { passive: true });
 
   document.addEventListener('touchmove', (e) => {
     if (!onResults() || e.touches.length !== 2) return;
-    
+
     // Çift parmakla dokunulduğunda tarayıcının varsayılan sayfa yakınlaştırmasını (native zoom) engelle!
     // Bu sayede .bottom-nav ve sayfa yapısı bozulmaz. Sadece bizim custom applyScale() çalışır.
     if (e.cancelable) e.preventDefault();
-    
+
     isPinching = true;
     const dist = pinchDist(e.touches);
     if (lastPinchDist > 0) {
@@ -530,7 +532,7 @@ function initResultsPinchZoom() {
 
   document.addEventListener('touchend', (e) => {
     if (e.touches.length < 2) {
-      isPinching    = false;
+      isPinching = false;
       lastPinchDist = 0;
     }
   }, { passive: true });
@@ -619,11 +621,11 @@ async function init() {
         pwaToast.classList.remove('hidden');
         // render frame'den sonra animasyonu tetikle
         requestAnimationFrame(() => pwaToast.classList.add('show'));
-        
+
         document.getElementById('pwa-refresh')?.addEventListener('click', () => {
           updateSW(true);
         });
-        
+
         document.getElementById('pwa-close')?.addEventListener('click', () => {
           pwaToast.classList.remove('show');
           setTimeout(() => pwaToast.classList.add('hidden'), 300);
@@ -682,7 +684,7 @@ async function init() {
   if (moreSheetPanel) {
     let startY = 0;
     let currentY = 0;
-    
+
     moreSheetPanel.addEventListener('touchstart', (e) => {
       // Eğer kullanıcının tıkladığı yer içeriklerin scroll edildiği bir div ise 
       // (örneğin listenin ortası) ve liste en üstte değilse kaydırma iptal edilebilir.
@@ -698,7 +700,7 @@ async function init() {
       if (!startY) return;
       currentY = e.touches[0].clientY;
       const deltaY = currentY - startY;
-      
+
       // Aşağı çekiliyorsa (ve scroll en üstteyse)
       if (deltaY > 0 && moreSheetPanel.scrollTop <= 0) {
         if (e.cancelable) e.preventDefault(); // Native scroll/overscroll u engelle
@@ -710,7 +712,7 @@ async function init() {
     moreSheetPanel.addEventListener('touchend', () => {
       if (!startY) return;
       const deltaY = currentY - startY;
-      
+
       if (deltaY > 60) {
         // Yeterince aşağı çekildiyse kapat (closeMore zaten transition ile kaydırır)
         closeMore();
@@ -719,7 +721,7 @@ async function init() {
         moreSheetPanel.style.transition = 'transform 0.22s ease-out';
         moreSheetPanel.style.transform = 'translateY(0)';
       }
-      
+
       startY = 0;
       currentY = 0;
     });

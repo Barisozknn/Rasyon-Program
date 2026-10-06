@@ -13,7 +13,8 @@
     "prices": "💰 Fiyat Yöneticisi",
     "observations": "📊 Saha Gözlem",
     "settings": "⚙️ Ayarlar",
-    "ai": "🤖 AI Asistan"
+    "ai": "🤖 AI Asistan",
+    "recommendations": "💡 Tavsiyeler"
   },
   "ai": {
     "disclaimer": "⚠️ Uyarı: Bu bir yapay zeka asistanıdır. Kararlarınızı uygulamadan önce her zaman gerçek bir zootekniste veya veteriner hekime danışınız.",
@@ -379,6 +380,8 @@
     "tmr_already_wet": "Rasyon zaten hedeften ıslak (nem %{m}) → dışarıdan su eklemeye gerek yok.",
     "sum_moisture_title": "Rasyon nem oranı (100 − KM%); önerilen %45-55",
     "sum_nel": "NEL (Mcal)",
+    "sum_nel_density": "NEL (Mcal/kg KM)",
+    "nel_density_title": "1 kg Kuru Maddedeki Enerji Yoğunluğu (Mcal/kg)",
     "sum_mp": "MP (g/gün)",
     "sum_cp": "HP (%KM, bilgi)",
     "sum_ndf": "NDF (%KM)",
@@ -1842,7 +1845,20 @@
     "herd": "<b>🚜 Çiftlik Yönetim ve TMR Paneli</b> — Çiftliğinizdeki tüm grupların yem yönetimini tek ekrandan yapmanızı sağlar.<br>• <b>Rasyon Atama:</b> Kayıtlı rasyonları ilgili gruplara atayın.<br>• <b>Günlük TMR İhtiyacı:</b> Hayvan sayıları üzerinden çiftliğinizin günlük toplam karma yem tonajını hesaplar.<br>• <b>Maliyet Takibi:</b> Tüm çiftliğin makro karlılığını gösterir.<br>• <b>Stok Takibi:</b> Sürünüzün TMR ihtiyacına göre mevcut yem stoklarınızın kaç gün yeteceğini hesaplar.",
     "prices": "<b>💰 Fiyat Yöneticisi</b> — Hızlı yem fiyatı güncelleyicisi.<br>• <b>Merkezi:</b> Tüm yem fiyatlarınızı tek bir yerden güncelleyin.<br>• <b>Kaydet:</b> Güncellenen fiyatlar gelecekteki optimizasyonlarda ve IOFC hesaplarında kullanılır.",
     "observations": "<b>📊 Saha Gözlemleri</b> — Gerçek saha verisi giriş modülü.<br>• <b>Ölçümler:</b> Gerçekleşen süt verimi, kondisyon (BCS) ve idrar pH kayıtları.<br>• <b>Takip:</b> Dashboard trendleri ve doğru uyarılar için gereklidir.",
-    "settings": "<b>⚙️ Ayarlar</b> — Genel uygulama tercihleri.<br>• <b>Yerelleştirme:</b> Dil ve birim sistemlerini (metrik/emperyal) değiştirin.<br>• <b>Hesaplama:</b> CNCPS iteratif motorunu veya DMI tokluk modellerini açıp kapatın.<br>• <b>Bulut Senkronizasyonu:</b> Bulut yedekleme anahtarlarını ve veri aktarımını yönetin."
+    "settings": "<b>⚙️ Ayarlar</b> — Genel uygulama tercihleri.<br>• <b>Yerelleştirme:</b> Dil ve birim sistemlerini (metrik/emperyal) değiştirin.<br>• <b>Hesaplama:</b> CNCPS iteratif motorunu veya DMI tokluk modellerini açıp kapatın.<br>• <b>Bulut Senkronizasyonu:</b> Bulut yedekleme anahtarlarını ve veri aktarımını yönetin.",
+    "recommendations": "<b>💡 Tavsiyeler</b> — Bu sekmede süt sığırcılığı ile ilgili NASEM 2021, NRC 2001 ve güncel bilimsel araştırmalara dayalı, %100 güvenilir ve akademik uzman tavsiyeleri yer alır. Kategorilere göre filtreleme yapabilir veya arama çubuğunu kullanarak belirli konuları hızlıca bulabilirsiniz."
+  },
+  "recommendationsTab": {
+    "search_placeholder": "Tavsiyelerde ara...",
+    "filter_all": "Tüm Tavsiyeler",
+    "filter_dry": "Kuru Dönem",
+    "filter_lac": "Laktasyon",
+    "filter_health": "Sağlık / Rumen",
+    "filter_housing": "Barınak",
+    "filter_water": "Su Tüketimi",
+    "filter_calf": "Buzağı",
+    "empty_state": "Belirtilen kriterlere uygun tavsiye bulunamadı.",
+    "tip_header": "ZOOTEKNİST ÖNERİSİ:"
   },
   "pwa": {
     "new_version": "Yeni bir sürüm hazır!",
