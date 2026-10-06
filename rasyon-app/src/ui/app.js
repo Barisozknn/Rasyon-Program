@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Ana Uygulama — Durum yönetimi, tab routing, başlatma
  */
 
@@ -109,9 +109,9 @@ async function switchTab(tab) {
   document.body.setAttribute('data-active-tab', tab);
 
   // Sekme değişince sonuçlar zum'unu sıfırla
-  
 
-  
+
+
 
   updatePageTitle(tab);   // FAZ 21: üst-bar sayfa başlığı
   await renderTab(tab);
@@ -493,7 +493,7 @@ async function init() {
     const { migrated } = migrateDmiMethodToAuto();
     if (migrated) showToast(t('settings.dmi_migrated_toast'), 'info', 8000);
   } catch { /* göç best-effort; başarısızsa sessiz geç */ }
-
+  let offlineReadyToastShown = false;
   // PWA Güncelleme Kontrolü (Bildirimli)
   const updateSW = registerSW({
     onNeedRefresh() {
@@ -514,7 +514,10 @@ async function init() {
       }
     },
     onOfflineReady() {
-      showToast('Uygulama çevrimdışı kullanım için hazır.', 'success');
+      if (!offlineReadyToastShown) {
+        showToast('Uygulama çevrimdışı kullanım için hazır.', 'success');
+        offlineReadyToastShown = true;
+      }
     },
   });
 
@@ -610,10 +613,10 @@ async function init() {
 
   // FAZ 15.10: Tema toggle butonu + global klavye kısayolları
   applyTheme(getSettings().theme);   // ikon/başlığı kesin senkronla (buton render edildi)
-  document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
+  document.addEventListener('click', (e) => { if (e.target.closest('#theme-toggle')) toggleTheme(); });
   initKeyboardShortcuts();
   initInfoTooltips();   // denetim #23: dokunmatik tooltip
-  
+
 
   try {
     // Dört kütüphaneyi birleştir; sürüm farklı → yeniden seed
@@ -673,12 +676,12 @@ async function init() {
 init();
 
 // iOS Safari Pinch-Zoom Disable
-document.addEventListener('gesturestart', function(e) { e.preventDefault(); }, { passive: false });
-document.addEventListener('gesturechange', function(e) { e.preventDefault(); }, { passive: false });
-document.addEventListener('gestureend', function(e) { e.preventDefault(); }, { passive: false });
+document.addEventListener('gesturestart', function (e) { e.preventDefault(); }, { passive: false });
+document.addEventListener('gesturechange', function (e) { e.preventDefault(); }, { passive: false });
+document.addEventListener('gestureend', function (e) { e.preventDefault(); }, { passive: false });
 
 
-setTimeout(() => { document.querySelectorAll('*').forEach(el => { if(el.offsetWidth > window.innerWidth) console.log('OVERFLOW:', el); }); }, 2000);
+setTimeout(() => { document.querySelectorAll('*').forEach(el => { if (el.offsetWidth > window.innerWidth) console.log('OVERFLOW:', el); }); }, 2000);
 
 
 
