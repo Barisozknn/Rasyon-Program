@@ -4026,6 +4026,9 @@ details.acc-panel table.diag-table {
     align-items: center;
     justify-content: space-between;
   }
+  .recommendations-search {
+    flex: 0 0 250px;
+  }
 }
 
 .recommendations-filters {
@@ -4059,7 +4062,7 @@ details.acc-panel table.diag-table {
 }
 
 .recommendations-search {
-  flex: 0 0 250px;
+  width: 100%;
 }
 
 .search-input-wrapper {
