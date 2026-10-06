@@ -1,4 +1,4 @@
-/* ─── Reset & Base ─────────────────────────────────────────────────────────── */
+﻿/* ─── Reset & Base ─────────────────────────────────────────────────────────── */
 *,
 *::before,
 *::after {
@@ -1300,7 +1300,6 @@ body {
 .results-grid>.card {
   display: flex;
   flex-direction: column;
-  height: 100%;
   margin: 0 !important;
   min-width: 0;
 }
@@ -4275,8 +4274,9 @@ details.acc-panel table.diag-table {
   border-color: rgba(255, 255, 255, 0.1);
   color: #ccc;
 }
-/* Sonu�lar sekmesinde sayfa sonu bo�lu�unu s�f�rla (Masa�st� ve Mobil ortak) */
+/* Sonu�lar sekmesinde sayfa sonu bo�lu�unu s�f�rla (Masa�st� ve Mobil ortak) */
 body[data-active-tab="results"] .tab-content {
   padding-bottom: 0 !important;
 }
+
 
