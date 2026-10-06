@@ -1294,7 +1294,7 @@ body {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 1rem;
-  align-items: stretch;
+  align-items: start;
 }
 
 .results-grid>.card {
@@ -4278,5 +4278,6 @@ details.acc-panel table.diag-table {
 body[data-active-tab="results"] .tab-content {
   padding-bottom: 0 !important;
 }
+
 
 
