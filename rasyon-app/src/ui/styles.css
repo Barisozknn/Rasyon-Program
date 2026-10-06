@@ -3342,7 +3342,12 @@ details.acc-panel table.diag-table {
     overflow-x: hidden !important;
     padding-left: 0 !important;
     padding-right: 0 !important;
+    padding-bottom: 0 !important;
     max-width: 100vw;
+  }
+
+  body[data-active-tab="results"] .app-body {
+    touch-action: pan-y;
   }
 
   /* â”€â”€ SonuÃ§lar paneli: %100 Esnek Mobil GÃ¶rÃ¼nÃ¼m â”€â”€ */
@@ -3351,7 +3356,7 @@ details.acc-panel table.diag-table {
     flex-direction: column;
     width: 100%;
     padding: 0.85rem;
-    padding-bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
     box-sizing: border-box;
     /* Zoom ve saÄŸa-sola kaymayÄ± engelle */
     touch-action: pan-y;
@@ -4270,3 +4275,8 @@ details.acc-panel table.diag-table {
   border-color: rgba(255, 255, 255, 0.1);
   color: #ccc;
 }
+/* Sonuçlar sekmesinde sayfa sonu boþluðunu sýfýrla (Masaüstü ve Mobil ortak) */
+body[data-active-tab="results"] .tab-content {
+  padding-bottom: 0 !important;
+}
+
