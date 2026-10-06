@@ -35,7 +35,7 @@ export function renderStarchDigestionPanel(result) {
   const fecalPct = (sd.fecalStarch_g / total) * 100;
 
   return `
-    <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:1rem; margin-bottom:1rem">
+    <div class="res-grid-4">
       <div class="summary-card">
         <div class="val" style="color:${color}">${sd.rumenStarch_pct.toFixed(1)}%</div>
         <div class="lbl">${t('starch.rumen_ferm')}</div>

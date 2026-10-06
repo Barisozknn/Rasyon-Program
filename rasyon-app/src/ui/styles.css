@@ -3351,8 +3351,10 @@ details.acc-panel table.diag-table {
     flex-direction: column;
     width: 100%;
     padding: 0.85rem;
-    padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px));
     box-sizing: border-box;
+    /* Zoom ve sağa-sola kaymayı engelle */
+    touch-action: pan-y;
   }
 
   /* ── 2 sütunlu ızgara zorlaması kaldırıldı ── */

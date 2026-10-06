@@ -86,7 +86,7 @@ export function renderCNCPSFractionsPanel(result) {
       ${t('cncps.intro')}
     </div>
 
-    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:1rem; margin:0.75rem 0">
+    <div class="res-grid-3" style="margin-top:0.75rem">
       <div class="summary-card">
         <div class="val">${fastFermCHO.toFixed(1)}%</div>
         <div class="lbl">${t('cncps.fast_ferm')}</div>
