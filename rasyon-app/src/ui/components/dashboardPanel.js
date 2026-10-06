@@ -1,4 +1,6 @@
-/**
+
+        
+        /**
  * Dashboard Paneli (FAZ 15.1)
  *
  * Programa giriş ekranı — son rasyon özeti, sürü durumu, IOFC tahmini,
@@ -10,6 +12,7 @@ import {
   herdGroupGetAll,
   observationGetAll,
   rationGetAll,
+  feedGetAll,
   getActiveFarmId,
   farmGetById
 } from '../../data/db.js';
@@ -19,7 +22,7 @@ import { interpretDCAD } from '../../core/dcad.js';
 import { getSettings } from '../../data/settings.js';
 import { weightToDisplay, weightUnit, formatWeight } from '../unitFormat.js';
 import { escHtml, fmt } from '../utils.js';
-import { t } from '../i18n.js';
+import { t, feedDisplayName } from '../i18n.js';
 import { Chart, registerables } from 'chart.js';
 
 Chart.register(...registerables);
@@ -44,11 +47,12 @@ export async function renderDashboardPanel(container, state, options = {}) {
   const onNavigate = options.onNavigate || (() => {});
 
   // Veri toplamak için paralel sorgular (IndexedDB yoksa boş diziye düş)
-  const [profiles, groups, observationsRaw, rations] = await Promise.all([
+  const [profiles, groups, observationsRaw, rations, feeds] = await Promise.all([
     animalProfileGetAll().catch(() => []),
     herdGroupGetAll().catch(() => []),
     observationGetAll().catch(() => []),
     rationGetAll().catch(() => []),
+    feedGetAll().catch(() => [])
   ]);
 
   // observationGetAll() IndexedDB primary-key (ekleme) sırasında döner —
@@ -68,9 +72,17 @@ export async function renderDashboardPanel(container, state, options = {}) {
 
   // Sürü-ölçek IOFC tahmini — Çiftlik Panelindeki profillere atalı rasyonları topla
   let iofcEstimate = null;
+  let productionEstimate = null;
   let totalAssignedDailyIOFC = 0;
   let totalAssignedCows = 0;
   let totalAssignedMilkYield = 0;
+  let totalAssignedECM = 0;
+  let totalAssignedDMI = 0;
+  let totalAssignedRevenue = 0;
+  let feedCostMap = {};
+  let forageCost = 0;
+  let concentrateCost = 0;
+  let otherCost = 0;
 
   if (profiles && profiles.length > 0) {
     profiles.forEach(p => {
@@ -91,7 +103,39 @@ export async function renderDashboardPanel(container, state, options = {}) {
           });
           totalAssignedDailyIOFC += econ.daily.iofc_tl * groupSize;
           totalAssignedMilkYield += (p.milkYield ?? 0) * groupSize;
+          totalAssignedECM += econ.daily.ecm_kg * groupSize;
+          totalAssignedDMI += econ.daily.dmi_kg * groupSize;
+          totalAssignedRevenue += econ.daily.revenue_tl * groupSize;
           totalAssignedCows += groupSize;
+
+          const itemsList = ration.result?.items || ration.ingredients;
+          if (itemsList) {
+            itemsList.forEach(item => {
+              const fId = item.feedId || item.id;
+              const feedDefObj = feeds.find(f => f.id === fId);
+              const dmFrac = feedDefObj ? ((feedDefObj.dm || 100) / 100) : 1;
+              const price = feedDefObj ? (feedDefObj.pricePerTon || 0) : 0;
+              let unitCost = item.costPerDay;
+              if (unitCost == null && item.dmKg) {
+                 unitCost = item.dmKg * (price / 1000) / dmFrac;
+              }
+              const cost = (unitCost || 0) * groupSize;
+              
+              if (!feedCostMap[fId]) {
+                const feedDef = feeds.find(f => f.id === fId);
+                const category = feedDef?.category || 'other';
+                feedCostMap[fId] = { name: feedDisplayName(feedDef || item) || item.name, cost: 0, category, dailyKg: 0 };
+              }
+              feedCostMap[fId].cost += cost;
+              const asFedKg = item.asFedKg || (item.dmKg / dmFrac) || 0;
+              feedCostMap[fId].dailyKg += asFedKg * groupSize;
+              
+              const cat = feedCostMap[fId].category;
+              if (cat === 'roughage') forageCost += cost;
+              else if (cat === 'grain' || cat === 'protein' || cat === 'byproduct') concentrateCost += cost;
+              else otherCost += cost;
+            });
+          }
         }
       }
     });
@@ -117,6 +161,16 @@ export async function renderDashboardPanel(container, state, options = {}) {
       status: mockEcon.status,
       assignedCows: totalAssignedCows
     };
+    
+    productionEstimate = {
+      milk_kg: totalAssignedMilkYield,
+      ecm_kg: totalAssignedECM,
+      dmi_kg: totalAssignedDMI,
+      revenue_tl: totalAssignedRevenue,
+      fe: totalAssignedDMI > 0 ? totalAssignedECM / totalAssignedDMI : 0,
+      assignedCows: totalAssignedCows
+    };
+
   } else if (lastResult?.feasible && totalAnimals > 0) {
     // Çiftlik panelinde hiç rasyon ataması yoksa eski mantık (tekil rasyon x toplam hayvan)
     const econ = calcEconomics({
@@ -136,6 +190,61 @@ export async function renderDashboardPanel(container, state, options = {}) {
       status: econ.status,
       assignedCows: totalAnimals
     };
+    
+    productionEstimate = {
+      milk_kg: (lastAnimal.milkYield ?? 0) * totalAnimals,
+      ecm_kg: econ.daily.ecm_kg * totalAnimals,
+      dmi_kg: econ.daily.dmi_kg * totalAnimals,
+      revenue_tl: econ.daily.revenue_tl * totalAnimals,
+      fe: econ.daily.feedEfficiency,
+      assignedCows: totalAnimals
+    };
+  }
+
+
+  let iofcTrendPct = null;
+  let prodTrendPct = null;
+
+  if (iofcEstimate && rations && rations.length > 0) {
+     const now = Date.now();
+     const oldRations = rations.filter(r => {
+        if (!r.savedAt) return false;
+        const d = new Date(r.savedAt).getTime();
+        const diffDays = (now - d) / (1000 * 60 * 60 * 24);
+        return diffDays > 0.0001 && diffDays <= 30; // Çok kısa bir süre önceki kayıtlar da dahil edilsin
+     });
+
+     if (oldRations.length > 0) {
+         let sumPrevIOFC = 0;
+         let sumPrevMilk = 0;
+         let validIofcCount = 0;
+         let validMilkCount = 0;
+
+         oldRations.forEach(r => {
+            const milk = r.animal?.milkYield;
+            const cost = r.totalCostTl || (r.result ? r.result.totalCost : null);
+            if (milk && cost) {
+               const prevIofc = (milk * milkPrice) - cost;
+               if (prevIofc > 0) {
+                   sumPrevIOFC += prevIofc;
+                   validIofcCount++;
+               }
+               sumPrevMilk += milk;
+               validMilkCount++;
+            }
+         });
+
+         if (validIofcCount > 0) {
+             const avgPrevIofc = sumPrevIOFC / validIofcCount;
+             iofcTrendPct = ((iofcEstimate.perCow - avgPrevIofc) / avgPrevIofc) * 100;
+         }
+         
+         if (validMilkCount > 0 && productionEstimate && productionEstimate.assignedCows > 0) {
+             const avgPrevMilk = sumPrevMilk / validMilkCount;
+             const currentAvgMilk = productionEstimate.milk_kg / productionEstimate.assignedCows;
+             prodTrendPct = ((currentAvgMilk - avgPrevMilk) / avgPrevMilk) * 100;
+         }
+     }
   }
 
   // Son 7 gün gözlem trendi
@@ -146,7 +255,7 @@ export async function renderDashboardPanel(container, state, options = {}) {
   const stockTracking = activeFarm?.stockTracking || {};
 
   // Hatırlatıcılar
-  const reminders = buildReminders({ lastResult, observations, profiles, animal: lastAnimal, stockTracking, groups, rations });
+  const reminders = buildReminders({ lastResult, observations, profiles, animal: lastAnimal, stockTracking, groups, rations, feedCostMap });
 
   container.innerHTML = `
     <div class="dashboard">
@@ -172,12 +281,13 @@ export async function renderDashboardPanel(container, state, options = {}) {
         </div>
       </div>
 
-      <!-- 4 ana kart -->
+      <!-- 5 ana kart -->
       <div class="dashboard-grid">
         ${renderLastRationCard(lastResult, lastAt, lastAnimal, milkPrice, units)}
         ${renderHerdStatusCard(profiles, groups, totalAnimals)}
-        ${renderIOFCCard(iofcEstimate, totalAnimals)}
-        ${renderRemindersCard(reminders)}
+        ${renderIOFCCard(iofcEstimate, totalAnimals, iofcTrendPct)}
+        ${renderProductionCard(productionEstimate, totalAnimals, prodTrendPct)}
+        ${renderRemindersCard(reminders)}\n        ${renderFeedCostCard(feedCostMap, forageCost, concentrateCost, otherCost)}
       </div>
 
       <!-- Trend grafiği -->
@@ -362,7 +472,17 @@ function renderHerdStatusCard(profiles, groups, totalAnimals) {
     </div>`;
 }
 
-function renderIOFCCard(iofc, totalAnimals) {
+function renderIOFCCard(iofc, totalAnimals, trend) {
+
+  let trendHtml = '';
+  if (typeof trend === 'number' && trend !== null && !isNaN(trend)) {
+    const isPos = trend >= 0;
+    const color = isPos ? 'var(--success)' : 'var(--danger)';
+    const icon = isPos ? 'ti-trending-up' : 'ti-trending-down';
+    const sign = isPos ? '+' : '';
+    trendHtml = `<div style="font-size: 0.75rem; font-weight: 600; color: ${color}; display: flex; align-items: center; gap: 0.2rem; justify-content: center; margin-top: 0.2rem;"><i class="ti ${icon}"></i> ${sign}${trend.toFixed(1)}%</div>`;
+  }
+
   if (!iofc) {
     return `
       <div class="dash-card">
@@ -390,6 +510,7 @@ function renderIOFCCard(iofc, totalAnimals) {
       <div class="dash-stats-row">
         <div class="dash-stat">
           <div class="dash-stat-val" style="color:${statusColor}">${fmt(iofc.perCow, 0)}</div>
+          ${trendHtml}
           <div class="dash-stat-lbl">${t('dashboard.stat_cow_day')}</div>
         </div>
         <div class="dash-stat">
@@ -457,7 +578,7 @@ function renderRemindersCard(reminders) {
 
 // ─── Hatırlatıcı Üreteç ───────────────────────────────────────────────────────
 
-function buildReminders({ lastResult, observations, profiles, animal = {}, stockTracking = {}, groups = [], rations = [] }) {
+function buildReminders({ lastResult, observations, profiles, animal = {}, stockTracking = {}, groups = [], rations = [], feedCostMap = {} }) {
   const reminders = [];
 
   // Rasyon durumu uyarıları
@@ -513,6 +634,61 @@ function buildReminders({ lastResult, observations, profiles, animal = {}, stock
       });
     }
   }
+
+  // Çiftlik Panelindeki Atalı Rasyonların Riskleri (Aşama 3)
+  const evaluatedRations = new Set();
+  profiles.forEach(p => {
+    if (p.targetRationId && !evaluatedRations.has(p.targetRationId)) {
+      evaluatedRations.add(p.targetRationId);
+      const ration = rations.find(r => r.id === p.targetRationId);
+      
+      if (ration) {
+        const comp = (ration.result && ration.result.composition) || ration.nutrients || {};
+        const fever = (ration.result && ration.result.milkFever) || ration.milkFever;
+
+        if (fever && p.lactationStage === 'close_up' && (fever.riskLevel === 'high' || fever.riskLevel === 'very_high')) {
+          reminders.push({
+            level: 'danger',
+            icon: 'ti-stethoscope',
+            title: t('dashboard.rem_fever_t') + ' (' + (p.name || 'Grup') + ')',
+            text: t('dashboard.rem_fever_x', { level: fever.riskLevel === 'very_high' ? t('dashboard.fever_vhigh') : t('dashboard.fever_high') }),
+            nav: 'herd',
+          });
+        }
+        
+        const dcad = comp.dcad_meq;
+        if (Number.isFinite(dcad)) {
+          const cowPeriod = p.lactationStage === 'close_up' ? 'transition'
+                          : p.lactationStage === 'far_off'  ? 'dry_faroff'
+                          : 'lactation';
+          const di = typeof interpretDCAD === 'function' ? interpretDCAD(dcad, cowPeriod) : null;
+          if (di && di.status !== 'optimal' && (di.severity === 'high' || di.severity === 'medium')) {
+            const dir = di.status === 'below_target' ? t('dashboard.dcad_low') : t('dashboard.dcad_high');
+            const fix = cowPeriod === 'transition' ? t('dashboard.fix_anionic') : t('dashboard.fix_buffer');
+            reminders.push({
+              level: di.severity === 'high' ? 'danger' : 'warn',
+              icon: 'ti-bolt',
+              title: t('dashboard.rem_dcad_t', { dir, label: di.target.label }) + ' (' + (p.name || 'Grup') + ')',
+              text: t('dashboard.rem_dcad_x', { v: dcad.toFixed(1), min: di.target.min, max: di.target.max, fix }),
+              nav: 'herd',
+            });
+          }
+        }
+
+        const ndf = comp.ndf_pct;
+        const starch = comp.starch_pct || comp.nfc_pct;
+        if (ndf && ndf < 28 && starch && starch > 28) {
+             reminders.push({
+               level: 'danger',
+               icon: 'ti-activity-heartbeat',
+               title: (t('dashboard.rem_sara_t') || 'Asidoz (SARA) Riski') + ' (' + (p.name || 'Grup') + ')',
+               text: t('dashboard.rem_sara_x') || 'NDF çok düşük (<%28) veya Nişasta yüksek (>%28). Etkili lif (peNDF) ekleyin.',
+               nav: 'herd'
+             });
+        }
+      }
+    }
+  });
 
   // Gözlem trendi uyarıları (en son profilin son 4 gözlemi)
   if (observations.length >= 2 && profiles.length > 0) {
@@ -590,7 +766,10 @@ function buildReminders({ lastResult, observations, profiles, animal = {}, stock
     Object.keys(stockTracking).forEach(feedId => {
       const stock = stockTracking[feedId];
       // Eğer eski kayıtsa (dailyKg yoksa) veya stok verisi girilmemişse atla
-      if (!stock || !stock.stockQty || !stock.planQty || !stock.dailyKg) return;
+      if (!stock || !stock.stockQty || !stock.planQty) return;
+
+      const dynamicDailyKg = (feedCostMap && feedCostMap[feedId]) ? feedCostMap[feedId].dailyKg : (stock.dailyKg || 0);
+      if (!dynamicDailyKg || dynamicDailyKg <= 0) return;
 
       let stockKg = parseFloat(stock.stockQty);
       if (stock.stockUnit === 'ton') stockKg *= 1000;
@@ -599,18 +778,20 @@ function buildReminders({ lastResult, observations, profiles, animal = {}, stock
       if (stock.planUnit === 'hafta') planDays *= 7;
       else if (stock.planUnit === 'ay') planDays *= 30;
 
-      const requiredKg = stock.dailyKg * planDays;
-      if (stockKg < requiredKg) {
+      const requiredKg = dynamicDailyKg * planDays;
+      const daysWillLast = stockKg / dynamicDailyKg;
+      if (daysWillLast < planDays) {
         const missingKg = requiredKg - stockKg;
         let missingText = missingKg >= 1000 
           ? t('dashboard.missing_ton', { val: (missingKg / 1000).toLocaleString(undefined, {maximumFractionDigits:1}) })
           : t('dashboard.missing_kg', { val: missingKg.toLocaleString(undefined, {maximumFractionDigits:1}) });
         
+        const isCritical = daysWillLast < 10;
         reminders.push({
-          level: 'danger',
+          level: isCritical ? 'danger' : 'warn',
           icon: 'ti-packages',
-          title: t('dashboard.stock_alert_title'),
-          text: t('dashboard.stock_alert_text', { feed: stock.feedName || 'Yem', missing: missingText, plan: stock.planQty, unit: stock.planUnit }),
+          title: (t('dashboard.stock_alert_title') || 'Stok Uyarısı') + (isCritical ? ' (Kritik)' : ''),
+          text: t('dashboard.stock_alert_text', { feed: stock.feedName || 'Yem', missing: missingText, plan: stock.planQty, unit: stock.planUnit }) + ` (~${Math.floor(daysWillLast)} gün kaldı)`,
           nav: 'herd',
         });
       }
@@ -700,4 +881,126 @@ function drawTrendChart(canvas, observations) {
       },
     },
   });
+}
+
+function renderProductionCard(prod, totalAnimals, trend) {
+
+  let trendHtml = '';
+  if (typeof trend === 'number' && trend !== null && !isNaN(trend)) {
+    const isPos = trend >= 0;
+    const color = isPos ? 'var(--success)' : 'var(--danger)';
+    const icon = isPos ? 'ti-trending-up' : 'ti-trending-down';
+    const sign = isPos ? '+' : '';
+    trendHtml = `<div style="font-size: 0.75rem; font-weight: 600; color: ${color}; display: flex; align-items: center; gap: 0.2rem; justify-content: center; margin-top: 0.2rem;"><i class="ti ${icon}"></i> ${sign}${trend.toFixed(1)}%</div>`;
+  }
+
+  if (!prod) return '';
+
+  const feColor = prod.fe >= 1.5 ? 'var(--success)' : prod.fe >= 1.3 ? 'var(--primary)' : 'var(--warning)';
+
+  return `
+    <div class="dash-card">
+      <div class="dash-card-title"><i class="ti ti-chart-pie"></i> ${t('dashboard.production_perf') || 'Sürü Performansı & Üretim'}</div>
+      <div class="dash-stats-row">
+        <div class="dash-stat">
+          <div class="dash-stat-val">
+            ${prod.milk_kg.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+          </div>
+          <div class="dash-stat-lbl">${t('dashboard.stat_total_milk') || 'Toplam Süt (L/Gün)'}</div>
+        </div>
+        <div class="dash-stat">
+          <div class="dash-stat-val">
+            ${prod.revenue_tl.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+          </div>
+          <div class="dash-stat-lbl">${t('dashboard.stat_revenue') || 'Ciro (₺/Gün)'}</div>
+        </div>
+        <div class="dash-stat">
+          <div class="dash-stat-val" style="color:${feColor}">
+            ${prod.fe.toFixed(2)}
+          </div>
+          <div class="dash-stat-lbl">${t('dashboard.stat_fe') || 'Yem Verimi (FE)'}</div>
+        </div>
+      </div>
+      <div class="dash-card-iofc">
+        <b style="color:${feColor}">${prod.fe >= 1.5 ? (t('dashboard.fe_excellent') || 'Mükemmel (>1.5)') : prod.fe >= 1.3 ? (t('dashboard.fe_good') || 'İyi (1.3-1.5)') : (t('dashboard.fe_low') || 'Düşük (<1.3)')}</b>
+        &middot; ${t('dashboard.based_on', { n: prod.assignedCows || totalAnimals })}
+      </div>
+      <div class="text-small text-muted mt-1" style="line-height:1.4">
+        ${t('dashboard.prod_note') || 'ⓘ FE = ECM / DMI. Sadece rasyon atalı gruplar baz alınmıştır.'}
+      </div>
+    </div>`;
+}
+
+let costChartInstance = null;
+function renderFeedCostCard(feedCostMap, forageCost, concentrateCost, otherCost) {
+  // Extract top 3 most expensive feeds
+  const feedArr = Object.values(feedCostMap).filter(f => f.cost > 0);
+  feedArr.sort((a, b) => b.cost - a.cost);
+  const top3 = feedArr.slice(0, 3);
+  
+  const totalCost = forageCost + concentrateCost + otherCost;
+  // if (totalCost === 0) return ''; // removed so it always shows up
+
+  // Setup the canvas right after render using setTimeout
+  setTimeout(() => {
+    const canvas = document.getElementById('dash-feed-cost-chart');
+    if (!canvas) return;
+    
+    const existingChart = Chart.getChart(canvas);
+    if (existingChart) {
+      existingChart.destroy();
+    }
+    
+    costChartInstance = new Chart(canvas, {
+      type: 'doughnut',
+      data: {
+        labels: [t('dashboard.forage_cost') || 'Kaba Yem', t('dashboard.conc_cost') || 'Kesif Yem', t('dashboard.other_cost') || 'Katkı/Diğer'],
+        datasets: [{
+          data: [forageCost, concentrateCost, otherCost],
+          backgroundColor: ['#10b981', '#3b82f6', '#f59e0b'],
+          borderWidth: 0,
+          cutout: '70%'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => ' ' + ctx.raw.toLocaleString(undefined, {maximumFractionDigits:0}) + ' ₺'
+            }
+          }
+        }
+      }
+    });
+  }, 100);
+
+  return `
+    <div class="dash-card">
+      <div class="dash-card-title"><i class="ti ti-chart-pie"></i> ${t('dashboard.cost_breakdown') || 'Maliyet Dağılımı'}</div>
+      <div style="display:flex; gap:1rem; align-items:center; margin-top:0.5rem">
+        <div style="width: 100px; height: 100px; position:relative; flex-shrink:0;">
+          <canvas id="dash-feed-cost-chart"></canvas>
+          <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center; font-weight:700; font-size:1rem; color:var(--text-main);">
+             ${totalCost.toLocaleString(undefined, {notation: "compact", maximumFractionDigits: 1})}
+          </div>
+        </div>
+        <div style="flex: 1; font-size: 0.85rem;">
+          <div style="font-weight:600; margin-bottom:0.4rem; color:var(--text-muted);">${t('dashboard.top_expenses') || 'En Çok Harcananlar'}</div>
+          <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:0.3rem;">
+            ${top3.map((f, i) => `
+              <li style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width: 110px;">${i+1}. ${escHtml(f.name)}</span>
+                <b style="color:var(--text-main);">${f.cost.toLocaleString(undefined, {maximumFractionDigits:0})} ₺</b>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+      </div>
+      <div class="text-small text-muted mt-2" style="line-height:1.4; padding-top: 0.5rem; border-top: 1px solid var(--border-light, #eee);">
+        ${t('dashboard.cost_note') || 'ⓘ Hesaplama: Sürü gruplarına atanan rasyonlar ile güncel yem fiyatları çaprazlanarak günlük toplam maliyet tahmin edilmiştir.'}
+      </div>
+    </div>`;
 }
