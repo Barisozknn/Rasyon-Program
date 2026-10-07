@@ -678,7 +678,8 @@ function renderRow(r, idx) {
   
   const iofc = r.economics?.daily?.iofc_tl || 0;
   const isFeasible = r.result && r.result.feasible !== false; // if cloned old ration, assume feasible
-  const iofcCls = isFeasible ? (iofc > 0 ? 'status-row-ok' : 'status-row-above') : 'status-row-above';
+  const isDry = r.profile?.lactationStage === 'far_off' || r.profile?.lactationStage === 'close_up';
+  const iofcCls = !isFeasible ? 'status-row-above' : (isDry ? 'status-row-dry' : (iofc > 0 ? 'status-row-ok' : 'status-row-above'));
   
   return `
     <tr class="${iofcCls}">

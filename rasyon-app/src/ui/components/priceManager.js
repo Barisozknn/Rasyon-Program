@@ -759,7 +759,8 @@ async function takeSnapshot(container) {
   if (Object.keys(_pendingChanges).length > 0) {
     if (!confirm(t('pm.snap_confirm'))) return;
   }
-  const note = prompt(t('pm.snap_note_prompt'), '') ?? '';
+  const note = prompt(t('pm.snap_note_prompt'), '');
+  if (note === null) return; // Kullanıcı iptal etti
   try {
     const feedsWithPrice = _allFeeds.filter(f => Number(f.pricePerTon) > 0);
     if (feedsWithPrice.length === 0) {

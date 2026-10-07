@@ -78,6 +78,8 @@ export async function renderDashboardPanel(container, state, options = {}) {
   let totalAssignedMilkYield = 0;
   let totalAssignedECM = 0;
   let totalAssignedDMI = 0;
+  let lactatingECM = 0;
+  let lactatingDMI = 0;
   let totalAssignedRevenue = 0;
   let feedCostMap = {};
   let forageCost = 0;
@@ -107,6 +109,11 @@ export async function renderDashboardPanel(container, state, options = {}) {
           totalAssignedDMI += econ.daily.dmi_kg * groupSize;
           totalAssignedRevenue += econ.daily.revenue_tl * groupSize;
           totalAssignedCows += groupSize;
+
+          if (p.lactationStage !== 'far_off' && p.lactationStage !== 'close_up') {
+            lactatingECM += econ.daily.ecm_kg * groupSize;
+            lactatingDMI += econ.daily.dmi_kg * groupSize;
+          }
 
           const itemsList = ration.result?.items || ration.ingredients;
           if (itemsList) {
@@ -167,7 +174,7 @@ export async function renderDashboardPanel(container, state, options = {}) {
       ecm_kg: totalAssignedECM,
       dmi_kg: totalAssignedDMI,
       revenue_tl: totalAssignedRevenue,
-      fe: totalAssignedDMI > 0 ? totalAssignedECM / totalAssignedDMI : 0,
+      fe: lactatingDMI > 0 ? lactatingECM / lactatingDMI : 0,
       assignedCows: totalAssignedCows
     };
 
@@ -196,7 +203,7 @@ export async function renderDashboardPanel(container, state, options = {}) {
       ecm_kg: econ.daily.ecm_kg * totalAnimals,
       dmi_kg: econ.daily.dmi_kg * totalAnimals,
       revenue_tl: econ.daily.revenue_tl * totalAnimals,
-      fe: econ.daily.feedEfficiency,
+      fe: (lastAnimal.lactationStage !== 'far_off' && lastAnimal.lactationStage !== 'close_up') ? econ.daily.feedEfficiency : 0,
       assignedCows: totalAnimals
     };
   }
@@ -983,8 +990,9 @@ function renderFeedCostCard(feedCostMap, forageCost, concentrateCost, otherCost)
       <div style="display:flex; gap:1rem; align-items:center; margin-top:0.5rem">
         <div style="width: 100px; height: 100px; position:relative; flex-shrink:0;">
           <canvas id="dash-feed-cost-chart"></canvas>
-          <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center; font-weight:700; font-size:1rem; color:var(--text-main);">
-             ${totalCost.toLocaleString(undefined, {notation: "compact", maximumFractionDigits: 1})}
+          <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center; color:var(--text-main); line-height: 1.2; width: 100%;">
+             <div style="font-weight:700; font-size:0.95rem;">${totalCost.toLocaleString(undefined, {notation: "compact", maximumFractionDigits: 1})} ₺</div>
+             <div style="font-size:0.6rem; font-weight:normal; color:var(--text-muted); text-transform:uppercase;">${t('dashboard.daily_label') || 'GÜNLÜK'}</div>
           </div>
         </div>
         <div style="flex: 1; font-size: 0.85rem;">
@@ -992,8 +1000,8 @@ function renderFeedCostCard(feedCostMap, forageCost, concentrateCost, otherCost)
           <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:0.3rem;">
             ${top3.map((f, i) => `
               <li style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width: 110px;">${i+1}. ${escHtml(f.name)}</span>
-                <b style="color:var(--text-main);">${f.cost.toLocaleString(undefined, {maximumFractionDigits:0})} ₺</b>
+                <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex: 1; margin-right: 0.5rem;" title="${escHtml(f.name)}">${i+1}. ${escHtml(f.name)}</span>
+                <b style="color:var(--text-main); flex-shrink: 0;">${f.cost.toLocaleString(undefined, {maximumFractionDigits:0})} ₺</b>
               </li>
             `).join('')}
           </ul>

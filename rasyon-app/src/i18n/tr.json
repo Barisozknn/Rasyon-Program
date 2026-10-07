@@ -105,7 +105,7 @@
     "fe_excellent": "Mükemmel (>1.5)",
     "fe_good": "İyi (1.3-1.5)",
     "fe_low": "Düşük (<1.3)",
-    "prod_note": "ⓘ FE = ECM / DMI. Sadece rasyon atalı gruplar baz alınmıştır.",
+    "prod_note": "ⓘ FE = ECM / DMI. Sadece rasyon atalı ve laktasyon dönemindeki gruplar hesaplamaya dahil edilmiştir.",
     "forage_cost": "Kaba Yem",
     "conc_cost": "Kesif Yem",
     "other_cost": "Katkı/Diğer",
@@ -152,7 +152,8 @@
     "missing_kg": "{val} kg eksik",
     "missing_ton": "{val} ton eksik",
     "stock_alert_title": "Stok Uyarısı",
-    "stock_alert_text": "{feed} hedeflenen {plan} {unit} süreden daha erken tükenecek ({missing})."
+    "stock_alert_text": "{feed} hedeflenen {plan} {unit} süreden daha erken tükenecek ({missing}).",
+    "daily_label": "GÜNLÜK"
   },
   "stages": {
     "early": "Erken Laktasyon",
