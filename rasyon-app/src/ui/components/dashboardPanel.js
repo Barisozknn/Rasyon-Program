@@ -91,6 +91,10 @@ export async function renderDashboardPanel(container, state, options = {}) {
       const groupSize = groups.find(g => g.id === p.groupId)?.animalCount ?? 0;
       if (groupSize === 0) return;
 
+      let includeDryInIofc = localStorage.getItem('dashIncludeDryInIofc') !== 'false';
+      const isDry = p.lactationStage === 'far_off' || p.lactationStage === 'close_up';
+      if (!includeDryInIofc && isDry) return;
+
       if (p.targetRationId) {
         const ration = rations.find(r => r.id === p.targetRationId);
         if (ration && ration.result?.feasible) {
@@ -493,7 +497,18 @@ function renderIOFCCard(iofc, totalAnimals, trend) {
   if (!iofc) {
     return `
       <div class="dash-card">
-        <div class="dash-card-title"><i class="ti ti-coins"></i> ${t('dashboard.estimated_iofc')}</div>
+        <div class="dash-card-title" style="display:flex; justify-content:space-between; align-items:center;">
+        <div><i class="ti ti-coins"></i> ${t('dashboard.estimated_iofc')}</div>
+        <label class="m-0 d-flex align-items-center gap-2" style="cursor: pointer; user-select: none;">
+          <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: normal;">Kuru Dönemleri Dahil Et</span>
+          <div class="custom-toggle-switch">
+            <input type="checkbox" id="dashIncludeDryToggle" ${localStorage.getItem('dashIncludeDryInIofc') !== 'false' ? 'checked' : ''}>
+            <div class="custom-toggle-switch-bg">
+              <div class="custom-toggle-switch-handle"></div>
+            </div>
+          </div>
+        </label>
+      </div>
         <div class="empty-state" style="padding:1rem">
           <p class="text-muted">
             ${totalAnimals === 0
@@ -513,7 +528,18 @@ function renderIOFCCard(iofc, totalAnimals, trend) {
 
   return `
     <div class="dash-card">
-      <div class="dash-card-title"><i class="ti ti-coins"></i> ${t('dashboard.estimated_iofc')}</div>
+      <div class="dash-card-title" style="display:flex; justify-content:space-between; align-items:center;">
+        <div><i class="ti ti-coins"></i> ${t('dashboard.estimated_iofc')}</div>
+        <label class="m-0 d-flex align-items-center gap-2" style="cursor: pointer; user-select: none;">
+          <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: normal;">Kuru Dönemleri Dahil Et</span>
+          <div class="custom-toggle-switch">
+            <input type="checkbox" id="dashIncludeDryToggle" ${localStorage.getItem('dashIncludeDryInIofc') !== 'false' ? 'checked' : ''}>
+            <div class="custom-toggle-switch-bg">
+              <div class="custom-toggle-switch-handle"></div>
+            </div>
+          </div>
+        </label>
+      </div>
       <div class="dash-stats-row">
         <div class="dash-stat">
           <div class="dash-stat-val" style="color:${statusColor}">${fmt(iofc.perCow, 0)}</div>
