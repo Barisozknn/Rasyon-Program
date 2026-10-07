@@ -92,7 +92,7 @@ export async function renderDashboardPanel(container, state, options = {}) {
       if (groupSize === 0) return;
 
       let includeDryInIofc = localStorage.getItem('dashIncludeDryInIofc') !== 'false';
-      const isDry = p.lactationStage === 'far_off' || p.lactationStage === 'close_up';
+      const pStage = p.lactationStage || p.animal?.lactationStage; const isDry = pStage === 'far_off' || pStage === 'close_up';
       if (!includeDryInIofc && isDry) return;
 
       if (p.targetRationId) {
@@ -114,7 +114,8 @@ export async function renderDashboardPanel(container, state, options = {}) {
           totalAssignedRevenue += econ.daily.revenue_tl * groupSize;
           totalAssignedCows += groupSize;
 
-          if (p.lactationStage !== 'far_off' && p.lactationStage !== 'close_up') {
+          const pStage2 = p.lactationStage || p.animal?.lactationStage;
+          if (pStage2 !== 'far_off' && pStage2 !== 'close_up') {
             lactatingECM += econ.daily.ecm_kg * groupSize;
             lactatingDMI += econ.daily.dmi_kg * groupSize;
           }
