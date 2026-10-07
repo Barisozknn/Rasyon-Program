@@ -1143,9 +1143,12 @@
     "s6_title": "AI Assistant",
     "s6_desc": "Formulated your ration but still unsure? Go to the <b>AI Assistant</b> tab and click Review Ration to get a professional AI evaluation.",
     "s6_tip": "You can freely ask questions to the AI Assistant and get expert nutritional advice.",
-    "s7_title": "Cloud Sync & Account",
-    "s7_desc": "Using the <b>Cloud</b> infrastructure, you can create an account and sync all your farm data (profiles, feeds, rations) to the cloud. Click the cloud icon at the top to begin.",
-    "s7_tip": "Don't forget to sync regularly from the cloud menu to avoid losing your work."
+    "s7_title": "Recommendations",
+    "s7_desc": "On the <b>Recommendations</b> tab, you can find automatic suggestions for nutrient deficiencies or excesses in your ration.",
+    "s7_tip": "By following these recommendations, you can optimize animal health and milk yield.",
+    "s8_title": "Cloud Sync & Account",
+    "s8_desc": "Using the <b>Cloud</b> infrastructure, you can create an account and sync all your farm data (profiles, feeds, rations) to the cloud. Click the cloud icon at the top to begin.",
+    "s8_tip": "Don't forget to sync regularly from the cloud menu to avoid losing your work."
   },
   "herd": {
     "empty_no_profile": "No saved animal profiles yet.",

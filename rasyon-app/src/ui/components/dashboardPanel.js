@@ -80,6 +80,7 @@ export async function renderDashboardPanel(container, state, options = {}) {
   let totalAssignedDMI = 0;
   let lactatingECM = 0;
   let lactatingDMI = 0;
+  let lactatingAssignedCows = 0;
   let totalAssignedRevenue = 0;
   let feedCostMap = {};
   let forageCost = 0;
@@ -118,6 +119,7 @@ export async function renderDashboardPanel(container, state, options = {}) {
           if (pStage2 !== 'far_off' && pStage2 !== 'close_up') {
             lactatingECM += econ.daily.ecm_kg * groupSize;
             lactatingDMI += econ.daily.dmi_kg * groupSize;
+            lactatingAssignedCows += groupSize;
           }
 
           const itemsList = ration.result?.items || ration.ingredients;
@@ -180,7 +182,7 @@ export async function renderDashboardPanel(container, state, options = {}) {
       dmi_kg: totalAssignedDMI,
       revenue_tl: totalAssignedRevenue,
       fe: lactatingDMI > 0 ? lactatingECM / lactatingDMI : 0,
-      assignedCows: totalAssignedCows
+      assignedCows: lactatingAssignedCows
     };
 
   } else if (lastResult?.feasible && totalAnimals > 0) {
@@ -343,6 +345,14 @@ export async function renderDashboardPanel(container, state, options = {}) {
   container.querySelectorAll('[data-nav]').forEach(btn => {
     btn.addEventListener('click', () => onNavigate(btn.dataset.nav));
   });
+
+  const dryToggle = container.querySelector('#dashIncludeDryToggle');
+  if (dryToggle) {
+    dryToggle.addEventListener('change', (e) => {
+      localStorage.setItem('dashIncludeDryInIofc', e.target.checked ? 'true' : 'false');
+      renderDashboardPanel(container, state, options);
+    });
+  }
 
   // Mini trend grafiği
   if (sevenDayObs.length >= 2) {
@@ -857,6 +867,7 @@ function drawTrendChart(canvas, observations) {
   );
   const myData  = observations.map(o => o.milkYield ?? null);
   const bcsData = observations.map(o => o.bcs ?? null);
+  const dmiData = observations.map(o => o.dmiActual ?? null);
 
   trendChartInstance = new Chart(canvas, {
     type: 'line',
@@ -885,6 +896,18 @@ function drawTrendChart(canvas, observations) {
           pointRadius: 3,
           fill: false,
           yAxisID: 'y1',
+          spanGaps: true,
+        },
+        {
+          label: t('obs.col_dmi') || 'KMT (kg/g�n)',
+          data: dmiData,
+          borderColor: 'rgba(16,185,129,1)',
+          backgroundColor: 'rgba(16,185,129,0.1)',
+          borderWidth: 2,
+          tension: 0.3,
+          pointRadius: 3,
+          fill: false,
+          yAxisID: 'y',
           spanGaps: true,
         },
       ],
@@ -957,7 +980,7 @@ function renderProductionCard(prod, totalAnimals, trend) {
       </div>
       <div class="dash-card-iofc">
         <b style="color:${feColor}">${prod.fe >= 1.5 ? (t('dashboard.fe_excellent') || 'Mükemmel (>1.5)') : prod.fe >= 1.3 ? (t('dashboard.fe_good') || 'İyi (1.3-1.5)') : (t('dashboard.fe_low') || 'Düşük (<1.3)')}</b>
-        &middot; ${t('dashboard.based_on', { n: prod.assignedCows || totalAnimals })}
+        &middot; ${t('dashboard.based_on', { n: prod.assignedCows !== undefined ? prod.assignedCows : totalAnimals })}
       </div>
       <div class="text-small text-muted mt-1" style="line-height:1.4">
         ${t('dashboard.prod_note') || 'ⓘ FE = ECM / DMI. Sadece rasyon atalı gruplar baz alınmıştır.'}

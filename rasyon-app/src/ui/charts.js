@@ -22,6 +22,13 @@ export function setChartTheme(theme) {
   const dark = theme === 'dark';
   Chart.defaults.color = dark ? '#cdd8d0' : '#5a7060';            // eksen/etiket metni
   Chart.defaults.borderColor = dark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.08)'; // ızgara çizgileri
+  
+  // Tooltip metinlerini her zaman beyaz yap (okunabilirlik için)
+  if (Chart.defaults.plugins && Chart.defaults.plugins.tooltip) {
+    Chart.defaults.plugins.tooltip.titleColor = '#ffffff';
+    Chart.defaults.plugins.tooltip.bodyColor = '#ffffff';
+    Chart.defaults.plugins.tooltip.footerColor = '#ffffff';
+  }
 }
 
 function destroyChart(id) {

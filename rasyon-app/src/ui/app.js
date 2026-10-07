@@ -324,7 +324,8 @@ async function initCloud() {
   await onAuthChange(async (event, session) => {
     if (session?.user) {
       await startSync(session.user);
-      refreshFarmButton(); // Uzlaştırma sonrası arayüzü güncelle
+      refreshFarmButton();
+      renderTab(activeTab);
     } else if (event === 'SIGNED_OUT') {
       stopSync();
       refreshFarmButton();

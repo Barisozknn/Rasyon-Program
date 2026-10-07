@@ -4024,12 +4024,24 @@ details.acc-panel table.diag-table {
 }
 
 @media print {
-
-  #app,
-  .app-body {
+  html, body, #app, .app-body, .tab-content, .tab-panel, #tab-results, .results-grid, .results-grid > .card, .card, .table-scroll-wrap, .feed-table-wrap, .results-container {
     display: block !important;
     width: 100% !important;
     max-width: 100% !important;
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+    position: static !important;
+  }
+  body[data-active-tab="results"] .tab-content,
+  body[data-active-tab="results"] .app-body,
+  body[data-active-tab="results"] .table-scroll-wrap,
+  body[data-active-tab="results"] #app {
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+    overflow-x: visible !important;
+    overflow-y: visible !important;
   }
 }
 

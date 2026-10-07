@@ -1143,9 +1143,12 @@
     "s6_title": "Yapay Zeka (AI) Asistan",
     "s6_desc": "Rasyonunuzu hazırladınız ama emin değil misiniz? <b>AI Asistan</b> sekmesine girin ve Rasyonu İncele butonuna basarak rasyonunuzun profesyonel yorumunu alın.",
     "s6_tip": "AI Asistan'a serbestçe sorular sorup uzman besleme tavsiyesi alabilirsiniz.",
-    "s7_title": "Hesap & Bulut Senkronizasyonu",
-    "s7_desc": "<b>Bulut</b> altyapısı sayesinde hesap oluşturabilir, çiftliğinizi ve tüm verilerinizi (profiller, yemler, rasyonlar) buluta kaydedebilirsiniz. Üst kısımdaki bulut ikonuna basarak başlayın.",
-    "s7_tip": "Çalışmalarınızı kaybetmemek için düzenli olarak bulut menüsünden eşitleme yapmayı unutmayın."
+    "s7_title": "Tavsiyeler",
+    "s7_desc": "<b>Tavsiyeler</b> sekmesinde rasyonunuzdaki besin madde eksikliklerine veya fazlalıklarına dair otomatik öneriler bulabilirsiniz.",
+    "s7_tip": "Tavsiyeleri dikkate alarak hayvan sağlığını ve süt verimini optimize edebilirsiniz.",
+    "s8_title": "Hesap & Bulut Senkronizasyonu",
+    "s8_desc": "<b>Bulut</b> altyapısı sayesinde hesap oluşturabilir, çiftliğinizi ve tüm verilerinizi (profiller, yemler, rasyonlar) buluta kaydedebilirsiniz. Üst kısımdaki bulut ikonuna basarak başlayın.",
+    "s8_tip": "Çalışmalarınızı kaybetmemek için düzenli olarak bulut menüsünden eşitleme yapmayı unutmayın."
   },
   "herd": {
     "empty_no_profile": "Henüz kayıtlı hayvan profili yok.",
