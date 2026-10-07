@@ -1,58 +1,37 @@
-/**
- * AI Service for DeepSeek API Integration
- */
+import { getSupabaseClient } from '../data/sync/supabaseClient.js';
 
 /**
- * Sends a full conversation to the DeepSeek API.
- * Supports multi-turn chat history for context-aware responses.
+ * Sends a full conversation to the Supabase Edge Function 'ask-ai'.
  *
  * @param {Array<{role: string, content: string}>} messages - Full conversation history
- *   including the system prompt as the first element.
  * @returns {Promise<string>} The AI's response text.
  */
 export async function askGemini(messages) {
-  const apiKey = import.meta.env.VITE_DEEPSEEK_API_KEY;
-
-  if (!apiKey) {
-    throw new Error("DeepSeek API key (VITE_DEEPSEEK_API_KEY) is not set in .env");
+  const supabase = await getSupabaseClient();
+  if (!supabase) {
+    throw new Error("Supabase bağlantısı kurulamadı. Lütfen .env dosyasındaki ayarlarınızı kontrol edin.");
   }
 
-  const endpoint = "https://api.deepseek.com/chat/completions";
-
-  const payload = {
-    model: "deepseek-chat",
-    messages,
-    temperature: 0.35,
-    max_tokens: 4096,
-    top_p: 0.9,
-  };
-
   try {
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`
-      },
-      body: JSON.stringify(payload)
+    const { data, error } = await supabase.functions.invoke('ask-ai', {
+      body: { messages }
     });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      console.error("DeepSeek API Error Response:", errorData);
-      throw new Error(`API Hatası: ${response.status} - Lütfen API anahtarınızı kontrol edin.`);
+    if (error) {
+      console.error("Supabase Edge Function Hatası:", error);
+      throw new Error(`Edge Function Hatası: ${error.message}`);
     }
 
-    const data = await response.json();
-
-    if (data.choices && data.choices.length > 0) {
-      return data.choices[0].message.content;
+    if (data && data.reply) {
+      return data.reply;
+    } else if (data && data.error) {
+       throw new Error(data.error);
     } else {
       throw new Error("Yapay zeka boş bir yanıt döndürdü.");
     }
 
   } catch (error) {
-    console.error("DeepSeek Fetch Error:", error);
-    throw new Error(`AI Hatası: ${error.message || "İletişim kurulamadı."}`);
+    console.error("Supabase Invoke Error:", error);
+    throw new Error(`AI İletişim Hatası: ${error.message || "Bilinmeyen bir hata oluştu."}`);
   }
 }
