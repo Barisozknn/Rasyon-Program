@@ -1,4 +1,5 @@
 import "@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -13,8 +14,29 @@ export default {
     }
 
     try {
-      const { messages } = await req.json();
+      const { messages, deviceId } = await req.json();
 
+      if (!deviceId) {
+        throw new Error("Yetkisiz erişim: Cihaz kimliği (deviceId) eksik.");
+      }
+
+      // Supabase Bağlantısı ve Güvenlik Kontrolü
+      const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
+      const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+      const supabase = createClient(supabaseUrl, supabaseKey);
+
+      const { data: codeData, error: dbError } = await supabase
+        .from("ai_activation_codes")
+        .select("id")
+        .eq("device_id", deviceId)
+        .eq("is_used", true)
+        .maybeSingle();
+
+      if (dbError || !codeData) {
+        throw new Error("Yetkisiz erişim: Bu cihaz için geçerli bir aktivasyon bulunamadı. Lütfen hile yapmayınız!");
+      }
+
+      // Güvenlik duvarı geçildi, DeepSeek API'ye istek yapılıyor
       const apiKey = Deno.env.get("DEEPSEEK_API_KEY");
       if (!apiKey) {
         throw new Error("API Key is missing");

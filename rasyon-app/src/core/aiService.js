@@ -11,10 +11,14 @@ export async function askGemini(messages) {
   if (!supabase) {
     throw new Error("Supabase bağlantısı kurulamadı. Lütfen .env dosyasındaki ayarlarınızı kontrol edin.");
   }
+  const deviceId = localStorage.getItem('device_id');
+  if (!deviceId) {
+    throw new Error("Cihaz kimliği bulunamadı. Lütfen ayarlardan yapay zeka asistanınızı tekrar aktive edin.");
+  }
 
   try {
     const { data, error } = await supabase.functions.invoke('ask-ai', {
-      body: { messages }
+      body: { messages, deviceId }
     });
 
     if (error) {
