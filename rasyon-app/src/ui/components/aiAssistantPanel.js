@@ -308,6 +308,8 @@ export async function renderAiAssistantPanel(container) {
       .custom-toggle-switch-handle { position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background-color: #fff; border-radius: 50%; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1); }
       .custom-toggle-switch input[type="checkbox"]:checked ~ .custom-toggle-switch-bg { background-color: #0d6efd; }
       .custom-toggle-switch input[type="checkbox"]:checked ~ .custom-toggle-switch-bg .custom-toggle-switch-handle { transform: translateX(20px); }
+      @keyframes mic-pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.7; } 100% { transform: scale(1); opacity: 1; } }
+      .mic-recording i { animation: mic-pulse 1.5s infinite; color: #fff; }
     </style>
     <div class="ai-panel">
       <!-- SOL MENÜ: GEÇMİŞ SOHBETLER (Mobilde Bottom Sheet) -->
@@ -351,10 +353,15 @@ export async function renderAiAssistantPanel(container) {
               <span style="font-size: 0.85rem; color: var(--text-secondary); padding-top: 2px;">${t('ai.add_farm_data')}</span>
             </label>
           </div>
-          <div style="display: flex; gap: 0.5rem; width: 100%;">
-            <textarea id="aiChatInput" placeholder="${t('ai.placeholder')}" rows="2" style="flex:1;"></textarea>
-            <button id="aiSendBtn" class="btn btn-primary" title="${t('ai.send')}">
-              <i class="ti ti-send"></i>
+          <div style="display: flex; gap: 0.5rem; width: 100%; align-items: center;">
+            <textarea id="aiChatInput" placeholder="${t('ai.placeholder')}" rows="2" style="flex:1; border-radius: 12px; padding: 0.5rem;"></textarea>
+            
+            <button id="aiMicBtn" class="btn btn-secondary" title="Sesli Yazma" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 50%; padding: 0; flex-shrink: 0;">
+              <i class="ti ti-microphone" style="font-size: 1.25rem;"></i>
+            </button>
+            
+            <button id="aiSendBtn" class="btn btn-primary" title="${t('ai.send')}" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 50%; padding: 0; flex-shrink: 0;">
+              <i class="ti ti-send" style="font-size: 1.25rem;"></i>
             </button>
           </div>
         </div>
@@ -638,6 +645,77 @@ export async function renderAiAssistantPanel(container) {
       sendMessage();
     }
   });
+
+  // --- Sesli Yazma (Speech Recognition) ---
+  const micBtn = document.getElementById('aiMicBtn');
+  let recognition = null;
+  let isRecording = false;
+  let silenceTimer = null;
+  let initialText = '';
+
+  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+    recognition.lang = 'tr-TR';
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    const resetSilenceTimer = (delay) => {
+      if (silenceTimer) clearTimeout(silenceTimer);
+      silenceTimer = setTimeout(() => {
+        if (isRecording) {
+          recognition.stop();
+        }
+      }, delay);
+    };
+
+    recognition.onstart = () => {
+      isRecording = true;
+      micBtn.classList.remove('btn-secondary');
+      micBtn.classList.add('btn-danger', 'mic-recording');
+      initialText = chatInput.value + (chatInput.value.trim() ? " " : "");
+      resetSilenceTimer(5000); // 5 saniye hiç ses duymazsa kapat
+    };
+
+    recognition.onresult = (event) => {
+      let currentFinal = '';
+      let currentInterim = '';
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) {
+          currentFinal += event.results[i][0].transcript;
+        } else {
+          currentInterim += event.results[i][0].transcript;
+        }
+      }
+      chatInput.value = initialText + currentFinal + currentInterim;
+      chatInput.scrollTop = chatInput.scrollHeight;
+      
+      resetSilenceTimer(2000); // Kelime duyarsa 2 saniye bekle
+    };
+
+    recognition.onerror = (e) => {
+      console.warn("Ses tanıma hatası:", e.error);
+      if (isRecording) recognition.stop();
+    };
+
+    recognition.onend = () => {
+      isRecording = false;
+      micBtn.classList.remove('btn-danger', 'mic-recording');
+      micBtn.classList.add('btn-secondary');
+      if (silenceTimer) clearTimeout(silenceTimer);
+      chatInput.focus();
+    };
+
+    micBtn.addEventListener('click', () => {
+      if (isRecording) {
+        recognition.stop();
+      } else {
+        recognition.start();
+      }
+    });
+  } else {
+    if (micBtn) micBtn.style.display = 'none'; // Tarayıcı desteklemiyorsa gizle
+  }
 
   // Initial render
   renderSidebar();
