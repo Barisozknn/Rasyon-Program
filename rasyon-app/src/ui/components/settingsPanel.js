@@ -219,7 +219,7 @@ export async function renderSettingsPanel(container, state, options = {}) {
 
       <!-- AI Aktivasyonu -->
       <div class="card mt-2" id="ai-activation-card">
-        <div class="card-title"><i class="ti ti-robot"></i> ${t('settings.ai_activation')}</div>
+        <div class="card-title"><i class="ti ti-sparkles"></i> ${t('settings.ai_activation')}</div>
         <div class="info-box">${t('settings.ai_activation_desc')}</div>
         <div class="form-grid mt-1">
           <div class="form-group full-width" style="display:flex; gap:0.5rem;">

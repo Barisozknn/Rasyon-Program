@@ -1,4 +1,16 @@
-html, body { overflow-x: hidden !important; max-width: 100vw !important; }
+html {
+  background-color: var(--sidebar-bg);
+  overflow-x: hidden !important; 
+  max-width: 100vw !important;
+}
+
+body {
+  background-color: var(--bg);
+  min-height: 100vh; /* (veya destekleyen cihazlar için 100dvh) */
+  min-height: 100dvh;
+  overflow-x: hidden !important; 
+  max-width: 100vw !important;
+}
 /* ─── Reset & Base ─────────────────────────────────────────────────────────── */
 *,
 *::before,
