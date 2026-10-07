@@ -21,6 +21,7 @@ import { reverseGeocode } from '../../core/weatherApi.js';   // denetim #19: koo
 import { isCloudConfigured } from '../../data/auth.js';
 import { showToast, escHtml } from '../utils.js';
 import { t, setLanguage } from '../i18n.js';
+import { updateAiTabUI } from '../app.js';
 
 const CLOUD_STATUS_ICON = { idle: 'ti-cloud', syncing: 'ti-refresh', synced: 'ti-cloud-check', pending: 'ti-clock', offline: 'ti-cloud-off', error: 'ti-alert-triangle' };
 
@@ -216,6 +217,20 @@ export async function renderSettingsPanel(container, state, options = {}) {
         </div>
       </div>
 
+      <!-- AI Aktivasyonu -->
+      <div class="card mt-2" id="ai-activation-card">
+        <div class="card-title"><i class="ti ti-robot"></i> ${t('settings.ai_activation')}</div>
+        <div class="info-box">${t('settings.ai_activation_desc')}</div>
+        <div class="form-grid mt-1">
+          <div class="form-group full-width" style="display:flex; gap:0.5rem;">
+            <input type="text" id="ai-code-input" placeholder="${t('settings.ai_activation_code')}" style="flex:1" ${localStorage.getItem('ai_activated') === 'true' ? 'disabled value="********"' : ''} />
+            <button class="btn ${localStorage.getItem('ai_activated') === 'true' ? 'btn-success' : 'btn-primary'}" id="btn-activate-ai" ${localStorage.getItem('ai_activated') === 'true' ? 'disabled' : ''}>
+              ${localStorage.getItem('ai_activated') === 'true' ? '<i class="ti ti-check"></i> ' + t('settings.ai_already_active') : '<i class="ti ti-key"></i> ' + t('settings.ai_activate_btn')}
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- Hesap & Bulut (FAZ 16.10) -->
       <div class="card mt-2" id="cloud-settings-card">
         <div class="card-title"><i class="ti ti-cloud"></i> ${t('cloud.settings_title')}</div>
@@ -261,6 +276,57 @@ export async function renderSettingsPanel(container, state, options = {}) {
   }
   refreshDesc();
   systemSelect.addEventListener('change', refreshDesc);
+
+  // ── AI Aktivasyonu ──
+  const btnActivateAi = container.querySelector('#btn-activate-ai');
+  const inputAiCode = container.querySelector('#ai-code-input');
+  if (btnActivateAi) {
+    btnActivateAi.addEventListener('click', async () => {
+      const code = inputAiCode.value.trim();
+      if (!code) return;
+      
+      btnActivateAi.disabled = true;
+      btnActivateAi.innerHTML = '<i class="ti ti-loader-2 ti-spin"></i>';
+      
+      try {
+        const { getSupabaseClient } = await import('../../data/sync/supabaseClient.js');
+        const supabase = await getSupabaseClient();
+        
+        if (!supabase) {
+          throw new Error("Supabase bağlantısı kurulamadı. (Bulut ayarlarını kontrol edin)");
+        }
+        
+        let deviceId = localStorage.getItem('device_id');
+        if (!deviceId) {
+          deviceId = 'dev_' + Math.random().toString(36).substring(2, 11);
+          localStorage.setItem('device_id', deviceId);
+        }
+        
+        const { data, error } = await supabase.rpc('activate_ai_code', { p_code: code, p_device_id: deviceId });
+        
+        if (error) throw error;
+        
+        if (data && data.success) {
+          localStorage.setItem('ai_activated', 'true');
+          updateAiTabUI();
+          showToast(t('settings.ai_activated_success'), 'success');
+          inputAiCode.disabled = true;
+          inputAiCode.value = '********';
+          btnActivateAi.className = 'btn btn-success';
+          btnActivateAi.innerHTML = '<i class="ti ti-check"></i> ' + t('settings.ai_already_active');
+        } else {
+          showToast(data?.message || t('settings.ai_activated_error'), 'error');
+          btnActivateAi.disabled = false;
+          btnActivateAi.innerHTML = '<i class="ti ti-key"></i> ' + t('settings.ai_activate_btn');
+        }
+      } catch (err) {
+        console.error('AI Activation error:', err);
+        showToast(t('settings.ai_activated_error'), 'error');
+        btnActivateAi.disabled = false;
+        btnActivateAi.innerHTML = '<i class="ti ti-key"></i> ' + t('settings.ai_activate_btn');
+      }
+    });
+  }
 
   // ── Hesap & Bulut (FAZ 16.10) ──
   const cloudCard = container.querySelector('#cloud-settings-card');

@@ -34,7 +34,10 @@
     "assistant_thinking": "Assistant is thinking...",
     "server_error": "Failed to communicate with the server or an error occurred. Please try again.",
     "generic_error": "An error occurred.",
-    "input_placeholder": "Ask the AI a question..."
+    "input_placeholder": "Ask the AI a question...",
+    "locked_title": "AI Assistant Locked",
+    "locked_desc": "To use the AI assistant, you must enter your activation code from the Settings page.",
+    "go_to_settings": "Go to Settings"
   },
   "bottomNav": {
     "more": "Menu"
@@ -832,6 +835,13 @@
     "no_results": "No results"
   },
   "settings": {
+    "ai_activation": "AI Activation",
+    "ai_activation_desc": "Enter your activation code here to unlock the in-app AI assistant.",
+    "ai_activation_code": "Activation Code",
+    "ai_activate_btn": "Activate",
+    "ai_activated_success": "AI assistant successfully activated!",
+    "ai_activated_error": "Invalid or incorrect code. Please check.",
+    "ai_already_active": "AI Activated ✓",
     "description": "Manage application preferences, unit systems, and your farm details here.",
     "science_system": "🔬 Scientific System",
     "requirement_system": "Requirement System",

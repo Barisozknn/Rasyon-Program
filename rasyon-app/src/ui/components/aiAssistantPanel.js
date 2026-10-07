@@ -268,6 +268,22 @@ async function buildContextData(includeData = false) {
 // ─── Ana Panel Renderlayıcı ───────────────────────────────────────────────────
 
 export async function renderAiAssistantPanel(container) {
+  if (localStorage.getItem('ai_activated') !== 'true') {
+    container.innerHTML = `
+      <div class="ai-locked-screen" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 2rem;">
+        <i class="ti ti-lock" style="font-size: 5rem; color: var(--text-muted); margin-bottom: 1.5rem;"></i>
+        <h2 style="margin-bottom: 1rem; color: var(--text-primary); font-weight: bold;">${t('ai.locked_title') || 'Yapay Zeka Kilitli'}</h2>
+        <p style="color: var(--text-secondary); max-width: 400px; margin-bottom: 2rem; line-height: 1.6;">
+          ${t('ai.locked_desc') || 'Yapay zeka asistanını kullanabilmek için Ayarlar sayfasından aktivasyon kodunuzu girmeniz gerekmektedir.'}
+        </p>
+        <button class="btn btn-primary" onclick="document.querySelector('[data-tab=\\'settings\\']').click()" style="padding: 0.75rem 2rem; font-size: 1.1rem; border-radius: 2rem;">
+          <i class="ti ti-settings"></i> ${t('ai.go_to_settings') || 'Ayarlara Git'}
+        </button>
+      </div>
+    `;
+    return;
+  }
+
   // Yükleme sırasında geçici ekran
   container.innerHTML = `<div class="p-4 text-center text-muted"><i class="ti ti-loader ti-spin"></i> Yükleniyor...</div>`;
 

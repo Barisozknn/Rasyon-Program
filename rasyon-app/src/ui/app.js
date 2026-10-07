@@ -195,6 +195,30 @@ function updateAppUIStrings() {
   updatePageTitle();
 }
 
+/** AI Asistan sekmesinin görsel kilit durumunu günceller */
+export function updateAiTabUI() {
+  const isActivated = localStorage.getItem('ai_activated') === 'true';
+  const aiTabs = document.querySelectorAll('[data-tab="ai"]');
+  
+  aiTabs.forEach(btn => {
+    let lockIcon = btn.querySelector('.ai-lock-icon');
+    
+    if (!isActivated) {
+      btn.style.opacity = '0.6';
+      if (!lockIcon) {
+        lockIcon = document.createElement('i');
+        lockIcon.className = 'ti ti-lock ai-lock-icon';
+        lockIcon.style.marginLeft = 'auto';
+        lockIcon.style.opacity = '0.7';
+        btn.appendChild(lockIcon);
+      }
+    } else {
+      btn.style.opacity = '1';
+      if (lockIcon) lockIcon.remove();
+    }
+  });
+}
+
 window.addEventListener('language-changed', async () => {
   updateAppUIStrings();
   // Re-render active tab
@@ -662,7 +686,9 @@ async function init() {
   // FAZ 16.11: Çiftlik seçici (header) — geçişte aktif sekmeyi tazeler
   initFarmSwitcher(() => renderTab(activeTab));
 
+  updateAiTabUI();
   await renderTab(activeTab);
+
 
   // FAZ 16.10: Bulut/hesap (tembel — supabase yalnız yapılandırılmışsa yüklenir).
   // Fire-and-forget: UI'ı bloklamaz; oturum varsa arka planda senkron başlar.

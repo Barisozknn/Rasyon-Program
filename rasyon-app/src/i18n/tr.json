@@ -34,7 +34,10 @@
     "assistant_thinking": "Asistan düşünüyor...",
     "server_error": "Sunucu ile iletişim kurulamadı veya bir hata oluştu. Lütfen tekrar deneyin.",
     "generic_error": "Bir hata oluştu.",
-    "input_placeholder": "Yapay zekaya soru sorun..."
+    "input_placeholder": "Yapay zekaya soru sorun...",
+    "locked_title": "Yapay Zeka Kilitli",
+    "locked_desc": "Yapay zeka asistanını kullanabilmek için Ayarlar sayfasından aktivasyon kodunuzu girmeniz gerekmektedir.",
+    "go_to_settings": "Ayarlara Git"
   },
   "bottomNav": {
     "more": "Menü"
@@ -832,6 +835,13 @@
     "no_results": "Sonuç bulunamadı"
   },
   "settings": {
+    "ai_activation": "Yapay Zeka Aktivasyonu",
+    "ai_activation_desc": "Uygulama içi yapay zeka asistanını kullanabilmek için size verilen aktivasyon kodunu buraya giriniz.",
+    "ai_activation_code": "Aktivasyon Kodu",
+    "ai_activate_btn": "Aktive Et",
+    "ai_activated_success": "Yapay zeka asistanı başarıyla aktif edildi!",
+    "ai_activated_error": "Hatalı veya geçersiz kod. Lütfen kontrol edin.",
+    "ai_already_active": "Yapay Zeka Aktif ✓",
     "description": "Uygulama tercihlerini, birim sistemlerini ve çiftlik bilgilerinizi buradan yönetebilirsiniz.",
     "science_system": "🔬 Bilim Sistemi",
     "requirement_system": "Gereksinim Sistemi",
