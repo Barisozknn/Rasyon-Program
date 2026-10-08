@@ -602,10 +602,22 @@ body {
 
 .tab-panel {
   display: none;
+  animation: fadeSlideIn 0.25s ease-out forwards;
 }
 
 .tab-panel.active {
   display: block;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ─── Cards ────────────────────────────────────────────────────────────────── */

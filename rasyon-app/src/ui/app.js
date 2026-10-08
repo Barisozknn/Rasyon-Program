@@ -114,6 +114,7 @@ async function switchTab(tab) {
 
 
   updatePageTitle(tab);   // FAZ 21: üst-bar sayfa başlığı
+  await new Promise(resolve => setTimeout(resolve, 15));
   await renderTab(tab);
 
   // Sonuçlar/Grafikler sekmesine geçince Chart.js'yi yeniden boyutlandır
