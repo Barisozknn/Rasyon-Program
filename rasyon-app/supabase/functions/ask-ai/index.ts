@@ -14,7 +14,7 @@ export default {
     }
 
     try {
-      const { messages, deviceId } = await req.json();
+      const { messages, deviceId, tools } = await req.json();
 
       if (!deviceId) {
         throw new Error("Yetkisiz erişim: Cihaz kimliği (deviceId) eksik.");
@@ -42,19 +42,25 @@ export default {
         throw new Error("API Key is missing");
       }
 
+      const payload: any = {
+        model: "deepseek-chat",
+        messages,
+        temperature: 0.35,
+        max_tokens: 4096,
+        top_p: 0.9,
+      };
+
+      if (tools && tools.length > 0) {
+        payload.tools = tools;
+      }
+
       const response = await fetch("https://api.deepseek.com/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${apiKey}`,
         },
-        body: JSON.stringify({
-          model: "deepseek-chat",
-          messages,
-          temperature: 0.35,
-          max_tokens: 4096,
-          top_p: 0.9,
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
@@ -63,7 +69,12 @@ export default {
       }
 
       const data = await response.json();
-      return new Response(JSON.stringify({ reply: data.choices[0].message.content }), {
+      const msg = data.choices[0].message;
+      
+      return new Response(JSON.stringify({ 
+        reply: msg.content,
+        tool_calls: msg.tool_calls
+      }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     } catch (error: any) {
