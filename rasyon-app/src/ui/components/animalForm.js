@@ -747,6 +747,27 @@ function updateCalc(form, state, container) {
       return '—';
     };
 
+    // NEL Idame Breakdown
+    const nelBasal = (r.system === 'NASEM2021' ? 0.10 : 0.08) * Math.pow(animal.bw, 0.75);
+    const nelHeat = Math.max(0, nel.maintenance - nelBasal);
+    const lblNelBasal = t('acalc.nel_basal').startsWith('acalc.') ? 'Bazal Metabolizma' : t('acalc.nel_basal');
+    const lblNelHeat = t('acalc.nel_heat').startsWith('acalc.') ? 'Isı Stresi İlavesi' : t('acalc.nel_heat');
+
+    // MP Idame Breakdown
+    let mpUrine = 0, mpScurf = 0, mpFecal = 0;
+    if (r.system === 'NASEM2021') {
+      mpUrine = 2.75 * Math.pow(animal.bw, 0.75);
+      mpScurf = 0.2 * Math.pow(animal.bw, 0.6);
+    } else {
+      mpUrine = 2.75 * Math.pow(animal.bw, 0.5);
+      mpScurf = 0.2 * Math.pow(animal.bw, 0.6);
+    }
+    mpFecal = Math.max(0, mp.maintenance - mpUrine - mpScurf);
+    
+    const lblMpFecal = t('acalc.mp_fecal').startsWith('acalc.') ? 'Dışkı (Endojen)' : t('acalc.mp_fecal');
+    const lblMpUrine = t('acalc.mp_urine').startsWith('acalc.') ? 'İdrar (Endojen)' : t('acalc.mp_urine');
+    const lblMpScurf = t('acalc.mp_scurf').startsWith('acalc.') ? 'Tüy / Deri (Scurf)' : t('acalc.mp_scurf');
+
     calcEl.innerHTML = `
       <!-- 🔢 ÖZET KARTLAR (her zaman açık) -->
       <div class="summary-bar">
@@ -765,6 +786,8 @@ function updateCalc(form, state, container) {
 <table class="diag-table" style="font-size:0.85rem; margin-top:0.5rem">
           <tbody>
             <tr><td>${t('acalc.nel_maint')}${nel.heatAdjusted ? t('acalc.heat_adj_sfx') : ''}</td><td class="num">${n2(nel.maintenance)} Mcal</td></tr>
+            <tr class="text-muted" style="font-size:0.9em"><td style="padding-left:1.5rem">└ ${lblNelBasal}</td><td class="num">${n2(nelBasal)} Mcal</td></tr>
+            ${nelHeat > 0 ? `<tr class="text-muted" style="font-size:0.9em"><td style="padding-left:1.5rem">└ ${lblNelHeat}</td><td class="num">${n2(nelHeat)} Mcal</td></tr>` : ''}
             <tr><td>${t('acalc.nel_milk')}</td><td class="num">${n2(nel.lactation)} Mcal</td></tr>
             <tr><td>${t('acalc.nel_preg')}</td><td class="num">${n2(nel.pregnancy)} Mcal</td></tr>
             ${Number.isFinite(nel.activity) ? `<tr><td>${t('acalc.nel_act')}</td><td class="num">${n2(nel.activity)} Mcal</td></tr>` : ''}
@@ -787,6 +810,9 @@ function updateCalc(form, state, container) {
 <table class="diag-table" style="font-size:0.85rem; margin-top:0.5rem">
           <tbody>
             <tr><td>${t('acalc.mp_maint')}</td><td class="num">${n0(mp.maintenance)} g</td></tr>
+            <tr class="text-muted" style="font-size:0.9em"><td style="padding-left:1.5rem">└ ${lblMpFecal}</td><td class="num">${n0(mpFecal)} g</td></tr>
+            <tr class="text-muted" style="font-size:0.9em"><td style="padding-left:1.5rem">└ ${lblMpUrine}</td><td class="num">${n0(mpUrine)} g</td></tr>
+            <tr class="text-muted" style="font-size:0.9em"><td style="padding-left:1.5rem">└ ${lblMpScurf}</td><td class="num">${n0(mpScurf)} g</td></tr>
             <tr><td>${t('acalc.mp_milk')}</td><td class="num">${n0(mp.lactation)} g</td></tr>
             <tr><td>${t('acalc.mp_preg')}</td><td class="num">${n0(mp.pregnancy)} g</td></tr>
             ${mp.growth ? `<tr><td>${t('acalc.mp_growth')}</td><td class="num">${n0(mp.growth)} g</td></tr>` : ''}
