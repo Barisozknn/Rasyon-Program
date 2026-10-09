@@ -309,7 +309,7 @@ export function renderResultsPanel(container, state) {
       <!-- Rasyon dağılımı -->
       <div class="card">
         <div class="card-title">${t('results.card_distribution')}</div>
-        <div class="chart-wrap">
+        <div class="chart-wrap" style="height: ${Math.max(280, 200 + (result.items?.length || 0) * 18)}px">
           <div class="chart-inner">
             <canvas id="chart-pie"></canvas>
           </div>

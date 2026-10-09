@@ -40,6 +40,10 @@
     "go_to_settings": "Ayarlara Git"
   },
   "bottomNav": {
+    "dashboard": "Ana",
+    "animal": "Hayvan",
+    "ration": "Rasyon",
+    "results": "Sonuç",
     "more": "Menü"
   },
   "common": {

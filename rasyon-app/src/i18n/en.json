@@ -40,6 +40,10 @@
     "go_to_settings": "Go to Settings"
   },
   "bottomNav": {
+    "dashboard": "Home",
+    "animal": "Animal",
+    "ration": "Ration",
+    "results": "Results",
     "more": "Menu"
   },
   "common": {

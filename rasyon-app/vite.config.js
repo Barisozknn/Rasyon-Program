@@ -30,7 +30,7 @@ export default defineConfig({
       },
       workbox: {
         // Tüm uygulama varlıkları precache (çevrimdışı çalışma için WASM + font dahil)
-        globPatterns: ['**/*.{js,css,html,svg,wasm,woff,woff2}'],
+        globPatterns: ['**/*.{js,css,html,svg,wasm,woff,woff2,ttf,eot}'],
         // PDF/Excel dinamik chunk'ları büyük → precache limitini yükselt
         maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
         cleanupOutdatedCaches: true,
