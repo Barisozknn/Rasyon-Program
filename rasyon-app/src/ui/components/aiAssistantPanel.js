@@ -33,17 +33,31 @@ async function buildContextData() {
 
     const settings = getSettings();
 
-    // Rasyon fihristi (Sadece isim ve ID)
-    const rationList = allRations.map(r => ({
-      id: r.id || null,
-      name: r.name || 'İsimsiz Rasyon'
-    }));
+    // Rasyon fihristi (İsim, ID ve Tarih) - Yeniden eskiye sıralı
+    const rationList = allRations
+      .sort((a, b) => new Date(b.createdAt || b._createdAt || 0) - new Date(a.createdAt || a._createdAt || 0))
+      .map(r => {
+        const dateVal = r.createdAt || r._createdAt;
+        const dateStr = dateVal ? new Date(dateVal).toLocaleString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Bilinmiyor';
+        return {
+          id: r.id || null,
+          name: r.name || 'İsimsiz Rasyon',
+          date: dateStr
+        };
+      });
 
     // Profil fihristi
-    const profileList = allProfiles.map(p => ({
-      id: p.id || null,
-      name: p.name || 'İsimsiz Profil'
-    }));
+    const profileList = allProfiles
+      .sort((a, b) => new Date(b.createdAt || b._createdAt || 0) - new Date(a.createdAt || a._createdAt || 0))
+      .map(p => {
+        const dateVal = p.createdAt || p._createdAt;
+        const dateStr = dateVal ? new Date(dateVal).toLocaleDateString('tr-TR') : 'Bilinmiyor';
+        return {
+          id: p.id || null,
+          name: p.name || 'İsimsiz Profil',
+          date: dateStr
+        };
+      });
 
     // Grup fihristi
     const groupList = allHerdGroups.map(g => ({
