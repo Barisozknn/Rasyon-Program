@@ -324,12 +324,19 @@ async function initCloud() {
   // Oturum değişimi → senkronu başlat/durdur (INITIAL_SESSION ile açılışta da çalışır)
   await onAuthChange(async (event, session) => {
     if (session?.user) {
+      if (session.user.user_metadata?.ai_activated) {
+        localStorage.setItem('ai_activated', 'true');
+      }
       await startSync(session.user);
       refreshFarmButton();
+      updateAiTabUI();
       renderTab(activeTab);
     } else if (event === 'SIGNED_OUT') {
+      localStorage.removeItem('ai_activated');
       stopSync();
       refreshFarmButton();
+      updateAiTabUI();
+      renderTab(activeTab);
     }
   });
 }

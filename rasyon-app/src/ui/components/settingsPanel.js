@@ -221,10 +221,17 @@ export async function renderSettingsPanel(container, state, options = {}) {
       <div class="card mt-2" id="ai-activation-card">
         <div class="card-title"><i class="ti ti-sparkles"></i> ${t('settings.ai_activation')}</div>
         <div class="info-box">${t('settings.ai_activation_desc')}</div>
+        ${!getSyncState()?.user ? `
+          <div class="alert alert-warning" style="margin-top: 0.5rem; padding: 0.75rem; border-radius: var(--radius); border: 1px solid var(--warning); color: var(--warning); display: flex; align-items: center; gap: 0.5rem;">
+            <i class="ti ti-alert-triangle"></i> Lütfen aktivasyon kodunu girmek için önce Bulut Hesabınıza giriş yapın.
+          </div>
+        ` : ''}
         <div class="form-grid mt-1">
           <div class="form-group full-width" style="display:flex; gap:0.5rem;">
-            <input type="text" id="ai-code-input" placeholder="${t('settings.ai_activation_code')}" style="flex:1" ${localStorage.getItem('ai_activated') === 'true' ? 'disabled value="********"' : ''} />
-            <button class="btn ${localStorage.getItem('ai_activated') === 'true' ? 'btn-success' : 'btn-primary'}" id="btn-activate-ai" ${localStorage.getItem('ai_activated') === 'true' ? 'disabled' : ''}>
+            <input type="text" id="ai-code-input" placeholder="${t('settings.ai_activation_code')}" style="flex:1" 
+              ${localStorage.getItem('ai_activated') === 'true' ? 'disabled value="********"' : (!getSyncState()?.user ? 'disabled' : '')} />
+            <button class="btn ${localStorage.getItem('ai_activated') === 'true' ? 'btn-success' : 'btn-primary'}" id="btn-activate-ai" 
+              ${localStorage.getItem('ai_activated') === 'true' || !getSyncState()?.user ? 'disabled' : ''}>
               ${localStorage.getItem('ai_activated') === 'true' ? '<i class="ti ti-check"></i> ' + t('settings.ai_already_active') : '<i class="ti ti-key"></i> ' + t('settings.ai_activate_btn')}
             </button>
           </div>
@@ -295,18 +302,23 @@ export async function renderSettingsPanel(container, state, options = {}) {
         if (!supabase) {
           throw new Error("Supabase bağlantısı kurulamadı. (Bulut ayarlarını kontrol edin)");
         }
-        
-        let deviceId = localStorage.getItem('device_id');
-        if (!deviceId) {
-          deviceId = 'dev_' + Math.random().toString(36).substring(2, 11);
-          localStorage.setItem('device_id', deviceId);
+        // --- YENİ AKTİVASYON MANTIĞI (Bulut Hesap Tabanlı) ---
+        const syncState = getSyncState();
+        if (!syncState || !syncState.user) {
+          throw new Error("Yapay Zeka aktivasyonu için öncelikle Bulut hesabınıza giriş yapmalısınız.");
         }
         
-        const { data, error } = await supabase.rpc('activate_ai_code', { p_code: code, p_device_id: deviceId });
+        const userId = syncState.user.id;
+        
+        // Cihaz kimliği yerine doğrudan kullanıcının ID'sini (auth.uid) gönderiyoruz
+        const { data, error } = await supabase.rpc('activate_ai_code', { p_code: code, p_device_id: userId });
         
         if (error) throw error;
         
         if (data && data.success) {
+          // Başarılıysa kullanıcının profil (metadata) dosyasına ai_activated: true yaz
+          await supabase.auth.updateUser({ data: { ai_activated: true } });
+          
           localStorage.setItem('ai_activated', 'true');
           updateAiTabUI();
           showToast(t('settings.ai_activated_success'), 'success');

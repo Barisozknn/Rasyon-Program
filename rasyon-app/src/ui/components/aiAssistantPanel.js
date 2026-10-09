@@ -7,6 +7,7 @@ import DOMPurify from 'dompurify';
 import { newId } from '../../data/uuid.js';
 import { getAiChats, saveAiChat, deleteAiChat, rationGetAll, animalProfileGetAll, observationGetAll, getActiveFarm, feedGetAll, herdGroupGetAll, priceHistoryGetAll } from '../../data/db.js';
 import { getSettings } from '../../data/settings.js';
+import { getSyncState } from '../../data/sync/syncManager.js';
 
 // ─── Sabit Limitler ───────────────────────────────────────────────────────────
 const MAX_HISTORY_MESSAGES = 10; // API'ya gönderilecek maksimum önceki mesaj sayısı
@@ -85,6 +86,25 @@ async function buildContextData() {
 // ─── Ana Panel Renderlayıcı ───────────────────────────────────────────────────
 
 export async function renderAiAssistantPanel(container) {
+  const syncState = getSyncState();
+  const isLoggedIn = syncState && syncState.user;
+
+  if (!isLoggedIn) {
+    container.innerHTML = `
+      <div class="ai-locked-screen" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 2rem;">
+        <i class="ti ti-cloud-lock" style="font-size: 5rem; color: var(--text-muted); margin-bottom: 1.5rem;"></i>
+        <h2 style="margin-bottom: 1rem; color: var(--text-primary); font-weight: bold;">Bulut Hesabı Gerekli</h2>
+        <p style="color: var(--text-secondary); max-width: 400px; margin-bottom: 2rem; line-height: 1.6;">
+          Yapay zeka asistanını kullanabilmek için öncelikle bulut hesabınıza giriş yapmalısınız.
+        </p>
+        <button class="btn btn-primary" onclick="document.querySelector('[data-tab=\\'settings\\']').click()" style="padding: 0.75rem 2rem; font-size: 1.1rem; border-radius: 2rem;">
+          <i class="ti ti-login"></i> Giriş Yap
+        </button>
+      </div>
+    `;
+    return;
+  }
+
   if (localStorage.getItem('ai_activated') !== 'true') {
     container.innerHTML = `
       <div class="ai-locked-screen" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 2rem;">
