@@ -408,6 +408,7 @@ export async function renderSettingsPanel(container, state, options = {}) {
 
   // ── Kaydet ──
   container.querySelector('#set-save').addEventListener('click', async () => {
+    const oldLang = getSettings()?.language || 'tr';
     const payload = {
       science: {
         system: systemSelect.value,
@@ -454,6 +455,14 @@ export async function renderSettingsPanel(container, state, options = {}) {
     showToast(t('settings.saved_toast'), 'success');
     const status = container.querySelector('#set-status');
     if (status) status.textContent = `${t('settings.last_saved')}: ${new Date(saved.updatedAt).toLocaleString()}`;
+    
+    // FAZ 21.1: Masaüstü sol sidebar'ın tarayıcı önbelleği/layout sorunu nedeniyle 
+    // anında güncellenmemesini kesin olarak çözmek için dil değiştiyse sayfayı yenile (B Planı)
+    if (oldLang !== payload.language) {
+      setTimeout(() => {
+        window.location.reload();
+      }, 500); // Kullanıcıya 'Kaydedildi' toast mesajını göstermek için kısa bir bekleme
+    }
   });
 
   // ── Yedek İndir ──

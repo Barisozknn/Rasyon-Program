@@ -158,22 +158,26 @@ function updatePageTitle(tab = activeTab) {
 }
 
 function updateAppUIStrings() {
-  // FAZ 21: Data-i18n based updates (Normal elements)
+  // Update all data-i18n elements
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
-    if (key) {
-      const translated = t(key);
-      if (translated !== key) {
-        if (el.tagName === 'INPUT' && (el.type === 'text' || el.type === 'search')) {
-           el.placeholder = translated;
-        } else if (!el.classList.contains('tab-label') && !el.classList.contains('bn-label') && !el.classList.contains('mi-label')) {
-           el.textContent = translated;
-        }
-      }
+    if (!key) return;
+    
+    let translated = t(key);
+    if (translated === key) return;
+
+    if (el.tagName === 'INPUT' && (el.type === 'text' || el.type === 'search')) {
+       el.placeholder = translated;
+    } else {
+       // FAZ 21: İkon bazlı sekmelerden emoji ayıklaması
+       if (el.classList.contains('tab-label') || el.classList.contains('bn-label') || el.classList.contains('mi-label')) {
+         translated = String(translated).replace(/^\s*[\p{Extended_Pictographic}☀-➿️‍]+\s*/u, '').trim();
+       }
+       el.textContent = translated;
     }
   });
 
-  // MUTLAK VE ZORUNLU SIDEBAR GÜNCELLEMESİ (Her türlü önbellek/markup sorununu aşmak için)
+  // Fallback for buttons where spans might be missing
   const TABS_KEYS = {
     dashboard: 'tabs.dashboard', animal: 'tabs.animal', feeds: 'tabs.feeds', ration: 'tabs.ration',
     results: 'tabs.results', herd: 'tabs.herd', prices: 'tabs.prices', observations: 'tabs.observations',
@@ -187,11 +191,8 @@ function updateAppUIStrings() {
       const translated = t(key);
       const text = String(translated).replace(/^\s*[\p{Extended_Pictographic}☀-➿️‍]+\s*/u, '').trim();
 
-      // Mümkün olan her türlü etiketi (span) bul ve ez
       const label = btn.querySelector('.tab-label, .bn-label, .mi-label');
-      if (label) {
-        label.textContent = text;
-      } else {
+      if (!label) {
         // Eğer span silinmişse veya yapısı bozulmuşsa, butonun içindeki son text node'unu ez
         Array.from(btn.childNodes).forEach(node => {
           if (node.nodeType === Node.TEXT_NODE && node.nodeValue.trim().length > 0) {
@@ -209,11 +210,11 @@ function updateAppUIStrings() {
 
   // PWA banner (index.html) translations
   const pwaMsg = document.querySelector('.pwa-message');
-  if (pwaMsg) pwaMsg.innerHTML = `<i class="ti ti-download"></i> ${t('pwa.new_version')}`;
+  if (pwaMsg) pwaMsg.innerHTML = `<i class="ti ti-download"></i> ${t('static.pwa_update') || 'Yeni bir sürüm hazır!'}`;
   const pwaRefresh = document.getElementById('pwa-refresh');
-  if (pwaRefresh) pwaRefresh.textContent = t('pwa.refresh');
+  if (pwaRefresh) pwaRefresh.textContent = t('static.refresh') || 'Yenile';
   const pwaClose = document.getElementById('pwa-close');
-  if (pwaClose) pwaClose.textContent = t('pwa.close');
+  if (pwaClose) pwaClose.textContent = t('common.close') || 'Kapat';
 
   updatePageTitle();
 }
