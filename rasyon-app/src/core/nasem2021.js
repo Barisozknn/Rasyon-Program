@@ -120,59 +120,55 @@ export function compareNRCvsNASEM(nrc2001Result, nasem2021Result) {
 // ─── NASEM 2021 PROTEİN GÜNCELLEMELERİ ──────────────────────────────────────
 
 /**
- * MP İdame Gereksinimi — NASEM 2021 güncellenmiş
- * NRC 2001'de 3.8 × BW^0.75 idi
- * NASEM 2021: metabolik kayıplar yeniden değerlendirildi
- * @param {number} bw - Canlı ağırlık (kg)
- * @returns {number} MP_idame (g/gün)
- */
-export function mpMaintenanceNASEM(bw) {
-  // Endogenous urinary: 2.75 × BW^0.75
-  // Endogenous fecal: 1.9 × DMI (g/kg DMI) - ağırlıklı 0.4 × BW^0.75 yaklaşımı
-  // Toplam: ~4.1 × BW^0.75 (NASEM 2021 Tablo 3-1)
-  return 4.1 * Math.pow(bw, 0.75);
-}
-
-/**
- * Metabolize edilebilir protein laktasyon verimliliği (NASEM 2021)
- * NRC 2001'de 0.67 idi (NASEM 2021 ile aynı korunmuş)
- * @param {number} milkYield    - Süt verimi (kg/gün)
- * @param {number} milkProtein  - Süt proteini (%)
- * @returns {number} MP_laktasyon (g/gün)
- */
-export function mpLactationNASEM(milkYield, milkProtein) {
-  // Süt protein verimliliği: 0.67 (NRC 2001 ile aynı)
-  return (milkYield * milkProtein * 10) / 0.67;
-}
-
-/**
  * Toplam MP Gereksinimleri — NASEM 2021
  * FAZ 13.1: nrc2001.js calcMPRequirements paritesi (pregnancyMonth fallback dahil)
- * NASEM 2021 değişiklikleri: idame 4.1 × BW^0.75 (NRC 3.8 idi)
- * Gebelik MP formülü NASEM 2021'de NRC ile aynı korunmuş.
+ * NASEM 2021 Tam Faktöriyel Model: idrar MP, tüy TP, dışkı TP ayrı hesaplanır.
  * @param {object} animal - Hayvan profili
+ * @param {number} dmi - Kuru madde tüketimi (kg/gün)
+ * @param {number} ndf - Rasyon NDF yüzdesi (varsayılan 32)
  * @returns {object} MP gereksinim bileşenleri (g/gün)
  */
-export function calcMPRequirementsNASEM(animal) {
+export function calcMPRequirementsNASEM(animal, dmi = 0, ndf = 32) {
   const { bw, milkYield, milkProtein, pregnant, gestDays, pregnancyMonth } = animal;
 
   const effectiveGestDays = Number.isFinite(gestDays)
     ? gestDays
     : (Number.isFinite(pregnancyMonth) ? pregnancyMonth * 30 : 0);
 
-  const maintenance = mpMaintenanceNASEM(bw);
-  const lactation = mpLactationNASEM(milkYield, milkProtein);
-  // Gebelik MP: NASEM 2021, NRC 2001 Eq. 3-8 formülünü (kalfBW/45 ölçeklenmesi dahil) aynen kullanır.
-  // Doğru formül: (0.69×t − 69.2) × (CBW/45) / 0.33  [g CP/gün]
-  // NOT: Buradaki mpPregnancy, nrc2001.js'teki düzeltilmiş versiyondur (artık /6.25 yok).
-  const pregnancy = pregnant ? mpPregnancy(effectiveGestDays) : 0;
-  const total = maintenance + lactation + pregnancy;
+  // İdrar (Verimi %100 kabul edilir, doğrudan MP ihtiyacıdır)
+  const urineMP = (53 * 6.25 * bw) / 1000;
+
+  // Tüy / Deri (Scurf) TP
+  const scurfTP = 0.20 * Math.pow(bw, 0.60) * 0.85;
+
+  // Dışkı (Fecal) TP
+  const fecalTP = (11.62 + 0.134 * ndf) * dmi * 0.73;
+
+  // Süt TP
+  const milkTP = milkYield * 10 * milkProtein;
+
+  // Gebelik MP: mpPregnancy fonksiyonu NRC 2001'den gelir ve içindeki 0.33 verim zaten uygulanmıştır.
+  // Kılavuz: Gebelik ayrı 0.33 ile bölünür, 0.69 ile değil.
+  const pregnancyMP = pregnant ? mpPregnancy(effectiveGestDays) : 0;
+
+  const targetEfficiency = 0.69;
+
+  // İdame kalemi: tüy ve dışkının verime bölünmesi + idrar
+  const maintenance = (scurfTP + fecalTP) / targetEfficiency + urineMP;
+  
+  // Laktasyon kalemi
+  const lactation = milkTP / targetEfficiency;
+  
+  const total = maintenance + lactation + pregnancyMP;
 
   return {
     maintenance: Math.round(maintenance),
     lactation: Math.round(lactation),
-    pregnancy: Math.round(pregnancy),
+    pregnancy: Math.round(pregnancyMP),
     total: Math.round(total),
+    scurf: Math.round(scurfTP / targetEfficiency), // detay gösterimi için (MP olarak)
+    fecal: Math.round(fecalTP / targetEfficiency), // detay gösterimi için (MP olarak)
+    urine: Math.round(urineMP),                    // detay gösterimi için (MP olarak)
     source: 'NASEM2021',
   };
 }

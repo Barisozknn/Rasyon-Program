@@ -63,7 +63,7 @@ export function scenarioMetrics(result, { milkYield = 0, milkPrice = 0 } = {}) {
     lys: num(c.lys_g),
     met: num(c.met_g),
     his: num(c.his_g),   // sınırlayıcı trio (Lys/Met/His) — kompakt tabloda
-    // FAZ 23.4: 7 EAA gösterim (opsiyonel "Detaylı AA" toggle'ında) — tedarik g/gün
+    // FAZ 23.4: 7 EAA gösterim (opsiyonel "Detaylı AA" toggle'ında) — tedarik g${t('common.per_day')}
     eaa: {
       arg: num(aas.arg?.total_g), thr: num(aas.thr?.total_g), ile: num(aas.ile?.total_g),
       leu: num(aas.leu?.total_g), val: num(aas.val?.total_g), phe: num(aas.phe?.total_g), trp: num(aas.trp?.total_g),

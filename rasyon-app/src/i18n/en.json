@@ -51,7 +51,8 @@
     "close": "Close",
     "loading": "Loading...",
     "optimize": "Optimize Ration",
-    "tab_help_title": "What does this tab do?"
+    "tab_help_title": "What does this tab do?",
+    "per_day": "/day"
   },
   "dashboard": {
     "quick_actions": "Quick Actions",
@@ -156,7 +157,8 @@
     "missing_ton": "Missing {val} tons",
     "stock_alert_title": "Stock Alert",
     "stock_alert_text": "{feed} will run out before the planned {plan} {unit} ({missing}).",
-    "daily_label": "DAILY"
+    "daily_label": "DAILY",
+    "include_dry": "Include Dry Periods"
   },
   "stages": {
     "early": "Early Lactation",
@@ -901,7 +903,14 @@
     "humidity": "Humidity (%)",
     "milk_price": "Milk Price (TL/kg)",
     "save": "Save",
-    "title": "Settings"
+    "title": "Settings",
+    "sys_nasem_label": "NASEM 2021 (recommended)",
+    "sys_nasem_desc": "Fully mechanistic NASEM 2021 + CNCPS v6.5 engine. Updates over NRC 2001 (maintenance NEL 0.10×BW<sup>0.75</sup>, full factorial MP model, DMI/NDF based Ca & P formulas, BCS mobilization 84 Mcal/BCS) + <b>dynamic amino acids (AA)</b>, <b>passage rate-dependent RDP/RUP</b> and <b>iterative CNCPS v6.5 engine</b> (opt-in \"CNCPS Calc Mode\"). Recommended for high-yield herds.",
+    "sys_nrc_label": "NRC 2001 (classic)",
+    "sys_nrc_desc": "Classic 7th edition equations. Maintenance NEL 0.08×BW<sup>0.75</sup>, MP maintenance 3.8×BW<sup>0.75</sup>, BCS mobilization 62.56 Mcal/BCS. For backward compatibility.",
+    "sys_inra_label": "INRA 2018 (France)",
+    "sys_inra_desc": "European standard. Energy UFL, protein PDIE/PDIN, fill UEL. LP optimization runs with NASEM 2021; INRA values are shown as an additional report.",
+    "ai_login_warning": "Please log in to your Cloud Account first to enter the activation code."
   },
   "heat": {
     "stress_level": "Stress Level",
@@ -1794,7 +1803,12 @@
     "sum_dmi": "Total DMI",
     "sum_mp": "Total MP",
     "sum_nel": "Total NEL",
-    "unit_dm": "on DM basis"
+    "unit_dm": "on DM basis",
+    "nel_basal": "Basal Metabolism",
+    "nel_heat": "Heat Stress Adjustment",
+    "mp_fecal": "Feces (Endogenous)",
+    "mp_urine": "Urine (Endogenous)",
+    "mp_scurf": "Scurf"
   },
   "cloud": {
     "header_title": "Account & Cloud",
@@ -1898,5 +1912,17 @@
     "new_version": "A new version is ready!",
     "refresh": "Refresh",
     "close": "Close"
+  },
+  "static": {
+    "tab_help": "What is this tab for?",
+    "tab_help_desc": "This tab contains 100% reliable academic expert recommendations based on NASEM 2021, NRC 2001, and current scientific research regarding dairy farming. You can filter by categories or use the search bar to find specific topics quickly.",
+    "filter_all": "All Recommendations",
+    "filter_dry": "Dry Period",
+    "filter_health": "Health / Rumen",
+    "filter_housing": "Housing",
+    "filter_water": "Water Intake",
+    "filter_calf": "Calf",
+    "more_tabs": "All Tabs",
+    "pwa_update": "A new version is ready!"
   }
 }

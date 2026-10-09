@@ -511,7 +511,7 @@ function renderIOFCCard(iofc, totalAnimals, trend) {
         <div class="dash-card-title" style="display:flex; justify-content:space-between; align-items:center;">
         <div><i class="ti ti-coins"></i> ${t('dashboard.estimated_iofc')}</div>
         <label class="m-0 d-flex align-items-center gap-2" style="cursor: pointer; user-select: none;">
-          <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: normal;">Kuru Dönemleri Dahil Et</span>
+          <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: normal;">${t('dashboard.include_dry')}</span>
           <div class="custom-toggle-switch">
             <input type="checkbox" id="dashIncludeDryToggle" ${localStorage.getItem('dashIncludeDryInIofc') !== 'false' ? 'checked' : ''}>
             <div class="custom-toggle-switch-bg">
@@ -542,7 +542,7 @@ function renderIOFCCard(iofc, totalAnimals, trend) {
       <div class="dash-card-title" style="display:flex; justify-content:space-between; align-items:center;">
         <div><i class="ti ti-coins"></i> ${t('dashboard.estimated_iofc')}</div>
         <label class="m-0 d-flex align-items-center gap-2" style="cursor: pointer; user-select: none;">
-          <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: normal;">Kuru Dönemleri Dahil Et</span>
+          <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: normal;">${t('dashboard.include_dry')}</span>
           <div class="custom-toggle-switch">
             <input type="checkbox" id="dashIncludeDryToggle" ${localStorage.getItem('dashIncludeDryInIofc') !== 'false' ? 'checked' : ''}>
             <div class="custom-toggle-switch-bg">

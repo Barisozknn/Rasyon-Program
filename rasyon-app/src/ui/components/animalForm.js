@@ -793,9 +793,9 @@ function updateCalc(form, state, container) {
             ${Number.isFinite(nel.activity) ? `<tr><td>${t('acalc.nel_act')}</td><td class="num">${n2(nel.activity)} Mcal</td></tr>` : ''}
             ${nel.mobilization ? `<tr><td>${t('acalc.nel_mob')}</td><td class="num">${n2(nel.mobilization)} Mcal</td></tr>` : ''}
             ${nel.growth ? `<tr><td>${t('acalc.nel_growth')}</td><td class="num">${n2(nel.growth)} Mcal</td></tr>` : ''}
-            <tr style="font-weight:700"><td>${t('acalc.nel_total')}</td><td class="num">${n2(nel.total)} Mcal/gün</td></tr>
-            <tr><td>${t('acalc.fcm')}</td><td class="num">${n2(dmi.fcm)} kg/gün</td></tr>
-            <tr><td>${t('acalc.ecm')}</td><td class="num">${n2(dmi.ecm)} kg/gün</td></tr>
+            <tr style="font-weight:700"><td>${t('acalc.nel_total')}</td><td class="num">${n2(nel.total)} Mcal${t('common.per_day')}</td></tr>
+            <tr><td>${t('acalc.fcm')}</td><td class="num">${n2(dmi.fcm)} kg${t('common.per_day')}</td></tr>
+            <tr><td>${t('acalc.ecm')}</td><td class="num">${n2(dmi.ecm)} kg${t('common.per_day')}</td></tr>
             <tr><td>${t('acalc.dmi_method')}</td><td class="num">${dmi.method}${dmi.heatAdjusted ? t('acalc.heat_adj_sfx') : ''}</td></tr>
             <tr><td colspan="2" class="text-small text-muted">${t('acalc.dmi_fill_hint')}</td></tr>
           </tbody>
@@ -816,10 +816,10 @@ function updateCalc(form, state, container) {
             <tr><td>${t('acalc.mp_milk')}</td><td class="num">${n0(mp.lactation)} g</td></tr>
             <tr><td>${t('acalc.mp_preg')}</td><td class="num">${n0(mp.pregnancy)} g</td></tr>
             ${mp.growth ? `<tr><td>${t('acalc.mp_growth')}</td><td class="num">${n0(mp.growth)} g</td></tr>` : ''}
-            <tr style="font-weight:700"><td>${t('acalc.mp_total')}</td><td class="num">${n0(mp.total)} g/gün</td></tr>
+            <tr style="font-weight:700"><td>${t('acalc.mp_total')}</td><td class="num">${n0(mp.total)} g${t('common.per_day')}</td></tr>
             <tr><td colspan="2" style="background:var(--bg-light,#f5f5f5); font-weight:600; padding-top:0.4rem">${t('acalc.aa_targets')}</td></tr>
-            <tr><td>${t('acalc.lys_target')}</td><td class="num">${aaTargets.lys.pctMP}% MP ≈ ${n0(lysG)} g/gün</td></tr>
-            <tr><td>${t('acalc.met_target')}</td><td class="num">${aaTargets.met.pctMP}% MP ≈ ${n0(metG)} g/gün</td></tr>
+            <tr><td>${t('acalc.lys_target')}</td><td class="num">${aaTargets.lys.pctMP}% MP ≈ ${n0(lysG)} g${t('common.per_day')}</td></tr>
+            <tr><td>${t('acalc.met_target')}</td><td class="num">${aaTargets.met.pctMP}% MP ≈ ${n0(metG)} g${t('common.per_day')}</td></tr>
             <tr><td>${t('acalc.lysmet_ratio')}</td><td class="num">${aaTargets.lysMet_ratio.ideal} (${t('acalc.ratio_min')} ${aaTargets.lysMet_ratio.min})</td></tr>
           </tbody>
         </table>
@@ -833,13 +833,13 @@ function updateCalc(form, state, container) {
 <table class="diag-table" style="font-size:0.82rem; margin-top:0.5rem">
           <thead><tr><th>${t('acalc.col_mineral')}</th><th class="num">${t('acalc.col_min')}</th><th class="num">${t('acalc.col_max')}</th><th>${t('acalc.col_note')}</th></tr></thead>
           <tbody>
-            <tr><td>Ca (g/gün)</td><td class="num">${n1(min.ca.dietary)}</td><td class="num">—</td><td class="text-small text-muted">${min.ca.note || ''}</td></tr>
-            <tr><td>P (g/gün)</td><td class="num">${n1(min.p.total)}</td><td class="num">—</td><td></td></tr>
-            <tr><td>Mg (g/gün)</td><td class="num">${n1(min.mg.total)}</td><td class="num">—</td><td class="text-small text-muted">${min.mg.heatAdjusted ? t('acalc.heat_adj_tag') : ''}</td></tr>
-            <tr><td>K (g/gün)</td><td class="num">${n1(min.k.total)}</td><td class="num">—</td><td class="text-small text-muted">${min.k.heatAdjusted ? t('acalc.heat_adj_tag') : ''}</td></tr>
-            <tr><td>Na (g/gün)</td><td class="num">${n1(min.na.total)}</td><td class="num">—</td><td class="text-small text-muted">${min.na.heatAdjusted ? t('acalc.heat_adj_tag') : ''}</td></tr>
-            <tr><td>S (g/gün)</td><td class="num">${n1(min.s.minG)}</td><td class="num">${n1(min.s.maxG)}</td><td></td></tr>
-            <tr><td>Cl (g/gün)</td><td class="num">${n1(min.cl.minG)}</td><td class="num">—</td><td></td></tr>
+            <tr><td>Ca (g${t('common.per_day')})</td><td class="num">${n1(min.ca.dietary)}</td><td class="num">—</td><td class="text-small text-muted">${min.ca.note || ''}</td></tr>
+            <tr><td>P (g${t('common.per_day')})</td><td class="num">${n1(min.p.total)}</td><td class="num">—</td><td></td></tr>
+            <tr><td>Mg (g${t('common.per_day')})</td><td class="num">${n1(min.mg.total)}</td><td class="num">—</td><td class="text-small text-muted">${min.mg.heatAdjusted ? t('acalc.heat_adj_tag') : ''}</td></tr>
+            <tr><td>K (g${t('common.per_day')})</td><td class="num">${n1(min.k.total)}</td><td class="num">—</td><td class="text-small text-muted">${min.k.heatAdjusted ? t('acalc.heat_adj_tag') : ''}</td></tr>
+            <tr><td>Na (g${t('common.per_day')})</td><td class="num">${n1(min.na.total)}</td><td class="num">—</td><td class="text-small text-muted">${min.na.heatAdjusted ? t('acalc.heat_adj_tag') : ''}</td></tr>
+            <tr><td>S (g${t('common.per_day')})</td><td class="num">${n1(min.s.minG)}</td><td class="num">${n1(min.s.maxG)}</td><td></td></tr>
+            <tr><td>Cl (g${t('common.per_day')})</td><td class="num">${n1(min.cl.minG)}</td><td class="num">—</td><td></td></tr>
             <tr><td colspan="4" style="background:var(--bg-light,#f5f5f5); font-weight:600">${t('acalc.trace_min')}</td></tr>
             <tr><td>Fe</td><td class="num">${n0(tm.fe?.minMg)}</td><td class="num">${n0(tm.fe?.maxMg)}</td><td></td></tr>
             <tr><td>Zn</td><td class="num">${n0(tm.zn?.minMg)}</td><td class="num">${n0(tm.zn?.maxMg)}</td><td></td></tr>
@@ -859,15 +859,15 @@ function updateCalc(form, state, container) {
         <div class="feed-table-wrap" style="width:100%; overflow-x:auto;">
 <table class="diag-table" style="font-size:0.85rem; margin-top:0.5rem">
           <tbody>
-            <tr><td>Vitamin A</td><td class="num">${n0(vit.vitA?.recommendedIU)} IU/gün</td></tr>
-            <tr><td>Vitamin D</td><td class="num">${n0(vit.vitD?.recommendedIU)} IU/gün</td></tr>
-            <tr><td>Vitamin E</td><td class="num">${n0(vit.vitE?.recommendedIU)} IU/gün</td></tr>
-            <tr><td>${t('acalc.bcarotene_label')}</td><td class="num">${n0(vit.bcarotene?.recommendedMg)} mg/gün</td></tr>
-            <tr><td>${t('acalc.niacin_label')}</td><td class="num">${n0(vit.niacin?.recommendedG)} g/gün</td></tr>
-            <tr><td>${t('acalc.biotin_label')}</td><td class="num">${n0(vit.biotin?.recommendedMg)} mg/gün</td></tr>
-            <tr><td>${t('acalc.choline_label')}</td><td class="num">${n1(vit.choline?.recommendedIonG)} g/gün (≈ ${n0(vit.choline?.recommendedProductG_25pct)} ${t('acalc.choline_sfx')})</td></tr>
-            ${vit.b12?.recommendedMg ? `<tr><td>${t('acalc.b12_label')}</td><td class="num">${n1(vit.b12.recommendedMg)} mg/gün <span class="text-muted">${t('acalc.conditional')}</span></td></tr>` : ''}
-            ${vit.folicAcid?.recommendedMg ? `<tr><td>${t('acalc.folic_label')}</td><td class="num">${n0(vit.folicAcid.recommendedMg)} mg/gün <span class="text-muted">${t('acalc.conditional')}</span></td></tr>` : ''}
+            <tr><td>Vitamin A</td><td class="num">${n0(vit.vitA?.recommendedIU)} IU${t('common.per_day')}</td></tr>
+            <tr><td>Vitamin D</td><td class="num">${n0(vit.vitD?.recommendedIU)} IU${t('common.per_day')}</td></tr>
+            <tr><td>Vitamin E</td><td class="num">${n0(vit.vitE?.recommendedIU)} IU${t('common.per_day')}</td></tr>
+            <tr><td>${t('acalc.bcarotene_label')}</td><td class="num">${n0(vit.bcarotene?.recommendedMg)} mg${t('common.per_day')}</td></tr>
+            <tr><td>${t('acalc.niacin_label')}</td><td class="num">${n0(vit.niacin?.recommendedG)} g${t('common.per_day')}</td></tr>
+            <tr><td>${t('acalc.biotin_label')}</td><td class="num">${n0(vit.biotin?.recommendedMg)} mg${t('common.per_day')}</td></tr>
+            <tr><td>${t('acalc.choline_label')}</td><td class="num">${n1(vit.choline?.recommendedIonG)} g${t('common.per_day')} (≈ ${n0(vit.choline?.recommendedProductG_25pct)} ${t('acalc.choline_sfx')})</td></tr>
+            ${vit.b12?.recommendedMg ? `<tr><td>${t('acalc.b12_label')}</td><td class="num">${n1(vit.b12.recommendedMg)} mg${t('common.per_day')} <span class="text-muted">${t('acalc.conditional')}</span></td></tr>` : ''}
+            ${vit.folicAcid?.recommendedMg ? `<tr><td>${t('acalc.folic_label')}</td><td class="num">${n0(vit.folicAcid.recommendedMg)} mg${t('common.per_day')} <span class="text-muted">${t('acalc.conditional')}</span></td></tr>` : ''}
             <tr><td colspan="2" class="text-muted" style="font-size:0.78rem">${t('acalc.bgroup_note')}</td></tr>
           </tbody>
         </table>

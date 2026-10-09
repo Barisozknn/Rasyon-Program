@@ -54,15 +54,22 @@ export function mineralCoef(system = 'NASEM2021') {
  * @returns {object} { maintenance, lactation, pregnancy, total, dietary } (g/gün absorbed + dietary)
  */
 export function calcCalcium(bw, milkYield, milkCa = 1.22, pregnant = false, gestDays = 0, parity = 2, options = {}) {
-  const { system = 'NASEM2021', isDry = false } = options;
+  const { system = 'NASEM2021', isDry = false, dmi = 0 } = options;
   const coef = mineralCoef(system).ca;
 
-  // Absorbed basis
-  const maintenance = 0.031 * Math.pow(bw, 0.75);
-  const lactation = milkYield * milkCa;
-  const preg = pregnant && gestDays > 190
-    ? Math.max((0.02154 * gestDays - 2.9) * 45 / 1000, 0)
-    : 0;
+  let maintenance, lactation, preg;
+
+  if (system === 'NASEM2021' || system === 'INRA2018') {
+    // NASEM 2021: Net Ca = 0.9 * KMT + 1.03 * Süt
+    maintenance = 0.9 * dmi;
+    lactation = 1.03 * milkYield;
+    preg = pregnant && gestDays > 190 ? Math.max((0.02154 * gestDays - 2.9) * 45 / 1000, 0) : 0;
+  } else {
+    // NRC 2001: Absorbed basis
+    maintenance = 0.031 * Math.pow(bw, 0.75);
+    lactation = milkYield * milkCa;
+    preg = pregnant && gestDays > 190 ? Math.max((0.02154 * gestDays - 2.9) * 45 / 1000, 0) : 0;
+  }
 
   const totalAbsorbed = maintenance + lactation + preg;
 
@@ -95,10 +102,20 @@ export function calcCalcium(bw, milkYield, milkCa = 1.22, pregnant = false, gest
  * @param {string} [system='NASEM2021'] - bilim sistemi
  * @returns {object} { maintenance, lactation, total } (g/gün)
  */
-export function calcPhosphorus(dmi, milkYield, milkP = 0.90, system = 'NASEM2021') {
+export function calcPhosphorus(dmi, milkYield, milkP = 0.90, system = 'NASEM2021', bw = 0) {
   const coef = mineralCoef(system).p;
-  const maintenance = coef.maintPerKgDMI * dmi;   // g/kg KM × kg KM = g/gün
-  const lactation = milkYield * milkP;
+  
+  let maintenance, lactation;
+  if (system === 'NASEM2021' || system === 'INRA2018') {
+    // NASEM 2021: Net P = 1.0 * KMT + 0.0006 * CA + 0.90 * Süt
+    maintenance = 1.0 * dmi + 0.0006 * bw;
+    lactation = 0.90 * milkYield;
+  } else {
+    // NRC 2001
+    maintenance = coef.maintPerKgDMI * dmi;
+    lactation = milkYield * milkP;
+  }
+  
   const total = maintenance + lactation;
   return {
     maintenance: Math.round(maintenance * 10) / 10,
@@ -356,8 +373,8 @@ export function calcMineralRequirements(animal, dmi, system = 'NASEM2021') {
 
   // FAZ 10E: thi parametresi K/Na/Mg fonksiyonlarına aktarılır (ısı stresi düzeltmesi)
   return {
-    ca: calcCalcium(bw, milkYield, 1.22, pregnant, effectiveGestDays, animal.parity || 2, { system, isDry }),
-    p: calcPhosphorus(dmi, milkYield, 0.90, system),      // FAZ 13.7: DMI-bazlı idame
+    ca: calcCalcium(bw, milkYield, 1.22, pregnant, effectiveGestDays, animal.parity || 2, { system, isDry, dmi }),
+    p: calcPhosphorus(dmi, milkYield, 0.90, system, bw),      // FAZ 13.7: DMI-bazlı idame + NASEM BW
     mg: calcMagnesium(bw, milkYield, 0.12, thi, system),  // ısı düzeltmesi + system
     k: calcPotassium(dmi, milkYield, 1.43, thi),          // ısı düzeltmesi
     na: calcSodium(bw, milkYield, thi),                   // ısı düzeltmesi

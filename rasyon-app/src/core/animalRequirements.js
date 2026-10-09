@@ -350,7 +350,7 @@ export function calcAllRequirements(animal, options = {}) {
   // FAZ 18.2: doluluk-düzeltmeli KMT enjeksiyonu (rationOptimizer 2-pass). dmiOverride
   // verilirse hayvan-bazlı KMT yerine kullanılır (fcm/ecm/method korunur). DMI-bağımlı
   // mineral/iz mineral gereksinimleri de bu düzeltilmiş KMT'yi kullanır.
-  let dmi = calcDMI(animal, dmiMethod);
+  let dmi = calcDMI(animal, dmiMethod, system);
   if (Number.isFinite(options.dmiOverride) && options.dmiOverride > 0) {
     dmi = { ...dmi, dmi: options.dmiOverride, baseDmi: dmi.dmi, fillAdjusted: true };
   }
@@ -362,8 +362,10 @@ export function calcAllRequirements(animal, options = {}) {
   let nel = effectiveSystem === 'NASEM2021'
     ? calcNELRequirementsNASEM(animal)
     : calcNELRequirements(animal);
+  // Default NDF parameter for MP formula if ration target is missing, standard 32%
+  const rationNDF = options.compTargets?.ndf_pct?.min || 32;
   let mp = effectiveSystem === 'NASEM2021'
-    ? calcMPRequirementsNASEM(animal)
+    ? calcMPRequirementsNASEM(animal, dmi_kg, rationNDF)
     : calcMPRequirements(animal);
 
   // FAZ 13.10: Primipar (1. laktasyon) büyüme bileşeni — NRC 2001 Bölüm 11

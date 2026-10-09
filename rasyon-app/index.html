@@ -29,28 +29,28 @@
       </div>
       <nav class="sidebar-nav" aria-label="Ana navigasyon">
         <button class="tab-btn active" data-tab="dashboard"><i class="ti ti-layout-dashboard tab-icon"></i><span
-            class="tab-label">Ana Sayfa</span></button>
+            class="tab-label" data-i18n="tabs.dashboard">Ana Sayfa</span></button>
         <button class="tab-btn" data-tab="animal"><i class="ti ti-clipboard-list tab-icon"></i><span
-            class="tab-label">Hayvan Profili</span></button>
-        <button class="tab-btn" data-tab="feeds"><i class="ti ti-leaf tab-icon"></i><span class="tab-label">Yem
+            class="tab-label" data-i18n="tabs.animal">Hayvan Profili</span></button>
+        <button class="tab-btn" data-tab="feeds"><i class="ti ti-leaf tab-icon"></i><span class="tab-label" data-i18n="tabs.feeds">Yem
             Veritabanı</span></button>
-        <button class="tab-btn" data-tab="ration"><i class="ti ti-scale tab-icon"></i><span class="tab-label">Rasyon
+        <button class="tab-btn" data-tab="ration"><i class="ti ti-scale tab-icon"></i><span class="tab-label" data-i18n="tabs.ration">Rasyon
             Kurucu</span></button>
         <button class="tab-btn" data-tab="results"><i class="ti ti-chart-bar tab-icon"></i><span
-            class="tab-label">Sonuçlar</span><span class="results-badge" id="results-badge" style="display:none"><i
+            class="tab-label" data-i18n="tabs.results">Sonuçlar</span><span class="results-badge" id="results-badge" style="display:none"><i
               class="ti ti-check"></i></span></button>
-        <button class="tab-btn" data-tab="herd"><i class="ti ti-users tab-icon"></i><span class="tab-label">Çiftlik
+        <button class="tab-btn" data-tab="herd"><i class="ti ti-users tab-icon"></i><span class="tab-label" data-i18n="tabs.herd">Çiftlik
             Paneli</span></button>
-        <button class="tab-btn" data-tab="prices"><i class="ti ti-coins tab-icon"></i><span class="tab-label">Fiyat
+        <button class="tab-btn" data-tab="prices"><i class="ti ti-coins tab-icon"></i><span class="tab-label" data-i18n="tabs.prices">Fiyat
             Yöneticisi</span></button>
         <button class="tab-btn" data-tab="observations"><i class="ti ti-report-analytics tab-icon"></i><span
-            class="tab-label">Saha Gözlem</span></button>
-        <button class="tab-btn" data-tab="ai"><i class="ti ti-sparkles tab-icon"></i><span class="tab-label">AI
+            class="tab-label" data-i18n="tabs.observations">Saha Gözlem</span></button>
+        <button class="tab-btn" data-tab="ai"><i class="ti ti-sparkles tab-icon"></i><span class="tab-label" data-i18n="tabs.ai">AI
             Asistan</span></button>
         <button class="tab-btn" data-tab="recommendations"><i class="ti ti-bulb tab-icon"></i><span
-            class="tab-label">Tavsiyeler</span></button>
+            class="tab-label" data-i18n="tabs.recommendations">Tavsiyeler</span></button>
         <button class="tab-btn" data-tab="settings"><i class="ti ti-settings tab-icon"></i><span
-            class="tab-label">Ayarlar</span></button>
+            class="tab-label" data-i18n="tabs.settings">Ayarlar</span></button>
       </nav>
       <div class="sidebar-footer">
         <span class="app-version">NRC 2001 · NASEM 2021 · CNCPS v6.5</span>
@@ -90,7 +90,7 @@
             <!-- 📖 Sekme Yardımı -->
             <details class="tab-help-accordion" style="margin-bottom:0.75rem">
               <summary style="cursor:pointer; font-weight:600; color:var(--primary); display:flex; align-items:center; gap:0.4rem">
-                <i class="ti ti-info-circle"></i> Bu sekme ne işe yarar? <span style="font-size:0.75rem; font-weight:400; color:var(--text-muted); margin-left:auto">▾</span>
+                <i class="ti ti-info-circle"></i> <span data-i18n="static.tab_help">Bu sekme ne işe yarar?</span> <span style="font-size:0.75rem; font-weight:400; color:var(--text-muted); margin-left:auto">▾</span>
               </summary>
               <div class="info-box" style="margin-top:0.5rem; font-size:0.85rem; line-height:1.7">
                 Bu sekmede süt sığırcılığı ile ilgili NASEM 2021, NRC 2001 ve güncel bilimsel araştırmalara dayalı, %100 güvenilir ve akademik uzman tavsiyeleri yer alır. Kategorilere göre filtreleme yapabilir veya arama çubuğunu kullanarak belirli konuları hızlıca bulabilirsiniz.
@@ -126,15 +126,15 @@
     <!-- FAZ 15.4 Aşama 2: Mobil alt navigasyon (4 çekirdek sekme + Daha Fazla) -->
     <nav class="bottom-nav" aria-label="Mobil navigasyon">
       <button class="bottom-nav-btn active" data-tab="dashboard"><span class="bn-icon"><i
-            class="ti ti-layout-dashboard"></i></span><span class="bn-label">Ana</span></button>
+            class="ti ti-layout-dashboard"></i></span><span class="bn-label" data-i18n="bottomNav.dashboard">Ana</span></button>
       <button class="bottom-nav-btn" data-tab="animal"><span class="bn-icon"><i
-            class="ti ti-clipboard-list"></i></span><span class="bn-label">Hayvan</span></button>
+            class="ti ti-clipboard-list"></i></span><span class="bn-label" data-i18n="bottomNav.animal">Hayvan</span></button>
       <button class="bottom-nav-btn" data-tab="ration"><span class="bn-icon"><i class="ti ti-scale"></i></span><span
-          class="bn-label">Rasyon</span></button>
+          class="bn-label" data-i18n="bottomNav.ration">Rasyon</span></button>
       <button class="bottom-nav-btn" data-tab="results"><span class="bn-icon"><i
-            class="ti ti-chart-bar"></i></span><span class="bn-label">Sonuç</span></button>
+            class="ti ti-chart-bar"></i></span><span class="bn-label" data-i18n="bottomNav.results">Sonuç</span></button>
       <button class="bottom-nav-btn" id="bn-more"><span class="bn-icon"><i class="ti ti-menu-2"></i></span><span
-          class="bn-label">Menü</span></button>
+          class="bn-label" data-i18n="bottomNav.more">Menü</span></button>
     </nav>
 
     <!-- "Daha Fazla" alt sayfası (kalan sekmeler) -->
@@ -142,29 +142,29 @@
       <div class="more-sheet-backdrop" id="more-sheet-backdrop"></div>
       <div class="more-sheet-panel">
         <div class="more-sheet-handle"></div>
-        <div class="more-sheet-title">Tüm Sekmeler</div>
+        <div class="more-sheet-title" data-i18n="static.more_tabs">Tüm Sekmeler</div>
         <button class="more-item" data-tab="dashboard"><i class="ti ti-layout-dashboard mi-icon"></i><span
-            class="mi-label">Ana Sayfa</span></button>
+            class="mi-label" data-i18n="tabs.dashboard">Ana Sayfa</span></button>
         <button class="more-item" data-tab="animal"><i class="ti ti-clipboard-list mi-icon"></i><span
-            class="mi-label">Hayvan Profili</span></button>
-        <button class="more-item" data-tab="feeds"><i class="ti ti-leaf mi-icon"></i><span class="mi-label">Yem
+            class="mi-label" data-i18n="tabs.animal">Hayvan Profili</span></button>
+        <button class="more-item" data-tab="feeds"><i class="ti ti-leaf mi-icon"></i><span class="mi-label" data-i18n="tabs.feeds">Yem
             Veritabanı</span></button>
-        <button class="more-item" data-tab="ration"><i class="ti ti-scale mi-icon"></i><span class="mi-label">Rasyon
+        <button class="more-item" data-tab="ration"><i class="ti ti-scale mi-icon"></i><span class="mi-label" data-i18n="tabs.ration">Rasyon
             Kurucu</span></button>
         <button class="more-item" data-tab="results"><i class="ti ti-chart-bar mi-icon"></i><span
-            class="mi-label">Sonuçlar</span></button>
-        <button class="more-item" data-tab="herd"><i class="ti ti-users mi-icon"></i><span class="mi-label">Çiftlik
+            class="mi-label" data-i18n="tabs.results">Sonuçlar</span></button>
+        <button class="more-item" data-tab="herd"><i class="ti ti-users mi-icon"></i><span class="mi-label" data-i18n="tabs.herd">Çiftlik
             Paneli</span></button>
-        <button class="more-item" data-tab="prices"><i class="ti ti-coins mi-icon"></i><span class="mi-label">Fiyat
+        <button class="more-item" data-tab="prices"><i class="ti ti-coins mi-icon"></i><span class="mi-label" data-i18n="tabs.prices">Fiyat
             Yöneticisi</span></button>
         <button class="more-item" data-tab="observations"><i class="ti ti-report-analytics mi-icon"></i><span
-            class="mi-label">Saha Gözlem</span></button>
-        <button class="more-item" data-tab="ai"><i class="ti ti-sparkles mi-icon"></i><span class="mi-label">AI
+            class="mi-label" data-i18n="tabs.observations">Saha Gözlem</span></button>
+        <button class="more-item" data-tab="ai"><i class="ti ti-sparkles mi-icon"></i><span class="mi-label" data-i18n="tabs.ai">AI
             Asistan</span></button>
         <button class="more-item" data-tab="recommendations"><i class="ti ti-bulb mi-icon"></i><span
-            class="mi-label">Tavsiyeler</span></button>
+            class="mi-label" data-i18n="tabs.recommendations">Tavsiyeler</span></button>
         <button class="more-item" data-tab="settings"><i class="ti ti-settings mi-icon"></i><span
-            class="mi-label">Ayarlar</span></button>
+            class="mi-label" data-i18n="tabs.settings">Ayarlar</span></button>
       </div>
     </div>
 
@@ -181,7 +181,7 @@
     <!-- PWA Güncelleme Bildirimi -->
     <div id="pwa-toast" class="pwa-toast hidden" role="alert">
       <div class="pwa-message">
-        <i class="ti ti-download"></i> Yeni bir sürüm hazır!
+        <i class="ti ti-download"></i> <span data-i18n="static.pwa_update">Yeni bir sürüm hazır!</span>
       </div>
       <div class="pwa-actions">
         <button id="pwa-refresh" class="btn btn-primary btn-sm">Yenile</button>

@@ -17,12 +17,21 @@ export function calcFCM(milkYield, milkFat) {
  * Enerjice düzeltilmiş süt hesabı (ECM)
  * ECM = süt × (0.327 + 0.1276 × yağ% + 0.0978 × protein%)
  * Kaynak: Tyrrell & Reid (1965), NRC 2001 referansı
+ * NASEM 2021: NEL_süt / 0.70 (referans enerji) kullanılarak hesaplanır.
  * @param {number} milkYield  - Günlük süt verimi (kg/gün)
  * @param {number} milkFat    - Süt yağı (%)
  * @param {number} milkProtein - Süt proteini (%)
+ * @param {string} system     - Bilim sistemi ('NASEM2021' vb.)
+ * @param {number} milkLactose - Süt laktozu (%)
  * @returns {number} ECM (kg/gün)
  */
-export function calcECM(milkYield, milkFat, milkProtein) {
+export function calcECM(milkYield, milkFat, milkProtein, system = 'NRC2001', milkLactose = 4.8) {
+  if (system === 'NASEM2021' || system === 'INRA2018') {
+    // NASEM 2021 ECM: NEL_süt / 0.70 (Mcal/kg referans)
+    const nelMilk = milkYield * (0.0929 * milkFat + 0.0585 * milkProtein + 0.0395 * milkLactose);
+    return nelMilk / 0.70;
+  }
+  // Tyrrell & Reid (NRC 2001)
   return milkYield * (0.327 + 0.1276 * milkFat + 0.0978 * milkProtein);
 }
 
@@ -70,6 +79,7 @@ export function dmiHeifer(bw) {
  *   @param {number} animal.milkYield     - Süt verimi (kg/gün)
  *   @param {number} animal.milkFat       - Süt yağı (%)
  *   @param {number} animal.milkProtein   - Süt proteini (%)
+ *   @param {number} animal.milkLactose   - Süt laktozu (%)
  *   @param {number} animal.bw            - Canlı ağırlık (kg)
  *   @param {number} animal.bcs           - Vücut kondisyon skoru (1-5)
  *   @param {number} animal.dim           - Laktasyondaki gün
@@ -77,13 +87,14 @@ export function dmiHeifer(bw) {
  * @returns {number} KMT (kg/gün)
  */
 export function dmiDeSouza2019(animal) {
-  const { milkYield, milkFat, milkProtein, bw, bcs, dim, parity } = animal;
+  const { milkYield, milkFat, milkProtein, bw, bcs, dim, parity, milkLactose } = animal;
 
   // parity flag: 0 = 1. laktasyon, 1 = ≥2. laktasyon
   const p = parity >= 2 ? 1 : 0;
 
-  // Sütün enerji içeriği (Mcal/gün)
-  const nelMilkConc = 0.0929 * milkFat + 0.0547 * milkProtein + 0.192;
+  // Sütün enerji içeriği (Mcal/gün) - NASEM katsayıları
+  const lactose = Number.isFinite(milkLactose) ? milkLactose : 4.8;
+  const nelMilkConc = 0.0929 * milkFat + 0.0585 * milkProtein + 0.0395 * lactose;
   const milkE = milkYield * nelMilkConc;
 
   const base = (3.7 + p * 5.7) + 0.305 * milkE + 0.022 * bw + (-0.689 + p * (-1.87)) * bcs;
@@ -174,15 +185,16 @@ export function dmiDryCow(bw, daysToCalv) {
  *
  * @param {object} animal - Hayvan profili
  * @param {string} method - 'NRC2001' | 'deSouza2019' (varsayılan: 'NRC2001')
+ * @param {string} system - 'NASEM2021' | 'NRC2001' (varsayılan: 'NRC2001')
  * @returns {object} { dmi, method, heatAdjusted, isDryCow }
  */
-export function calcDMI(animal, method = 'NRC2001') {
-  const { milkYield, milkFat, milkProtein, bw, dim, thi, lactationStage } = animal;
+export function calcDMI(animal, method = 'NRC2001', system = 'NRC2001') {
+  const { milkYield, milkFat, milkProtein, bw, dim, thi, lactationStage, milkLactose } = animal;
 
   let dmi;
   const wol = dim / 7;
   const fcm = calcFCM(milkYield, milkFat);
-  const ecm = calcECM(milkYield, milkFat, milkProtein || 3.1);
+  const ecm = calcECM(milkYield, milkFat, milkProtein || 3.1, system, milkLactose || 4.8);
 
   // Kuru dönem: far_off / close_up → dmiDryCow() kullan (NRC 2001 Eq. 1-3)
   // Formda kuru dönem için `dim` alanı "doğuma kalan gün" olarak kullanılır

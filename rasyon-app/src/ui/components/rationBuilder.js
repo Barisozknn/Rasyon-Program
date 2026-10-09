@@ -315,21 +315,21 @@ export async function renderRationBuilder(container, state, { onOptimize }) {
               ${constraintRow('pufa_pct',   t('ration.pufa'),   mergeComp('pufa_pct', { max: stageDefaults.pufa_pct?.max }))}
             </div>
 
-            ${subHead(t('ration.adv_trace'), 'mg/gün')}
+            ${subHead(t('ration.adv_trace'), `mg${t('common.per_day')}`)}
             <div class="constraint-grid">
               ${TRACE_UI.map(([k, lbl]) => { const ph = tmReq[k]?.minMgDay != null ? (+tmReq[k].minMgDay).toFixed(1) : null;
                 return constraintRow('trace_' + k, lbl, compOverride['trace_' + k] || {}, {
                   minPh: ph ?? t('ration.min_ph'), maxPh: t('ration.max_ph'), minComputed: ph != null }); }).join('')}
             </div>
 
-            ${subHead(t('ration.adv_vitamins'), 'IU/gün')}
+            ${subHead(t('ration.adv_vitamins'), `IU${t('common.per_day')}`)}
             <div class="constraint-grid">
               ${VIT_UI.map(([k, lbl]) => { const ph = vitReq[k]?.minIU != null ? (+vitReq[k].minIU).toFixed(0) : null;
                 return constraintRow('vit_' + k, lbl, compOverride['vit_' + k] || {}, {
                   minPh: ph ?? t('ration.min_ph'), maxPh: t('ration.max_ph'), minComputed: ph != null }); }).join('')}
             </div>
 
-            ${subHead(t('ration.adv_macro'), 'g/gün')}
+            ${subHead(t('ration.adv_macro'), `g${t('common.per_day')}`)}
             <div class="constraint-grid">
               ${MACRO_UI.map(([k, lbl, ph]) => constraintRow('macro_' + k, lbl, compOverride['macro_' + k] || {}, {
                 minPh: ph ?? t('ration.min_ph'), maxPh: t('ration.max_ph'), minComputed: ph != null,
@@ -340,15 +340,15 @@ export async function renderRationBuilder(container, state, { onOptimize }) {
             ${subHead(t('ration.adv_protein2'))}
             <div class="constraint-grid">
               ${constraintRow('rup_pct', t('ration.rup_label'), compOverride.rup_pct || {}, { minPh: t('ration.min_ph'), maxPh: t('ration.max_ph') })}
-              ${constraintRow('aa_lys', 'Lys (g/gün)', compOverride.aa_lys || {}, { minPh: lysPh ?? t('ration.min_ph'), maxPh: '—', minComputed: lysPh != null })}
-              ${constraintRow('aa_met', 'Met (g/gün)', compOverride.aa_met || {}, { minPh: metPh ?? t('ration.min_ph'), maxPh: '—', minComputed: metPh != null })}
-              ${constraintRow('aa_his', 'His (g/gün)', compOverride.aa_his || {}, { minPh: hisPh ?? t('ration.min_ph'), maxPh: '—', minComputed: hisPh != null })}
+              ${constraintRow('aa_lys', `Lys (g${t('common.per_day')})`, compOverride.aa_lys || {}, { minPh: lysPh ?? t('ration.min_ph'), maxPh: '—', minComputed: lysPh != null })}
+              ${constraintRow('aa_met', `Met (g${t('common.per_day')})`, compOverride.aa_met || {}, { minPh: metPh ?? t('ration.min_ph'), maxPh: '—', minComputed: metPh != null })}
+              ${constraintRow('aa_his', `His (g${t('common.per_day')})`, compOverride.aa_his || {}, { minPh: hisPh ?? t('ration.min_ph'), maxPh: '—', minComputed: hisPh != null })}
             </div>
             <div class="text-small text-muted" style="margin:0.4rem 0 0.2rem">${t('ration.eaa_optional_note')}</div>
             <div class="constraint-grid">
               ${EAA7_UI.map(([k, lbl]) => {
                 const ph = (aaT && aaT[k] && mpTot) ? num1(mpTot * aaT[k].pctMP_min / 100) : null;
-                return constraintRow('aa_' + k, lbl + ' (g/gün)', compOverride['aa_' + k] || {}, {
+                return constraintRow('aa_' + k, lbl + ` (g${t('common.per_day')})`, compOverride['aa_' + k] || {}, {
                   minPh: ph ?? t('ration.min_ph'), maxPh: '—' });  // OPT-IN: minComputed YOK (gri/opsiyonel)
               }).join('')}
             </div>

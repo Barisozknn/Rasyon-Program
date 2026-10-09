@@ -180,7 +180,7 @@ export async function renderObservationsPanel(container, state) {
           <label>${t('obs.select_profile')}</label>
           <select id="obs-profile-select">
             ${profiles.map(p => `<option value="${escHtml(p.id)}" ${p.id === activeProfileId ? 'selected' : ''}>
-              ${escHtml(p.name)} (${p.milkYield ?? '?'} kg/gün, DIM ${p.dim ?? '?'})
+              ${escHtml(p.name)} (${p.milkYield ?? '?'} kg${t('common.per_day')}, DIM ${p.dim ?? '?'})
             </option>`).join('')}
           </select>
         </div>

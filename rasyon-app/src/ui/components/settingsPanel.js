@@ -25,27 +25,20 @@ import { updateAiTabUI } from '../app.js';
 
 const CLOUD_STATUS_ICON = { idle: 'ti-cloud', syncing: 'ti-refresh', synced: 'ti-cloud-check', pending: 'ti-clock', offline: 'ti-cloud-off', error: 'ti-alert-triangle' };
 
-const SYSTEM_INFO = {
+const getSystemInfo = () => ({
   NASEM2021: {
-    label: 'NASEM 2021 (önerilen)',
-    desc: 'Tam mekanistik NASEM 2021 + CNCPS v6.5 motoru. NRC 2001 çekirdek üzerine NASEM 2021 güncellemeleri '
-        + '(idame NEL 0.10×BW<sup>0.75</sup>, MP idame 4.1×BW<sup>0.75</sup>, BCS mobilizasyon 84 Mcal/BCS) + '
-        + 'ölçülü yemlerde <b>dinamik amino asit (AA)</b>, <b>pasaj hızına bağlı RDP/RUP</b> ve '
-        + '<b>iteratif CNCPS v6.5 motoru</b> (opt-in "CNCPS Hesap Modu"). '
-        + 'Yüksek verimli modern sürüler için önerilir.',
+    label: t('settings.sys_nasem_label'),
+    desc: t('settings.sys_nasem_desc'),
   },
   NRC2001: {
-    label: 'NRC 2001 (klasik)',
-    desc: 'Klasik 7. baskı denklemleri. İdame NEL 0.08×BW<sup>0.75</sup>, MP idame 3.8×BW<sup>0.75</sup>, '
-        + 'BCS mobilizasyon 62.56 Mcal/BCS. Geriye dönük karşılaştırma için.',
+    label: t('settings.sys_nrc_label'),
+    desc: t('settings.sys_nrc_desc'),
   },
   INRA2018: {
-    label: 'INRA 2018 (Fransa)',
-    desc: 'Avrupa standardı. Enerji UFL (Unité Fourragère Lait), protein PDIE/PDIN, '
-        + 'doluluk UEL birimleri. LP optimizasyonu NASEM 2021 ile çalışır; INRA değerleri '
-        + 'sonuç panelinde ek rapor olarak gösterilir.',
+    label: t('settings.sys_inra_label'),
+    desc: t('settings.sys_inra_desc'),
   },
-};
+});
 
 export async function renderSettingsPanel(container, state, options = {}) {
   const onSettingsChange = options.onSettingsChange || (() => {});
@@ -223,7 +216,7 @@ export async function renderSettingsPanel(container, state, options = {}) {
         <div class="info-box">${t('settings.ai_activation_desc')}</div>
         ${!getSyncState()?.user ? `
           <div class="alert alert-warning" style="margin-top: 0.5rem; padding: 0.75rem; border-radius: var(--radius); border: 1px solid var(--warning); color: var(--warning); display: flex; align-items: center; gap: 0.5rem;">
-            <i class="ti ti-alert-triangle"></i> Lütfen aktivasyon kodunu girmek için önce Bulut Hesabınıza giriş yapın.
+            <i class="ti ti-alert-triangle"></i> ${t('settings.ai_login_warning')}
           </div>
         ` : ''}
         <div class="form-grid mt-1">
@@ -278,7 +271,8 @@ export async function renderSettingsPanel(container, state, options = {}) {
   const descBox = container.querySelector('#system-desc');
 
   function refreshDesc() {
-    const info = SYSTEM_INFO[systemSelect.value] || SYSTEM_INFO.NASEM2021;
+    const infoMap = getSystemInfo();
+    const info = infoMap[systemSelect.value] || infoMap.NASEM2021;
     descBox.innerHTML = `<b>${escHtml(info.label)}:</b> ${info.desc}`;
   }
   refreshDesc();

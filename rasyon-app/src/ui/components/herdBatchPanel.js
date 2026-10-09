@@ -182,7 +182,7 @@ async function runHerdOptimization(container, state, profiles, groups) {
   const targetProfiles = filterGroupId ? profiles.filter(p => p.groupId === filterGroupId) : profiles;
   if (targetProfiles.length === 0) { showToast(t('herd.no_match_profile'), 'error'); return; }
 
-  // Ortak yem-stoğu girdileri (as-fed kg/gün); boş/0 = sınır yok
+  // Ortak yem-stoğu girdileri (as-fed kg${t('common.per_day')}); boş/0 = sınır yok
   const sharedStock = {};
   container.querySelectorAll('.herd-stock-input').forEach(inp => {
     const v = parseFloat(inp.value);

@@ -51,7 +51,8 @@
     "close": "Kapat",
     "loading": "Yükleniyor...",
     "optimize": "Rasyonu Optimize Et",
-    "tab_help_title": "Bu sekme ne işe yarar?"
+    "tab_help_title": "Bu sekme ne işe yarar?",
+    "per_day": "/gün"
   },
   "dashboard": {
     "quick_actions": "Hızlı İşlemler",
@@ -156,7 +157,8 @@
     "missing_ton": "{val} ton eksik",
     "stock_alert_title": "Stok Uyarısı",
     "stock_alert_text": "{feed} hedeflenen {plan} {unit} süreden daha erken tükenecek ({missing}).",
-    "daily_label": "GÜNLÜK"
+    "daily_label": "GÜNLÜK",
+    "include_dry": "Kuru Dönemleri Dahil Et"
   },
   "stages": {
     "early": "Erken Laktasyon",
@@ -901,7 +903,14 @@
     "humidity": "Bağıl Nem (%)",
     "milk_price": "Süt Fiyatı (TL/kg)",
     "save": "Kaydet",
-    "title": "Ayarlar"
+    "title": "Ayarlar",
+    "sys_nasem_label": "NASEM 2021 (önerilen)",
+    "sys_nasem_desc": "Tam mekanistik NASEM 2021 + CNCPS v6.5 motoru. NRC 2001 çekirdek üzerine NASEM 2021 güncellemeleri (idame NEL 0.10×BW<sup>0.75</sup>, tam faktöriyel MP modeli, KMT/NDF bazlı Ca ve P formülleri, BCS mobilizasyon 84 Mcal/BCS) + ölçülü yemlerde <b>dinamik amino asit (AA)</b>, <b>pasaj hızına bağlı RDP/RUP</b> ve <b>iteratif CNCPS v6.5 motoru</b> (opt-in \"CNCPS Hesap Modu\"). Yüksek verimli modern sürüler için önerilir.",
+    "sys_nrc_label": "NRC 2001 (klasik)",
+    "sys_nrc_desc": "Klasik 7. baskı denklemleri. İdame NEL 0.08×BW<sup>0.75</sup>, MP idame 3.8×BW<sup>0.75</sup>, BCS mobilizasyon 62.56 Mcal/BCS. Geriye dönük karşılaştırma için.",
+    "sys_inra_label": "INRA 2018 (Fransa)",
+    "sys_inra_desc": "Avrupa standardı. Enerji UFL, protein PDIE/PDIN, doluluk UEL birimleri. LP optimizasyonu NASEM 2021 ile çalışır; INRA değerleri ek rapor olarak sunulur.",
+    "ai_login_warning": "Lütfen aktivasyon kodunu girmek için önce Bulut Hesabınıza giriş yapın."
   },
   "heat": {
     "stress_level": "Stres Seviyesi",
@@ -1794,7 +1803,12 @@
     "sum_dmi": "Toplam KMT",
     "sum_mp": "Toplam MP",
     "sum_nel": "Toplam NEL",
-    "unit_dm": "KM bazında"
+    "unit_dm": "KM bazında",
+    "nel_basal": "Bazal Metabolizma",
+    "nel_heat": "Isı Stresi İlavesi",
+    "mp_fecal": "Dışkı (Endojen)",
+    "mp_urine": "İdrar (Endojen)",
+    "mp_scurf": "Tüy / Deri (Scurf)"
   },
   "cloud": {
     "header_title": "Hesap & Bulut",
@@ -1898,5 +1912,17 @@
     "new_version": "Yeni bir sürüm hazır!",
     "refresh": "Yenile",
     "close": "Kapat"
+  },
+  "static": {
+    "tab_help": "Bu sekme ne işe yarar?",
+    "tab_help_desc": "Bu sekmede süt sığırcılığı ile ilgili NASEM 2021, NRC 2001 ve güncel bilimsel araştırmalara dayalı, %100 güvenilir ve akademik uzman tavsiyeleri yer alır. Kategorilere göre filtreleme yapabilir veya arama çubuğunu kullanarak belirli konuları hızlıca bulabilirsiniz.",
+    "filter_all": "Tüm Tavsiyeler",
+    "filter_dry": "Kuru Dönem",
+    "filter_health": "Sağlık / Rumen",
+    "filter_housing": "Barınak",
+    "filter_water": "Su Tüketimi",
+    "filter_calf": "Buzağı",
+    "more_tabs": "Tüm Sekmeler",
+    "pwa_update": "Yeni bir sürüm hazır!"
   }
 }

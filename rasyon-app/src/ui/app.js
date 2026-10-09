@@ -158,32 +158,54 @@ function updatePageTitle(tab = activeTab) {
 }
 
 function updateAppUIStrings() {
-  // Kenar menü nav etiketleri — ikonlar statik SVG, yalnız .tab-label metnini güncelle
-  document.querySelectorAll('.tab-btn[data-tab]').forEach(btn => {
-    const tab = btn.dataset.tab;
-    const label = btn.querySelector('.tab-label');
-    const key = `tabs.${tab}`;
-    if (label && t(key) !== key) label.textContent = stripLeadingIcon(t(key));
-  });
-
-  // Mobil "Daha Fazla" sayfası etiketleri (.mi-label)
-  document.querySelectorAll('.more-item[data-tab]').forEach(btn => {
-    const tab = btn.dataset.tab;
-    const label = btn.querySelector('.mi-label');
-    const key = `tabs.${tab}`;
-    if (label && t(key) !== key) label.textContent = stripLeadingIcon(t(key));
-  });
-
-  // Mobil alt navigasyon kısa etiketleri (bottomNav.* anahtarları)
-  document.querySelectorAll('.bottom-nav-btn[data-tab]').forEach(btn => {
-    const tab = btn.dataset.tab;
-    const label = btn.querySelector('.bn-label');
-    if (tab && label && t(`bottomNav.${tab}`) !== `bottomNav.${tab}`) {
-      label.textContent = t(`bottomNav.${tab}`);
+  // FAZ 21: Data-i18n based updates (Normal elements)
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (key) {
+      const translated = t(key);
+      if (translated !== key) {
+        if (el.tagName === 'INPUT' && (el.type === 'text' || el.type === 'search')) {
+           el.placeholder = translated;
+        } else if (!el.classList.contains('tab-label') && !el.classList.contains('bn-label') && !el.classList.contains('mi-label')) {
+           el.textContent = translated;
+        }
+      }
     }
   });
+
+  // MUTLAK VE ZORUNLU SIDEBAR GÜNCELLEMESİ (Her türlü önbellek/markup sorununu aşmak için)
+  const TABS_KEYS = {
+    dashboard: 'tabs.dashboard', animal: 'tabs.animal', feeds: 'tabs.feeds', ration: 'tabs.ration',
+    results: 'tabs.results', herd: 'tabs.herd', prices: 'tabs.prices', observations: 'tabs.observations',
+    ai: 'tabs.ai', recommendations: 'tabs.recommendations', settings: 'tabs.settings'
+  };
+
+  document.querySelectorAll('.tab-btn[data-tab], .bottom-nav-btn[data-tab], .more-item[data-tab]').forEach(btn => {
+    const tab = btn.dataset.tab;
+    if (TABS_KEYS[tab]) {
+      const key = btn.classList.contains('bottom-nav-btn') ? `bottomNav.${tab}` : TABS_KEYS[tab];
+      const translated = t(key);
+      const text = String(translated).replace(/^\s*[\p{Extended_Pictographic}☀-➿️‍]+\s*/u, '').trim();
+
+      // Mümkün olan her türlü etiketi (span) bul ve ez
+      const label = btn.querySelector('.tab-label, .bn-label, .mi-label');
+      if (label) {
+        label.textContent = text;
+      } else {
+        // Eğer span silinmişse veya yapısı bozulmuşsa, butonun içindeki son text node'unu ez
+        Array.from(btn.childNodes).forEach(node => {
+          if (node.nodeType === Node.TEXT_NODE && node.nodeValue.trim().length > 0) {
+            node.nodeValue = text;
+          }
+        });
+      }
+    }
+  });
+
   const moreLabel = document.querySelector('#bn-more .bn-label');
-  if (moreLabel && t('bottomNav.more') !== 'bottomNav.more') moreLabel.textContent = t('bottomNav.more');
+  if (moreLabel && t('bottomNav.more') !== 'bottomNav.more') {
+    moreLabel.textContent = String(t('bottomNav.more')).replace(/^\s*[\p{Extended_Pictographic}☀-➿️‍]+\s*/u, '').trim();
+  }
 
   // PWA banner (index.html) translations
   const pwaMsg = document.querySelector('.pwa-message');

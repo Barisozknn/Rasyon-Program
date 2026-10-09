@@ -32,7 +32,7 @@ import { renderSensitivityPanel } from './results/sensitivityPanel.js';  // FAZ 
 /**
  * PROBLEMLER #3 — TMR Nem Dengesi & Eklenecek Su.
  * Hedef TMR nemi (composition.tmr_target_moisture) verilmişse: hedef / rasyondan karşılanan /
- * su ile karşılanan (açık) yığılmış bar + eklenecek su (kg/gün) kartı. Aksi halde boş döner.
+ * su ile karşılanan (açık) yığılmış bar + eklenecek su (kg${t('common.per_day')}) kartı. Aksi halde boş döner.
  */
 function renderTmrMoisturePanel(comp) {
   const T = comp.tmr_target_moisture;
