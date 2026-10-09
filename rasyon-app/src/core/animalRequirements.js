@@ -27,7 +27,7 @@ import { calcUFLRequirements, calcPDIRequirements, calcUELCapacity } from './inr
 // birimine çevrimi (rapor katmanı, LP yine NASEM ile). Tam mekanistik motor
 // (iteratif CNCPS) FAZ 19 hedefidir. Etiketler bu gerçeği yansıtır.
 export const REQUIREMENT_SYSTEMS = {
-  NASEM2021: { label: 'NRC 2001 çekirdek + NASEM 2021 güncellemeleri (idame/BCS/AA/mineral)', maintenance: '0.10×BW^0.75', mpMaintenance: '4.1×BW^0.75', bcsMobilization: '84 Mcal/BCS' },
+  NASEM2021: { label: 'NRC 2001 çekirdek + NASEM 2021 güncellemeleri (idame/BCS/AA/mineral)', maintenance: '0.10×BW^0.75', mpMaintenance: 'faktöriyel idrar+dışkı+tüy', bcsMobilization: '84 Mcal/BCS' },
   NRC2001:   { label: 'NRC 2001 (7. baskı, klasik)', maintenance: '0.08×BW^0.75', mpMaintenance: '3.8×BW^0.75', bcsMobilization: '62.56 Mcal/BCS' },
   INRA2018:  { label: 'INRA 2018 (rapor katmanı — formülasyon NASEM ile)', maintenance: '0.041×BW^0.75 UFL', protein: 'PDIE/PDIN', fill: 'UEL' },  // FAZ 16.1
 };

@@ -8,7 +8,7 @@
  *   2. Laktasyon NEL verimliliği: 0.64 → 0.66
  *   3. Gebelik enerji modeli güncellendi (fetal büyüme, 0.00274 katsayı)
  *   4. BCS mobilizasyon: 62.56 → 84 Mcal/BCS birim
- *   5. MP idame: 3.8 → 4.1 × BW^0.75
+ *   5. MP idame: faktöriyel idrar + dışkı + tüy/deri modeli
  *   6. Kolin gereksinimleri eklendi (geçiş dönemi)
  *
  * FAZ 13.1: pipeline'a tam bağlama — calcNELRequirementsNASEM ve
@@ -166,9 +166,15 @@ export function calcMPRequirementsNASEM(animal, dmi = 0, ndf = 32) {
     lactation: Math.round(lactation),
     pregnancy: Math.round(pregnancyMP),
     total: Math.round(total),
-    scurf: Math.round(scurfTP / targetEfficiency), // detay gösterimi için (MP olarak)
-    fecal: Math.round(fecalTP / targetEfficiency), // detay gösterimi için (MP olarak)
+    scurf: Math.round(scurfTP / targetEfficiency), // detay gösterimi için (MP katkısı)
+    fecal: Math.round(fecalTP / targetEfficiency), // detay gösterimi için (MP katkısı)
     urine: Math.round(urineMP),                    // detay gösterimi için (MP olarak)
+    raw: {
+      scurfTP: Math.round(scurfTP * 10) / 10,
+      fecalTP: Math.round(fecalTP),
+      milkTP: Math.round(milkTP),
+      targetEfficiency,
+    },
     source: 'NASEM2021',
   };
 }

@@ -249,13 +249,12 @@ describe('FAZ 13.1 — Bilim sistemi seçimi (NRC 2001 vs NASEM 2021)', () => {
     expect(diff).toBeLessThan(5);
   });
 
-  it('NASEM2021 MP idame NRC2001\'den ~%8 yüksek (4.1 vs 3.8 × BW^0.75)', () => {
+  it('NASEM2021 MP idame faktöriyel modelle hesaplanır ve alt kalemleri tutarlıdır', () => {
     const nasem = calcAllRequirements(baseAnimal, { system: 'NASEM2021' });
-    const nrc   = calcAllRequirements(baseAnimal, { system: 'NRC2001' });
-    const ratio = nasem.mp.maintenance / nrc.mp.maintenance;
-    // 4.1 / 3.8 = 1.079 → +%7.9
-    expect(ratio).toBeGreaterThan(1.06);
-    expect(ratio).toBeLessThan(1.10);
+    expect(nasem.mp.urine).toBeCloseTo(Math.round((53 * 6.25 * baseAnimal.bw) / 1000), 0);
+    expect(nasem.mp.fecal).toBeGreaterThan(0);
+    expect(nasem.mp.scurf).toBeGreaterThan(0);
+    expect(Math.abs(nasem.mp.maintenance - (nasem.mp.urine + nasem.mp.fecal + nasem.mp.scurf))).toBeLessThanOrEqual(1);
   });
 
   it('NASEM2021 BCS mobilizasyon NRC2001\'den ~%34 yüksek (84 vs 62.56)', () => {

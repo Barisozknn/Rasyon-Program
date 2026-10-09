@@ -3,7 +3,7 @@ import { calcNELRequirements } from '../src/core/nrc2001.js';
 import {
   nelMaintenanceNASEM, nelPregnancyNASEM,
   calcNELRequirementsNASEM, compareNRCvsNASEM,
-  mpMaintenanceNASEM,
+  calcMPRequirementsNASEM,
 } from '../src/core/nasem2021.js';
 
 const TOLERANCE = 0.02;
@@ -72,16 +72,31 @@ describe('NASEM 2021 Toplam NEL Karşılaştırması', () => {
 });
 
 describe('NASEM 2021 MP İdame', () => {
-  it('MP idame NASEM 2021: 4.1 × BW^0.75 > NRC 2001 (3.8)', () => {
-    const bw = 600;
-    const nasem = mpMaintenanceNASEM(bw);
-    const nrc = 3.8 * Math.pow(bw, 0.75);
-    expect(nasem).toBeGreaterThan(nrc);
+  const testAnimal = {
+    bw: 600,
+    milkYield: 30,
+    milkFat: 4,
+    milkProtein: 3.2,
+    milkLactose: 4.8,
+    pregnant: false,
+    gestDays: 0,
+  };
+
+  it('test vakasında ham protein kalemleri rehberle uyumludur', () => {
+    const mp = calcMPRequirementsNASEM(testAnimal, 21.8, 32);
+    expect(mp.raw.scurfTP).toBeCloseTo(7.9, 1);
+    expect(mp.raw.fecalTP).toBeCloseTo(253, 0);
+    expect(mp.raw.milkTP).toBe(960);
+    expect(mp.urine).toBe(199);
   });
 
-  it('600 kg için NASEM MP idame ~497 g/gün', () => {
-    const mp = mpMaintenanceNASEM(600);
-    // 4.1 × 600^0.75 = 4.1 × 121.15 ≈ 496.7
-    expect(withinTolerance(mp, 496.7)).toBe(true);
+  it('test vakasında MP katkıları ve toplam tutarlıdır', () => {
+    const mp = calcMPRequirementsNASEM(testAnimal, 21.8, 32);
+    expect(mp.scurf).toBe(11);
+    expect(mp.fecal).toBe(367);
+    expect(mp.lactation).toBe(1391);
+    expect(mp.maintenance).toBe(mp.scurf + mp.fecal + mp.urine);
+    expect(mp.total).toBeGreaterThanOrEqual(1965);
+    expect(mp.total).toBeLessThanOrEqual(1975);
   });
 });

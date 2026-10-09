@@ -754,16 +754,24 @@ function updateCalc(form, state, container) {
     const lblNelHeat = t('acalc.nel_heat').startsWith('acalc.') ? 'Isı Stresi İlavesi' : t('acalc.nel_heat');
 
     // MP Idame Breakdown
-    let mpUrine = 0, mpScurf = 0, mpFecal = 0;
-    if (r.system === 'NASEM2021') {
-      mpUrine = 2.75 * Math.pow(animal.bw, 0.75);
-      mpScurf = 0.2 * Math.pow(animal.bw, 0.6);
-    } else {
-      mpUrine = 2.75 * Math.pow(animal.bw, 0.5);
-      mpScurf = 0.2 * Math.pow(animal.bw, 0.6);
-    }
-    mpFecal = Math.max(0, mp.maintenance - mpUrine - mpScurf);
-    
+    const hasMpBreakdown = Number.isFinite(mp.urine) && Number.isFinite(mp.scurf) && Number.isFinite(mp.fecal);
+    const formulaNumber = (value, digits = 0) => Number.isFinite(value) ? value.toFixed(digits) : '—';
+    const isNasemMP = hasMpBreakdown && mp.raw && Number.isFinite(mp.raw.targetEfficiency);
+    const mpMaintenanceFormula = isNasemMP
+      ? `((${formulaNumber(mp.raw.fecalTP)} + ${formulaNumber(mp.raw.scurfTP, 1)}) / ${formulaNumber(mp.raw.targetEfficiency, 2)} + ${formulaNumber(mp.urine)} / 1)`
+      : `(3.8 × ${formulaNumber(animal.bw)}^0.75)`;
+    const mpMilkFormula = isNasemMP
+      ? `(${formulaNumber(mp.raw.milkTP)} / ${formulaNumber(mp.raw.targetEfficiency, 2)})`
+      : `(${formulaNumber(animal.milkYield)} × ${formulaNumber(animal.milkProtein, 1)} × 10 / 0.67)`;
+    const effectiveGestDays = Number.isFinite(animal.gestDays)
+      ? animal.gestDays
+      : (Number.isFinite(animal.pregnancyMonth) ? animal.pregnancyMonth * 30 : 0);
+    const mpPregnancyFormula = animal.pregnant
+      ? effectiveGestDays < 190
+        ? `(gebelik < 190 gün → 0)`
+        : `((0.69 × ${formulaNumber(effectiveGestDays)} − 69.2) × (45 / 45) / 0.33)`
+      : `(gebe değil → 0)`;
+
     const lblMpFecal = t('acalc.mp_fecal').startsWith('acalc.') ? 'Dışkı (Endojen)' : t('acalc.mp_fecal');
     const lblMpUrine = t('acalc.mp_urine').startsWith('acalc.') ? 'İdrar (Endojen)' : t('acalc.mp_urine');
     const lblMpScurf = t('acalc.mp_scurf').startsWith('acalc.') ? 'Tüy / Deri (Scurf)' : t('acalc.mp_scurf');
@@ -809,12 +817,14 @@ function updateCalc(form, state, container) {
         <div class="feed-table-wrap" style="width:100%; overflow-x:auto;">
 <table class="diag-table" style="font-size:0.85rem; margin-top:0.5rem">
           <tbody>
-            <tr><td>${t('acalc.mp_maint')}</td><td class="num">${n0(mp.maintenance)} g</td></tr>
-            <tr class="text-muted" style="font-size:0.9em"><td style="padding-left:1.5rem">└ ${lblMpFecal}</td><td class="num">${n0(mpFecal)} g</td></tr>
-            <tr class="text-muted" style="font-size:0.9em"><td style="padding-left:1.5rem">└ ${lblMpUrine}</td><td class="num">${n0(mpUrine)} g</td></tr>
-            <tr class="text-muted" style="font-size:0.9em"><td style="padding-left:1.5rem">└ ${lblMpScurf}</td><td class="num">${n0(mpScurf)} g</td></tr>
-            <tr><td>${t('acalc.mp_milk')}</td><td class="num">${n0(mp.lactation)} g</td></tr>
-            <tr><td>${t('acalc.mp_preg')}</td><td class="num">${n0(mp.pregnancy)} g</td></tr>
+            <tr><td>${t('acalc.mp_maint')} <span class="text-muted">(${mpMaintenanceFormula})</span></td><td class="num">${n0(mp.maintenance)} g</td></tr>
+            ${isNasemMP ? `
+              <tr class="text-muted" style="font-size:0.9em"><td style="padding-left:1.5rem">└ ${lblMpFecal} (${formulaNumber(mp.raw.fecalTP)} / ${formulaNumber(mp.raw.targetEfficiency, 2)})</td><td class="num">${n0(mp.fecal)} g</td></tr>
+              <tr class="text-muted" style="font-size:0.9em"><td style="padding-left:1.5rem">└ ${lblMpUrine} (${formulaNumber(mp.urine)} / 1)</td><td class="num">${n0(mp.urine)} g</td></tr>
+              <tr class="text-muted" style="font-size:0.9em"><td style="padding-left:1.5rem">└ ${lblMpScurf} (${formulaNumber(mp.raw.scurfTP, 1)} / ${formulaNumber(mp.raw.targetEfficiency, 2)})</td><td class="num">${n0(mp.scurf)} g</td></tr>
+            ` : ''}
+            <tr><td>${t('acalc.mp_milk')} <span class="text-muted">${mpMilkFormula}</span></td><td class="num">${n0(mp.lactation)} g</td></tr>
+            <tr><td>${t('acalc.mp_preg')} <span class="text-muted">${mpPregnancyFormula}</span></td><td class="num">${n0(mp.pregnancy)} g</td></tr>
             ${mp.growth ? `<tr><td>${t('acalc.mp_growth')}</td><td class="num">${n0(mp.growth)} g</td></tr>` : ''}
             <tr style="font-weight:700"><td>${t('acalc.mp_total')}</td><td class="num">${n0(mp.total)} g${t('common.per_day')}</td></tr>
             <tr><td colspan="2" style="background:var(--bg-light,#f5f5f5); font-weight:600; padding-top:0.4rem">${t('acalc.aa_targets')}</td></tr>
